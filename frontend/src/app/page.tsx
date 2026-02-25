@@ -9,13 +9,17 @@ import CascadaConsenso from '@/components/CascadaConsenso';
 import RankingTable from '@/components/RankingTable';
 import MobileTabBar from '@/components/MobileTabBar';
 import VoteCounter from '@/components/VoteCounter';
+import EncuestaPanel from '@/components/EncuestaPanel';
+import PlanchasPanel from '@/components/PlanchasPanel';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-type TabType = 'votar' | 'president' | 'senator' | 'deputy' | 'andean';
+type TabType = 'votar' | 'encuesta' | 'planchas' | 'president' | 'senator' | 'deputy' | 'andean';
 
 const TABS = [
+  { id: 'encuesta' as TabType, label: 'ENCUESTA' },
   { id: 'votar' as TabType, label: 'VOTAR' },
+  { id: 'planchas' as TabType, label: 'PLANCHAS' },
   { id: 'deputy' as TabType, label: 'DIPUTADOS' },
   { id: 'president' as TabType, label: 'PRESIDENTE(A)' },
   { id: 'senator' as TabType, label: 'SENADORES' },
@@ -43,7 +47,7 @@ export default function Home() {
         if (activeTab === 'votar') {
           const presidents = await getRanking('president');
           setCandidates(presidents);
-        } else {
+        } else if (activeTab !== 'encuesta' && activeTab !== 'planchas') {
           const ranked = await getRanking(activeTab);
           setCandidates(ranked);
         }
@@ -122,12 +126,6 @@ export default function Home() {
 
           {/* Column 2: Centered Navigation Links */}
           <nav className="navbar-center">
-            <button
-              onClick={() => setActiveTab('votar')}
-              className={`nav-tab ${activeTab === 'votar' ? 'active' : ''}`}
-            >
-              ENCUESTA
-            </button>
             {TABS.map(tab => (
               <button
                 key={tab.id}
@@ -176,7 +174,15 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="dashboard-wrapper">
-        {activeTab === 'votar' ? (
+        {activeTab === 'encuesta' ? (
+          /* ENCUESTA VIEW */
+          <div className="max-w-[900px] mx-auto w-full px-2">
+            <EncuestaPanel />
+          </div>
+        ) : activeTab === 'planchas' ? (
+          /* PLANCHAS VIEW */
+          <PlanchasPanel />
+        ) : activeTab === 'votar' ? (
           /* CANCHA VIEW */
           <div className="cancha-layout grid grid-cols-1 lg:grid-cols-[17.5fr_65fr_17.5fr] gap-[2.5rem]">
             {/* Left Panel - Live Momentum */}

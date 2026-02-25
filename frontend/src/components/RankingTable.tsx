@@ -153,11 +153,11 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
                     return (
                         <div key={candidate.id}>
                             {/* Desktop */}
-                            <div className="hidden md:grid grid-cols-[50px_1fr_100px_40px_100px_100px_80px_80px] gap-2 items-center px-6 py-3 rounded-lg transition-colors hover:bg-white/5" style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
+                            <div className="hidden md:grid grid-cols-[50px_1fr_100px_40px_100px_100px_80px_80px] gap-2 items-center px-6 py-4 rounded-lg transition-colors hover:bg-white/5 ranking-row" style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
                                 <span className="text-sm font-bold" style={{ color: globalRank <= 3 ? 'var(--vp-gold)' : 'var(--vp-text-dim)' }}>
                                     {globalRank}
                                 </span>
-                                <Link href={`/candidate/${candidate.id}`} className="flex items-center gap-3">
+                                <Link href={`/candidate/${candidate.id}`} className="flex items-center gap-3 pl-1">
                                     <img
                                         src={getAvatarUrl(candidate.name, 40, candidate.party_color)}
                                         alt={candidate.name}
@@ -201,38 +201,38 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
                             </div>
 
                             {/* Mobile — vertical card layout */}
-                            <div className="md:hidden flex flex-col rounded-xl p-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.02)' }}>
-                                {/* Top: rank + candidate + score */}
-                                <div className="flex items-center gap-3 mb-3">
-                                    <span className="text-sm font-bold w-7 text-center shrink-0" style={{ color: globalRank <= 3 ? 'var(--vp-gold)' : 'var(--vp-text-dim)' }}>
+                            <div className="md:hidden flex flex-col rounded-xl p-3 mb-2" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.02)' }}>
+                                {/* Top: rank + candidate info + score */}
+                                <div className="flex items-start gap-2.5 mb-2.5">
+                                    <span className="text-sm font-bold w-6 text-center shrink-0 pt-1" style={{ color: globalRank <= 3 ? 'var(--vp-gold)' : 'var(--vp-text-dim)' }}>
                                         {globalRank}
                                     </span>
-                                    <Link href={`/candidate/${candidate.id}`} className="flex items-center gap-3 flex-1 min-w-0">
+                                    <Link href={`/candidate/${candidate.id}`} className="flex items-start gap-2.5 flex-1 min-w-0">
                                         <img
                                             src={getAvatarUrl(candidate.name, 40, candidate.party_color)}
                                             alt={candidate.name}
                                             width={40}
                                             height={40}
-                                            className="candidate-avatar"
+                                            className="candidate-avatar shrink-0"
                                             loading="lazy"
                                         />
                                         <div className="min-w-0 flex-1">
-                                            <div className="text-sm font-semibold truncate" style={{ color: 'var(--vp-text)' }}>{candidate.name}</div>
-                                            <div className="text-[10px]" style={{ color: candidate.party_color }}>{candidate.party_abbreviation} — {candidate.region}</div>
+                                            <div className="text-[13px] font-semibold leading-tight" style={{ color: 'var(--vp-text)' }}>{candidate.name}</div>
+                                            <div className="text-[10px] mt-0.5" style={{ color: candidate.party_color }}>{candidate.party_abbreviation} — {candidate.region}</div>
+                                            <div className="flex items-center gap-1.5 mt-1">
+                                                <TrendIndicator momentum={Number(candidate.momentum_score)} />
+                                                <StarRating rating={Number(candidate.stars_rating)} />
+                                            </div>
                                         </div>
                                     </Link>
-                                    <div className="shrink-0 text-right">
+                                    <div className="shrink-0 text-right pt-0.5">
                                         <span className="score-badge">{Number(candidate.final_score).toFixed(1)}</span>
-                                        <div className="flex items-center justify-end gap-1 mt-0.5">
-                                            <TrendIndicator momentum={Number(candidate.momentum_score)} />
-                                            <StarRating rating={Number(candidate.stars_rating)} />
-                                        </div>
                                     </div>
                                 </div>
                                 {/* Bottom: full-width vote button */}
                                 <button
                                     onClick={() => onVote(candidate.id, candidate.position)}
-                                    className="w-full text-xs font-bold py-2.5 rounded-lg transition-all hover:scale-[1.02] active:scale-95"
+                                    className="w-full text-xs font-bold py-2 rounded-lg transition-all hover:scale-[1.02] active:scale-95"
                                     style={{ background: 'var(--vp-red)', color: 'white', boxShadow: '0 0 12px var(--vp-red-glow)' }}
                                 >
                                     🗳️ VOTAR

@@ -103,6 +103,21 @@ body {
   min-width: 0;
 }
 
+/* Ranking table row */
+.ranking-row {
+  line-height: 1.65;
+  padding-left: 0.5rem;
+}
+
+/* Premium section gaps for candidate profile */
+.profile-section-gap {
+  margin-top: 2.5rem;
+}
+
+.data-block-gap>*+* {
+  margin-top: 1.5rem;
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
@@ -506,7 +521,23 @@ body {
   }
 
   .cancha-field {
-    min-height: 60vh;
+    min-height: 55vh;
+    overflow: hidden;
+  }
+
+  .candidate-node {
+    width: 42px;
+    height: 42px;
+    border-width: 2px;
+  }
+
+  .cancha-field::after {
+    width: 70px;
+    height: 70px;
+  }
+
+  .peru-svg-map {
+    width: 55%;
   }
 }
 

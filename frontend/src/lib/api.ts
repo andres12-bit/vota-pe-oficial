@@ -147,3 +147,29 @@ export async function getStats() {
 export async function search(query: string) {
     return apiFetch<{ candidates: Candidate[]; proposals: Proposal[]; events: CandidateEvent[] }>(`/api/search?q=${encodeURIComponent(query)}`);
 }
+
+// Encuesta (Polls)
+export interface EncuestaPoll {
+    id: number;
+    question: string;
+    emoji: string;
+    category: string;
+    options: string[];
+    is_active: boolean;
+    vote_counts: Record<string, number>;
+    total_votes: number;
+}
+
+export async function getEncuestas(): Promise<EncuestaPoll[]> {
+    const data = await apiFetch<{ polls: EncuestaPoll[] }>('/api/encuesta');
+    return data.polls;
+}
+
+export async function voteEncuesta(pollId: number, optionIndex: number, fingerprint?: string) {
+    const res = await fetch(`${API_BASE}/api/encuesta/${pollId}/vote`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ option_index: optionIndex, fingerprint }),
+    });
+    return res.json();
+}

@@ -7,6 +7,8 @@
  * Both modes expose the same pg.Pool interface: query(), connect(), end()
  */
 require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
 
 // ==================== POSTGRESQL MODE ====================
 if (process.env.DATABASE_URL) {
@@ -45,9 +47,11 @@ const store = {
   votes: [],
   users: [],
   party_scores: [],
+  encuesta_polls: [],
+  encuesta_votes: [],
 };
 
-let nextId = { parties: 1, candidates: 1, proposals: 1, events: 1, votes: 1, users: 1, vps: 1, plan: 1 };
+let nextId = { parties: 1, candidates: 1, proposals: 1, events: 1, votes: 1, users: 1, vps: 1, plan: 1, encuesta_polls: 1, encuesta_votes: 1 };
 
 // ==================== SEED DATA ====================
 const PARTIES_SEED = [
@@ -289,40 +293,83 @@ function seedVicePresidentsAndPlans() {
   console.log(`[MEM-DB] Seeded ${store.candidate_vice_presidents.length} VPs, ${store.candidate_plan_gobierno.length} plan items for ${presidentCandidates.length} presidents`);
 }
 
-// ==================== INITIALIZE DATA ====================
+// ==================== INITIALIZE DATA FROM REAL JNE DATA ====================
 function initializeData() {
-  // Seed parties
-  PARTIES_SEED.forEach(p => {
+  // Load real JNE data
+  const jnePath = path.join(__dirname, '..', 'data', 'jne_candidates.json');
+  let jneData;
+  try {
+    jneData = JSON.parse(fs.readFileSync(jnePath, 'utf-8'));
+  } catch (err) {
+    console.error('[MEM-DB] ❌ Could not load jne_candidates.json. Run: node src/scripts/scrape_jne.js');
+    process.exit(1);
+  }
+
+  // Party color palette (cycle through these for parties)
+  const PARTY_COLORS = [
+    '#E53935', '#D81B60', '#8E24AA', '#5E35B1', '#3949AB', '#1E88E5',
+    '#039BE5', '#00ACC1', '#00897B', '#43A047', '#7CB342', '#C0CA33',
+    '#FDD835', '#FFB300', '#FB8C00', '#F4511E', '#6D4C41', '#546E7A',
+    '#EF5350', '#AB47BC', '#7E57C2', '#42A5F5', '#26C6DA', '#66BB6A',
+    '#FFCA28', '#FFA726', '#FF7043', '#8D6E63', '#78909C', '#EC407A',
+    '#29B6F6', '#26A69A', '#9CCC65', '#FFEE58', '#FF8A65', '#BDBDBD',
+    '#5C6BC0', '#0097A7', '#2E7D32', '#F57F17',
+  ];
+
+  // Build party mapping: JNE id → our internal id
+  const jnePartyMap = {}; // jne_id → our party id
+  jneData.parties.forEach((jp, idx) => {
     const id = nextId.parties++;
+    const abbrev = jp.abbreviation || jp.name.split(' ').map(w => w[0]).join('').substring(0, 5);
     store.parties.push({
-      id, name: p.name, abbreviation: p.abbreviation, logo: null, color: p.color,
+      id, name: jp.name, abbreviation: abbrev, logo: jp.logo_url || null,
+      color: PARTY_COLORS[idx % PARTY_COLORS.length],
       party_full_score: 0, updated_at: new Date().toISOString(), created_at: new Date().toISOString(),
     });
+    jnePartyMap[jp.jne_id] = id;
   });
 
-  // Seed presidential candidates
-  PRESIDENTIAL_SEED.forEach(c => {
-    const party = store.parties.find(p => p.name === c.party);
-    if (!party) return;
+  // Helper: create a candidate from JNE raw data
+  function seedCandidate(raw, position) {
+    const partyId = jnePartyMap[raw.party_jne_id];
+    if (partyId === undefined) return null;
+
     const id = nextId.candidates++;
-    const voteCount = Math.floor(seededRandom() * 5000) + 100;
-    const intScore = 50;
+    const voteCount = Math.floor(seededRandom() * 5000) + 50;
+    const intScore = Math.floor(seededRandom() * 40) + 30; // 30-70
     const momScore = Math.floor(seededRandom() * 30);
-    const integScore = 100 - Math.floor(seededRandom() * 15);
-    const riskScore = Math.floor(seededRandom() * 30);
+    const integScore = 100 - Math.floor(seededRandom() * 20);
+    const riskScore = Math.floor(seededRandom() * 40);
     const voteNorm = Math.min(100, voteCount / 100);
     const finalScore = parseFloat(((voteNorm * 0.40) + (intScore * 0.25) + (momScore * 0.20) + (integScore * 0.15)).toFixed(2));
 
+    const isActive = raw.status !== 'EXCLUIDO' && raw.status !== 'IMPROCEDENTE';
+
     store.candidates.push({
-      id, name: c.name, photo: null, party_id: party.id, position: 'president',
-      region: c.region, biography: c.bio, intelligence_score: intScore,
-      momentum_score: momScore, integrity_score: integScore, risk_score: riskScore,
-      stars_rating: c.stars, final_score: Math.min(100, finalScore), vote_count: voteCount,
-      is_active: true, updated_at: new Date().toISOString(), created_at: new Date().toISOString(),
+      id,
+      name: raw.name,
+      photo: raw.photo_url || null,
+      party_id: partyId,
+      position: position,
+      region: raw.region || 'Lima',
+      biography: `Candidato(a) ${raw.cargo || position}. ${raw.party_name || ''}.`,
+      intelligence_score: intScore,
+      momentum_score: momScore,
+      integrity_score: integScore,
+      risk_score: riskScore,
+      stars_rating: parseFloat((seededRandom() * 2 + 2).toFixed(1)),
+      final_score: Math.min(100, finalScore),
+      vote_count: voteCount,
+      is_active: isActive,
+      jne_status: raw.status || 'INSCRITO',
+      list_position: raw.list_position || 0,
+      updated_at: new Date().toISOString(),
+      created_at: new Date().toISOString(),
     });
 
-    // Add 2 proposals per presidential candidate
-    for (let j = 0; j < 2; j++) {
+    // Add 1 proposal per candidate (presidential get 2)
+    const propCount = position === 'president' ? 2 : 1;
+    for (let j = 0; j < propCount; j++) {
       const prop = PROPOSALS[(id + j) % PROPOSALS.length];
       store.candidate_proposals.push({
         id: nextId.proposals++, candidate_id: id,
@@ -330,95 +377,28 @@ function initializeData() {
         created_at: new Date().toISOString(),
       });
     }
-  });
 
-  // ==================== SEED VP & PLAN DATA FOR PRESIDENTIAL CANDIDATES ====================
+    return id;
+  }
+
+  // ==================== SEED PRESIDENTIAL CANDIDATES ====================
+  // Filter to only actual presidents (cargo includes PRESIDENTE), not VPs
+  const presidentCandidates = jneData.candidates.presidents.filter(c =>
+    (c.cargo || '').toUpperCase().includes('PRESIDENTE') && !(c.cargo || '').toUpperCase().includes('VICE')
+  );
+  presidentCandidates.forEach(c => seedCandidate(c, 'president'));
+
+  // ==================== SEED VP DATA ====================
   seedVicePresidentsAndPlans();
 
-  // ==================== GENERATE SENATORS (130 — 5 per region + extras) ====================
-  const senatorsPerRegion = 5;
-  for (let r = 0; r < REGIONS.length; r++) {
-    for (let s = 0; s < senatorsPerRegion; s++) {
-      const idx = r * senatorsPerRegion + s;
-      const party = store.parties[idx % store.parties.length];
-      const id = nextId.candidates++;
-      const voteCount = Math.floor(seededRandom() * 2000) + 50;
-      const momScore = Math.floor(seededRandom() * 25);
-      const integScore = 100 - Math.floor(seededRandom() * 20);
-      const riskScore = Math.floor(seededRandom() * 35);
-      const voteNorm = Math.min(100, voteCount / 100);
-      const finalScore = parseFloat(((voteNorm * 0.40) + (50 * 0.25) + (momScore * 0.20) + (integScore * 0.15)).toFixed(2));
+  // ==================== SEED SENATORS ====================
+  jneData.candidates.senators.forEach(c => seedCandidate(c, 'senator'));
 
-      store.candidates.push({
-        id, name: generateName(idx + 100), photo: null, party_id: party.id, position: 'senator',
-        region: REGIONS[r], biography: `Candidato al Senado por ${REGIONS[r]}. Representante de ${party.name}.`,
-        intelligence_score: 50, momentum_score: momScore, integrity_score: integScore,
-        risk_score: riskScore, stars_rating: parseFloat((seededRandom() * 2 + 2).toFixed(1)),
-        final_score: Math.min(100, finalScore), vote_count: voteCount,
-        is_active: true, updated_at: new Date().toISOString(), created_at: new Date().toISOString(),
-      });
+  // ==================== SEED DEPUTIES ====================
+  jneData.candidates.deputies.forEach(c => seedCandidate(c, 'deputy'));
 
-      // 1 proposal per senator
-      const prop = PROPOSALS[idx % PROPOSALS.length];
-      store.candidate_proposals.push({
-        id: nextId.proposals++, candidate_id: id,
-        title: prop.title, description: prop.desc, category: prop.cat,
-        created_at: new Date().toISOString(),
-      });
-    }
-  }
-
-  // ==================== GENERATE DEPUTIES (130 — 5 per region + extras) ====================
-  for (let r = 0; r < REGIONS.length; r++) {
-    for (let d = 0; d < senatorsPerRegion; d++) {
-      const idx = r * senatorsPerRegion + d;
-      const party = store.parties[(idx + 3) % store.parties.length]; // offset to vary party assignment
-      const id = nextId.candidates++;
-      const voteCount = Math.floor(seededRandom() * 1500) + 30;
-      const momScore = Math.floor(seededRandom() * 20);
-      const integScore = 100 - Math.floor(seededRandom() * 25);
-      const riskScore = Math.floor(seededRandom() * 40);
-      const voteNorm = Math.min(100, voteCount / 100);
-      const finalScore = parseFloat(((voteNorm * 0.40) + (50 * 0.25) + (momScore * 0.20) + (integScore * 0.15)).toFixed(2));
-
-      store.candidates.push({
-        id, name: generateName(idx + 300), photo: null, party_id: party.id, position: 'deputy',
-        region: REGIONS[r], biography: `Candidato a Diputado por ${REGIONS[r]}. Representante de ${party.name}.`,
-        intelligence_score: 50, momentum_score: momScore, integrity_score: integScore,
-        risk_score: riskScore, stars_rating: parseFloat((seededRandom() * 2 + 1.5).toFixed(1)),
-        final_score: Math.min(100, finalScore), vote_count: voteCount,
-        is_active: true, updated_at: new Date().toISOString(), created_at: new Date().toISOString(),
-      });
-
-      const prop = PROPOSALS[(idx + 5) % PROPOSALS.length];
-      store.candidate_proposals.push({
-        id: nextId.proposals++, candidate_id: id,
-        title: prop.title, description: prop.desc, category: prop.cat,
-        created_at: new Date().toISOString(),
-      });
-    }
-  }
-
-  // ==================== GENERATE ANDEAN PARLIAMENT (36 — 1 per party) ====================
-  store.parties.forEach((party, pi) => {
-    const id = nextId.candidates++;
-    const voteCount = Math.floor(seededRandom() * 1000) + 20;
-    const momScore = Math.floor(seededRandom() * 15);
-    const integScore = 100 - Math.floor(seededRandom() * 20);
-    const riskScore = Math.floor(seededRandom() * 30);
-    const voteNorm = Math.min(100, voteCount / 100);
-    const finalScore = parseFloat(((voteNorm * 0.40) + (50 * 0.25) + (momScore * 0.20) + (integScore * 0.15)).toFixed(2));
-
-    store.candidates.push({
-      id, name: generateName(pi + 500), photo: null, party_id: party.id, position: 'andean',
-      region: REGIONS[pi % REGIONS.length],
-      biography: `Candidato al Parlamento Andino. Representante de ${party.name}.`,
-      intelligence_score: 50, momentum_score: momScore, integrity_score: integScore,
-      risk_score: riskScore, stars_rating: parseFloat((seededRandom() * 2 + 2).toFixed(1)),
-      final_score: Math.min(100, finalScore), vote_count: voteCount,
-      is_active: true, updated_at: new Date().toISOString(), created_at: new Date().toISOString(),
-    });
-  });
+  // ==================== SEED ANDEAN PARLIAMENT ====================
+  jneData.candidates.andean.forEach(c => seedCandidate(c, 'andean'));
 
   // ==================== CALCULATE PARTY SCORES ====================
   store.parties.forEach(party => {
@@ -436,10 +416,99 @@ function initializeData() {
   store.party_scores.sort((a, b) => b.party_full_score - a.party_full_score);
   store.party_scores.forEach((ps, i) => { ps.ranking_position = i + 1; });
 
-  console.log(`[MEM-DB] Loaded ${store.parties.length} parties, ${store.candidates.length} candidates, ${store.candidate_proposals.length} proposals`);
+  console.log(`[MEM-DB] Loaded ${store.parties.length} parties, ${store.candidates.length} candidates (REAL JNE DATA)`);
+  console.log(`[MEM-DB]   Presidents: ${store.candidates.filter(c => c.position === 'president').length}, Senators: ${store.candidates.filter(c => c.position === 'senator').length}, Deputies: ${store.candidates.filter(c => c.position === 'deputy').length}, Andean: ${store.candidates.filter(c => c.position === 'andean').length}`);
 }
 
 initializeData();
+
+// ==================== SEED ENCUESTA POLLS ====================
+function seedEncuestaPolls() {
+  const POLLS = [
+    {
+      question: '¿Quién sería mejor Presidente(a) del Perú?',
+      emoji: '🏛️',
+      category: 'Presidencia',
+      options: [
+        'Keiko Fujimori', 'César Acuña', 'Hernando de Soto',
+        'Daniel Urresti', 'Lescano Ancieta', 'Otro candidato'
+      ],
+      simulated_votes: [2840, 1920, 2150, 1680, 1340, 870],
+    },
+    {
+      question: '¿Cuál es el tema más importante para el Perú?',
+      emoji: '📊',
+      category: 'Opinión',
+      options: [
+        'Economía y empleo', 'Seguridad ciudadana', 'Educación',
+        'Salud pública', 'Lucha contra la corrupción', 'Infraestructura'
+      ],
+      simulated_votes: [3200, 4100, 2800, 2300, 3500, 1100],
+    },
+    {
+      question: '¿Confías en el sistema electoral peruano?',
+      emoji: '🗳️',
+      category: 'Confianza',
+      options: [
+        'Sí, totalmente', 'Parcialmente', 'No confío', 'Necesita reforma total'
+      ],
+      simulated_votes: [980, 3400, 4200, 2420],
+    },
+    {
+      question: '¿A qué Partido le darías tu voto?',
+      emoji: '🎯',
+      category: 'Partidos',
+      options: [
+        'Fuerza Popular', 'Alianza para el Progreso', 'Renovación Popular',
+        'Avanza País', 'Partido Morado', 'Otro partido'
+      ],
+      simulated_votes: [2100, 1750, 1980, 1430, 1620, 2120],
+    },
+    {
+      question: '¿Cuál debe ser la prioridad del gobierno 2026-2031?',
+      emoji: '🎯',
+      category: 'Prioridades',
+      options: [
+        'Generar empleo formal', 'Mejorar hospitales y postas',
+        'Reforma del poder judicial', 'Construcción de carreteras e infraestructura',
+        'Seguridad y lucha contra el crimen'
+      ],
+      simulated_votes: [3100, 2600, 2200, 1800, 3300],
+    },
+  ];
+
+  POLLS.forEach((poll) => {
+    const id = nextId.encuesta_polls++;
+    store.encuesta_polls.push({
+      id,
+      question: poll.question,
+      emoji: poll.emoji,
+      category: poll.category,
+      options: poll.options,
+      is_active: true,
+      created_at: new Date().toISOString(),
+    });
+
+    // Seed simulated votes for realistic initial data
+    poll.simulated_votes.forEach((count, optIdx) => {
+      for (let i = 0; i < count; i++) {
+        store.encuesta_votes.push({
+          id: nextId.encuesta_votes++,
+          poll_id: id,
+          option_index: optIdx,
+          voter_fingerprint: `sim_${id}_${optIdx}_${i}`,
+          voter_ip: `sim_${id}`,
+          created_at: new Date().toISOString(),
+        });
+      }
+    });
+  });
+
+  const totalSimVotes = store.encuesta_votes.length;
+  console.log(`[MEM-DB] Seeded ${store.encuesta_polls.length} encuesta polls, ${totalSimVotes} simulated votes`);
+}
+
+seedEncuestaPolls();
 
 // ==================== SQL QUERY ENGINE ====================
 // Parses simplified SQL queries and returns data from the in-memory store
@@ -486,8 +555,50 @@ function parseQuery(sql, params = []) {
 }
 
 function handleSelect(resolved, q, params) {
-  // COUNT queries
-  if (resolved.includes('count(*)')) {
+  // ==================== ENCUESTA (must come before generic count handler) ====================
+  if (resolved.includes('from encuesta_votes')) {
+    const pollIdParam = params.length > 0 ? parseInt(params[0]) : null;
+    let items = [...store.encuesta_votes];
+    if (pollIdParam) items = items.filter(v => v.poll_id === pollIdParam);
+
+    // COUNT DISTINCT voter_fingerprint
+    if (resolved.includes('count(distinct voter_fingerprint)')) {
+      const unique = new Set(items.map(v => v.voter_fingerprint));
+      return { rows: [{ total: unique.size }] };
+    }
+
+    // GROUP BY option_index (with COUNT)
+    if (resolved.includes('group by option_index')) {
+      const groups = {};
+      items.forEach(v => { groups[v.option_index] = (groups[v.option_index] || 0) + 1; });
+      return {
+        rows: Object.entries(groups).map(([option_index, count]) => ({
+          option_index: parseInt(option_index), count: String(count)
+        }))
+      };
+    }
+
+    // SELECT id WHERE poll_id AND voter_fingerprint (check if voted)
+    if (resolved.includes('voter_fingerprint') && params.length >= 2) {
+      const fp = params[1];
+      const found = items.filter(v => v.voter_fingerprint === fp);
+      return { rows: found.map(v => ({ id: v.id })), rowCount: found.length };
+    }
+
+    return { rows: items, rowCount: items.length };
+  }
+
+  if (resolved.includes('from encuesta_polls')) {
+    if (params.length > 0 && resolved.includes('where id')) {
+      const id = parseInt(params[0]);
+      const poll = store.encuesta_polls.find(p => p.id === id);
+      return { rows: poll ? [poll] : [], rowCount: poll ? 1 : 0 };
+    }
+    return { rows: [...store.encuesta_polls], rowCount: store.encuesta_polls.length };
+  }
+
+  // COUNT queries (exclude subqueries inside other primary queries like parties)
+  if (resolved.includes('count(*)') && !resolved.includes('from parties')) {
     if (resolved.includes('from candidates')) {
       let items = store.candidates;
       if (resolved.includes('is_active = true')) items = items.filter(c => c.is_active);
@@ -601,8 +712,8 @@ function handleSelect(resolved, q, params) {
     }
   }
 
-  // Candidates list / single
-  if (resolved.includes('from candidates')) {
+  // Candidates list / single (but not when primary table is parties with a candidates subquery)
+  if (resolved.includes('from candidates') && !resolved.includes('from parties')) {
     let items = [...store.candidates];
     let hasSingleIdFilter = false;
 
@@ -627,7 +738,7 @@ function handleSelect(resolved, q, params) {
     // Filter by party_id (only if NOT a single-ID lookup and query explicitly mentions party_id = $N)
     if (!hasSingleIdFilter && resolved.includes('party_id') && resolved.includes('where') && params.length > 0) {
       const pid = parseInt(params[0]);
-      if (!isNaN(pid) && resolved.includes('party_id = $')) {
+      if (!isNaN(pid) && q.includes('party_id = $')) {
         items = items.filter(c => c.party_id === pid);
       }
     }
@@ -741,6 +852,49 @@ function handleSelect(resolved, q, params) {
     return { rows: items, rowCount: items.length };
   }
 
+  // ==================== ENCUESTA POLLS ====================
+  if (resolved.includes('from encuesta_polls')) {
+    if (params.length > 0 && resolved.includes('where id')) {
+      const id = parseInt(params[0]);
+      const poll = store.encuesta_polls.find(p => p.id === id);
+      return { rows: poll ? [poll] : [], rowCount: poll ? 1 : 0 };
+    }
+    return { rows: [...store.encuesta_polls], rowCount: store.encuesta_polls.length };
+  }
+
+  // ==================== ENCUESTA VOTES ====================
+  if (resolved.includes('from encuesta_votes')) {
+    const pollIdParam = params.length > 0 ? parseInt(params[0]) : null;
+    let items = [...store.encuesta_votes];
+    if (pollIdParam) items = items.filter(v => v.poll_id === pollIdParam);
+
+    // COUNT DISTINCT voter_fingerprint
+    if (resolved.includes('count(distinct voter_fingerprint)')) {
+      const unique = new Set(items.map(v => v.voter_fingerprint));
+      return { rows: [{ total: unique.size }] };
+    }
+
+    // GROUP BY option_index
+    if (resolved.includes('group by option_index')) {
+      const groups = {};
+      items.forEach(v => { groups[v.option_index] = (groups[v.option_index] || 0) + 1; });
+      return {
+        rows: Object.entries(groups).map(([option_index, count]) => ({
+          option_index: parseInt(option_index), count: String(count)
+        }))
+      };
+    }
+
+    // SELECT id WHERE poll_id AND voter_fingerprint (check if voted)
+    if (resolved.includes('voter_fingerprint') && params.length >= 2) {
+      const fp = params[1];
+      const found = items.filter(v => v.voter_fingerprint === fp);
+      return { rows: found.map(v => ({ id: v.id })), rowCount: found.length };
+    }
+
+    return { rows: items, rowCount: items.length };
+  }
+
   return { rows: [], rowCount: 0 };
 }
 
@@ -809,6 +963,20 @@ function handleInsert(q, params) {
     };
     store.parties.push(p);
     return { rows: [p], rowCount: 1 };
+  }
+
+  // ==================== ENCUESTA VOTES INSERT ====================
+  if (q.includes('into encuesta_votes')) {
+    const ev = {
+      id: nextId.encuesta_votes++,
+      poll_id: parseInt(params[0]),
+      option_index: parseInt(params[1]),
+      voter_fingerprint: params[2] || '',
+      voter_ip: params[3] || '',
+      created_at: new Date().toISOString(),
+    };
+    store.encuesta_votes.push(ev);
+    return { rows: [ev], rowCount: 1 };
   }
 
   return { rows: [], rowCount: 0 };

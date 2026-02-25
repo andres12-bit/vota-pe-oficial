@@ -1,6 +1,6 @@
 'use client';
 
-type TabType = 'votar' | 'president' | 'senator' | 'deputy' | 'andean';
+type TabType = 'votar' | 'encuesta' | 'planchas' | 'president' | 'senator' | 'deputy' | 'andean';
 
 interface Props {
     activeTab: TabType;
@@ -8,11 +8,11 @@ interface Props {
 }
 
 const MOBILE_TABS = [
+    { id: 'encuesta' as TabType, label: 'ENCUESTA', icon: '📊' },
     { id: 'votar' as TabType, label: 'VOTAR', icon: '🗳️' },
-    { id: 'president' as TabType, label: 'PLANCHAS', icon: '🏛️' },
+    { id: 'planchas' as TabType, label: 'PLANCHAS', icon: '🏛️' },
     { id: 'senator' as TabType, label: 'SENADORES', icon: '👔' },
     { id: 'deputy' as TabType, label: 'DIPUTADOS', icon: '📋' },
-    { id: 'andean' as TabType, label: 'P.ANDINO', icon: '🌎' },
 ];
 
 export default function MobileTabBar({ activeTab, onTabChange }: Props) {

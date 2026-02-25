@@ -15,6 +15,7 @@ const intelligenceRouter = require('./routes/intelligence');
 const adminRouter = require('./routes/admin');
 const coordinationRouter = require('./routes/coordination');
 const ingestionRouter = require('./routes/ingestion');
+const encuestaRouter = require('./routes/encuesta');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -50,6 +51,7 @@ app.use('/api/intelligence', intelligenceRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/coordination', coordinationRouter);
 app.use('/api/admin/ingestion', ingestionRouter);
+app.use('/api/encuesta', encuestaRouter);
 
 // Health check
 app.get('/api/health', (req, res) => {

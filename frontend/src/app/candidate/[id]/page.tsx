@@ -214,7 +214,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                 </div>
 
                 {/* Score Gauges + Formula */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6" style={{ marginTop: '2.5rem' }}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 profile-section-gap">
                     {/* Gauges */}
                     <div className="panel-glow">
                         <h3 className="text-[10px] font-bold tracking-[2px] uppercase mb-5" style={{ color: 'var(--vp-text-dim)' }}>
@@ -362,7 +362,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         <h3 className="text-xs font-bold tracking-[2px] uppercase mb-6" style={{ color: 'var(--vp-text-dim)' }}>
                             📋 Hoja de Vida
                         </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-[1.5rem]">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-[1.5rem] data-block-gap">
                             {candidate.education && (
                                 <div className="p-5 rounded-2xl" style={{ background: 'rgba(68,138,255,0.05)', border: '1px solid rgba(68,138,255,0.15)' }}>
                                     <div className="flex items-center gap-2.5 mb-4">
@@ -432,7 +432,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                             <h3 className="text-xs font-bold tracking-[2px] uppercase mb-6" style={{ color: 'var(--vp-text-dim)' }}>
                                 📜 Resumen de Plan de Gobierno
                             </h3>
-                            <div className="flex flex-col gap-6">
+                            <div className="flex flex-col gap-6 data-block-gap">
                                 {Object.entries(dimensions).map(([dimension, items]) => {
                                     const color = dimensionColors[dimension] || 'var(--vp-text-dim)';
                                     const icon = dimensionIcons[dimension] || '📋';
