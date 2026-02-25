@@ -1,0 +1,1022 @@
+{
+    "source": "JNE Voto Informado - Elecciones Generales 2026",
+    "url": "https://votoinformado.jne.gob.pe/presidente-vicepresidentes",
+    "scraped_at": "2026-02-24",
+    "total_candidates": 36,
+    "candidates": [
+        {
+            "id": 1,
+            "name": "Pablo Alfonso López Chau Nava",
+            "party": "Ahora Nación - AN",
+            "party_abbreviation": "AN",
+            "dni": "25331980",
+            "sex": "Masculino",
+            "birthplace": "Lima, Lima, Lima",
+            "residence": "Lima, Lima, Miraflores",
+            "education": {
+                "basic": {
+                    "primary": true,
+                    "secondary": true
+                },
+                "technical": [],
+                "university": [
+                    {
+                        "institution": "Universidad Nacional del Callao",
+                        "degree": "Economista",
+                        "completed": true
+                    },
+                    {
+                        "institution": "Universidad Nacional del Callao",
+                        "degree": "Bachiller en Ciencias Económicas",
+                        "completed": true,
+                        "year": 1976
+                    }
+                ],
+                "postgraduate": [
+                    {
+                        "institution": "Universidad Nacional Autónoma de México",
+                        "specialty": "Grado de Doctor en Economía",
+                        "degree": "Doctor",
+                        "completed": true,
+                        "year": 2005
+                    },
+                    {
+                        "institution": "Universidad Nacional Autónoma de México",
+                        "specialty": "Grado de Maestro en Economía",
+                        "degree": "Magíster",
+                        "completed": true,
+                        "year": 2002
+                    }
+                ]
+            },
+            "work_experience": [
+                {
+                    "employer": "Universidad Nacional de Ingeniería",
+                    "position": "Rector",
+                    "period": "2021 - 2025"
+                },
+                {
+                    "employer": "Universidad Nacional de Ingeniería",
+                    "position": "Director de la Escuela de Ingeniería Económica",
+                    "period": "2017 - 2019"
+                },
+                {
+                    "employer": "Universidad Nacional de Ingeniería",
+                    "position": "Profesor Principal",
+                    "period": "1990 - 2025"
+                }
+            ],
+            "political_history": [
+                {
+                    "organization": "Ahora Nación - AN",
+                    "position": "Fundador",
+                    "period": "2023 - Actualidad"
+                },
+                {
+                    "organization": "Alianza Electoral Ahora Nación",
+                    "position": "Presidente",
+                    "period": "2025 - 2025"
+                }
+            ],
+            "sentences": [],
+            "finances": {
+                "public_income": 350000.00,
+                "private_income": 0.00,
+                "total_income": 350000.00,
+                "properties": [
+                    {
+                        "type": "Registro de Predios",
+                        "value": 0.00
+                    },
+                    {
+                        "type": "Registro de Predios",
+                        "value": 0.00
+                    }
+                ],
+                "vehicles": []
+            }
+        },
+        {
+            "id": 2,
+            "name": "Ronald Darwin Atencio Sotomayor",
+            "party": "Alianza Electoral Venceremos",
+            "party_abbreviation": "AEV",
+            "dni": "41373494",
+            "sex": "Masculino",
+            "birthplace": "Huánuco, Huánuco",
+            "residence": "Lima, Lima",
+            "education": {
+                "basic": {
+                    "primary": true,
+                    "secondary": true
+                },
+                "technical": [],
+                "university": [
+                    {
+                        "institution": "Universidad San Martín de Porres",
+                        "degree": "Abogado",
+                        "completed": true
+                    }
+                ],
+                "postgraduate": []
+            },
+            "work_experience": [
+                {
+                    "employer": "Estudio Jurídico Atencio",
+                    "position": "Abogado",
+                    "period": "2010 - 2025"
+                }
+            ],
+            "political_history": [
+                {
+                    "organization": "Alianza Electoral Venceremos",
+                    "position": "Candidato Presidencial",
+                    "period": "2025"
+                }
+            ],
+            "sentences": [],
+            "finances": {
+                "public_income": 0.00,
+                "private_income": 290119.82,
+                "total_income": 290119.82,
+                "properties": [
+                    {
+                        "type": "Inmueble",
+                        "value": 0.00
+                    },
+                    {
+                        "type": "Inmueble",
+                        "value": 0.00
+                    },
+                    {
+                        "type": "Inmueble",
+                        "value": 0.00
+                    },
+                    {
+                        "type": "Inmueble",
+                        "value": 0.00
+                    }
+                ],
+                "vehicles": [
+                    {
+                        "type": "Vehículo",
+                        "value": 0.00
+                    },
+                    {
+                        "type": "Vehículo",
+                        "value": 0.00
+                    }
+                ]
+            }
+        },
+        {
+            "id": 3,
+            "name": "César Acuña Peralta",
+            "party": "Alianza para el Progreso",
+            "party_abbreviation": "APP",
+            "dni": "17903382",
+            "sex": "Masculino",
+            "birthplace": "Tacabamba, Chota, Cajamarca",
+            "residence": "La Libertad, Trujillo",
+            "education": {
+                "basic": {
+                    "primary": true,
+                    "secondary": true
+                },
+                "technical": [],
+                "university": [
+                    {
+                        "institution": "Universidad Nacional de Trujillo",
+                        "degree": "Ingeniero Químico",
+                        "completed": true
+                    }
+                ],
+                "postgraduate": [
+                    {
+                        "institution": "Universidad de Lima",
+                        "specialty": "Maestría en Educación",
+                        "degree": "Magíster",
+                        "completed": true
+                    },
+                    {
+                        "institution": "Universidad de los Andes",
+                        "specialty": "Maestría en Dirección Universitaria",
+                        "degree": "Magíster",
+                        "completed": true
+                    },
+                    {
+                        "institution": "Universidad Complutense de Madrid",
+                        "specialty": "Doctorado",
+                        "degree": "Doctor",
+                        "completed": true
+                    }
+                ]
+            },
+            "work_experience": [
+                {
+                    "employer": "Universidad César Vallejo",
+                    "position": "Asesor",
+                    "period": "2019 - 2025"
+                },
+                {
+                    "employer": "Gobierno Regional de La Libertad",
+                    "position": "Gobernador Regional",
+                    "period": "2019 - 2022"
+                },
+                {
+                    "employer": "Municipalidad Provincial de Trujillo",
+                    "position": "Alcalde",
+                    "period": "2007 - 2014"
+                }
+            ],
+            "political_history": [
+                {
+                    "organization": "Alianza para el Progreso",
+                    "position": "Fundador y Presidente",
+                    "period": "2001 - Actualidad"
+                }
+            ],
+            "sentences": [],
+            "finances": {
+                "public_income": 0.00,
+                "private_income": 9836766.00,
+                "total_income": 9836766.00,
+                "properties": [],
+                "vehicles": []
+            }
+        },
+        {
+            "id": 4,
+            "name": "José Daniel Williams Zapata",
+            "party": "Avanza País - Partido de Integración Social",
+            "party_abbreviation": "AVP",
+            "dni": "43287528",
+            "sex": "Masculino",
+            "birthplace": "Lima, Lima, Lima",
+            "residence": "Lima, Lima",
+            "education": {
+                "basic": {
+                    "primary": true,
+                    "secondary": true
+                },
+                "technical": [],
+                "university": [
+                    {
+                        "institution": "Escuela Militar de Chorrillos",
+                        "degree": "Licenciado en Ciencias Militares",
+                        "completed": true
+                    }
+                ],
+                "postgraduate": [
+                    {
+                        "institution": "Centro de Altos Estudios Nacionales (CAEN)",
+                        "specialty": "Maestría en Defensa Nacional",
+                        "degree": "Magíster",
+                        "completed": true
+                    }
+                ]
+            },
+            "work_experience": [
+                {
+                    "employer": "Congreso de la República",
+                    "position": "Congresista",
+                    "period": "2021 - 2025"
+                }
+            ],
+            "political_history": [
+                {
+                    "organization": "Avanza País",
+                    "position": "Miembro",
+                    "period": "2020 - Actualidad"
+                }
+            ],
+            "sentences": [],
+            "finances": {
+                "public_income": 351600.00,
+                "private_income": 0.00,
+                "total_income": 351600.00,
+                "properties": [],
+                "vehicles": []
+            }
+        },
+        {
+            "id": 5,
+            "name": "Álvaro Gonzalo Paz de la Barra Freigeiro",
+            "party": "Fe en el Perú",
+            "party_abbreviation": "FEP",
+            "dni": "41904418",
+            "sex": "Masculino",
+            "birthplace": "Lima, Lima, Miraflores",
+            "residence": "Lima, Lima, La Molina",
+            "education": {
+                "basic": {
+                    "primary": true,
+                    "secondary": true
+                },
+                "technical": [],
+                "university": [
+                    {
+                        "institution": "Universidad San Martín de Porres",
+                        "degree": "Abogado",
+                        "completed": true
+                    }
+                ],
+                "postgraduate": [
+                    {
+                        "institution": "EUCIM Business School",
+                        "specialty": "Maestría en Gestión Pública",
+                        "degree": "Magíster",
+                        "completed": true
+                    }
+                ]
+            },
+            "work_experience": [
+                {
+                    "employer": "Municipalidad de La Molina",
+                    "position": "Alcalde",
+                    "period": "2019 - 2022"
+                },
+                {
+                    "employer": "AMPE",
+                    "position": "Presidente",
+                    "period": "2020 - 2021"
+                },
+                {
+                    "employer": "Municipalidad del Rímac",
+                    "position": "Gerente Municipal",
+                    "period": "2015 - 2018"
+                }
+            ],
+            "political_history": [
+                {
+                    "organization": "Fe en el Perú",
+                    "position": "Presidente",
+                    "period": "2022 - Actualidad"
+                }
+            ],
+            "sentences": [],
+            "finances": {
+                "public_income": 0.00,
+                "private_income": 341465.00,
+                "total_income": 341465.00,
+                "properties": [],
+                "vehicles": []
+            }
+        },
+        {
+            "id": 6,
+            "name": "Keiko Sofía Fujimori Higuchi",
+            "party": "Fuerza Popular",
+            "party_abbreviation": "FP",
+            "dni": "10001088",
+            "sex": "Femenino",
+            "birthplace": "Lima, Lima, Jesús María",
+            "residence": "Lima, Lima, Surco",
+            "education": {
+                "basic": {
+                    "primary": true,
+                    "secondary": true
+                },
+                "technical": [],
+                "university": [
+                    {
+                        "institution": "Boston University",
+                        "degree": "Bachelor in Business Administration",
+                        "completed": true
+                    }
+                ],
+                "postgraduate": [
+                    {
+                        "institution": "Columbia University",
+                        "specialty": "MBA",
+                        "degree": "Magíster",
+                        "completed": true
+                    }
+                ]
+            },
+            "work_experience": [
+                {
+                    "employer": "Fuerza Popular",
+                    "position": "Presidenta",
+                    "period": "2010 - Actualidad"
+                },
+                {
+                    "employer": "Congreso de la República",
+                    "position": "Congresista",
+                    "period": "2006 - 2011"
+                }
+            ],
+            "political_history": [
+                {
+                    "organization": "Fuerza Popular",
+                    "position": "Presidenta y Fundadora",
+                    "period": "2010 - Actualidad"
+                },
+                {
+                    "organization": "Fuerza 2011",
+                    "position": "Candidata Presidencial",
+                    "period": "2011"
+                },
+                {
+                    "organization": "Fuerza Popular",
+                    "position": "Candidata Presidencial",
+                    "period": "2016, 2021"
+                }
+            ],
+            "sentences": [],
+            "finances": {
+                "public_income": 0.00,
+                "private_income": 271853.00,
+                "total_income": 271853.00,
+                "properties": [],
+                "vehicles": [
+                    {
+                        "type": "Vehículo",
+                        "value": 0.00
+                    }
+                ]
+            }
+        },
+        {
+            "id": 7,
+            "name": "Fiorella Giannina Molinelli Aristondo",
+            "party": "Fuerza y Libertad",
+            "party_abbreviation": "FYL",
+            "dni": "25681995",
+            "sex": "Femenino",
+            "birthplace": "Lima, Lima, San Isidro",
+            "residence": "Lima, Lima",
+            "education": {
+                "basic": {
+                    "primary": true,
+                    "secondary": true
+                },
+                "technical": [],
+                "university": [
+                    {
+                        "institution": "Pontificia Universidad Católica del Perú",
+                        "degree": "Economista",
+                        "completed": true
+                    }
+                ],
+                "postgraduate": [
+                    {
+                        "institution": "Universidad Torcuato Di Tella",
+                        "specialty": "Maestría",
+                        "degree": "Magíster",
+                        "completed": true
+                    },
+                    {
+                        "institution": "Universidad San Martín de Porres",
+                        "specialty": "Doctorado",
+                        "degree": "Doctor",
+                        "completed": true
+                    },
+                    {
+                        "institution": "Universidad de Alcalá de Henares",
+                        "specialty": "Maestría",
+                        "degree": "Magíster",
+                        "completed": true
+                    }
+                ]
+            },
+            "work_experience": [
+                {
+                    "employer": "EsSalud",
+                    "position": "Presidenta Ejecutiva",
+                    "period": "2020 - 2023"
+                },
+                {
+                    "employer": "Ministerio de Desarrollo e Inclusión Social",
+                    "position": "Ministra",
+                    "period": "2018 - 2019"
+                }
+            ],
+            "political_history": [
+                {
+                    "organization": "Fuerza y Libertad",
+                    "position": "Candidata Presidencial",
+                    "period": "2025"
+                }
+            ],
+            "sentences": [],
+            "finances": {
+                "public_income": 123865.00,
+                "private_income": 0.00,
+                "total_income": 123865.00,
+                "properties": [
+                    {
+                        "type": "Inmueble",
+                        "value": 0.00
+                    },
+                    {
+                        "type": "Inmueble",
+                        "value": 0.00
+                    }
+                ],
+                "vehicles": []
+            }
+        },
+        {
+            "id": 8,
+            "name": "Roberto Helbert Sánchez Palomino",
+            "party": "Juntos por el Perú",
+            "party_abbreviation": "JPP",
+            "dni": "16002918",
+            "sex": "Masculino",
+            "birthplace": "Lima, Huaral",
+            "residence": "Lima, Lima",
+            "education": {
+                "basic": {
+                    "primary": true,
+                    "secondary": true
+                },
+                "technical": [],
+                "university": [
+                    {
+                        "institution": "Universidad Nacional Mayor de San Marcos",
+                        "degree": "Psicólogo",
+                        "completed": true
+                    }
+                ],
+                "postgraduate": [
+                    {
+                        "institution": "Pontificia Universidad Católica del Perú",
+                        "specialty": "Maestría en Políticas Sociales",
+                        "degree": "Candidato a Magíster",
+                        "completed": false
+                    }
+                ]
+            },
+            "work_experience": [
+                {
+                    "employer": "Congreso de la República",
+                    "position": "Congresista",
+                    "period": "2021 - 2025"
+                },
+                {
+                    "employer": "Ministerio de Comercio Exterior y Turismo",
+                    "position": "Ministro",
+                    "period": "2022 - 2023"
+                }
+            ],
+            "political_history": [
+                {
+                    "organization": "Juntos por el Perú",
+                    "position": "Dirigente Nacional",
+                    "period": "2020 - Actualidad"
+                }
+            ],
+            "sentences": [],
+            "finances": {
+                "public_income": 224945.00,
+                "private_income": 0.00,
+                "total_income": 224945.00,
+                "properties": [
+                    {
+                        "type": "Predio Rural",
+                        "value": 0.00
+                    }
+                ],
+                "vehicles": []
+            }
+        },
+        {
+            "id": 9,
+            "name": "Rafael Jorge Belaúnde Llosa",
+            "party": "Libertad Popular",
+            "party_abbreviation": "LP",
+            "dni": "10219647",
+            "sex": "Masculino",
+            "birthplace": "Lima, Lima, Miraflores",
+            "residence": "Lima, Lima",
+            "education": {
+                "basic": {
+                    "primary": true,
+                    "secondary": true
+                },
+                "technical": [],
+                "university": [
+                    {
+                        "institution": "Universidad de Lima",
+                        "degree": "Economista",
+                        "completed": true
+                    }
+                ],
+                "postgraduate": []
+            },
+            "work_experience": [
+                {
+                    "employer": "Ministerio de Energía y Minas",
+                    "position": "Ministro",
+                    "period": "2003 - 2004"
+                },
+                {
+                    "employer": "Ferymar SAC",
+                    "position": "Gerente General",
+                    "period": "2005 - 2025"
+                }
+            ],
+            "political_history": [
+                {
+                    "organization": "Libertad Popular",
+                    "position": "Presidente",
+                    "period": "2023 - Actualidad"
+                }
+            ],
+            "sentences": [],
+            "finances": {
+                "public_income": 0.00,
+                "private_income": 2134800.00,
+                "total_income": 2134800.00,
+                "properties": [],
+                "vehicles": []
+            }
+        },
+        {
+            "id": 10,
+            "name": "Pitter Enrique Valderrama Peña",
+            "party": "Partido Aprista Peruano",
+            "party_abbreviation": "PAP",
+            "dni": "43632186",
+            "sex": "Masculino",
+            "birthplace": "Lima, Lima",
+            "residence": "Lima, Lima",
+            "education": {
+                "basic": {
+                    "primary": true,
+                    "secondary": true
+                },
+                "technical": [],
+                "university": [
+                    {
+                        "institution": "Universidad San Martín de Porres",
+                        "degree": "Bachiller en Derecho",
+                        "completed": true
+                    }
+                ],
+                "postgraduate": []
+            },
+            "work_experience": [
+                {
+                    "employer": "Empresas privadas",
+                    "position": "Analista Legal / Sub-gerente",
+                    "period": "2015 - 2025"
+                }
+            ],
+            "political_history": [
+                {
+                    "organization": "Partido Aprista Peruano",
+                    "position": "Militante",
+                    "period": "2010 - Actualidad"
+                }
+            ],
+            "sentences": [],
+            "finances": {
+                "public_income": 0.00,
+                "private_income": 33600.00,
+                "total_income": 33600.00,
+                "properties": [],
+                "vehicles": []
+            }
+        },
+        {
+            "id": 11,
+            "name": "Ricardo Pablo Belmont Cassinelli",
+            "party": "Partido Cívico Obras",
+            "party_abbreviation": "PCO",
+            "birthplace": "Lima",
+            "sex": "Masculino",
+            "education": {},
+            "work_experience": [],
+            "political_history": [],
+            "sentences": [],
+            "finances": {}
+        },
+        {
+            "id": 12,
+            "name": "Napoleón Becerra García",
+            "party": "Partido de los Trabajadores y Emprendedores PTE-Perú",
+            "party_abbreviation": "PTE",
+            "birthplace": "Cajamarca",
+            "sex": "Masculino",
+            "education": {},
+            "work_experience": [],
+            "political_history": [],
+            "sentences": [],
+            "finances": {}
+        },
+        {
+            "id": 13,
+            "name": "Jorge Nieto Montesinos",
+            "party": "Partido del Buen Gobierno",
+            "party_abbreviation": "PBG",
+            "birthplace": "Lima",
+            "sex": "Masculino",
+            "education": {},
+            "work_experience": [],
+            "political_history": [],
+            "sentences": [],
+            "finances": {}
+        },
+        {
+            "id": 14,
+            "name": "Charlie Carrasco Salazar",
+            "party": "Partido Demócrata Unido Perú",
+            "party_abbreviation": "PDUP",
+            "birthplace": "Lima",
+            "sex": "Masculino",
+            "education": {},
+            "work_experience": [],
+            "political_history": [],
+            "sentences": [],
+            "finances": {}
+        },
+        {
+            "id": 15,
+            "name": "Alex Gonzales Castillo",
+            "party": "Partido Demócrata Verde",
+            "party_abbreviation": "PDV",
+            "birthplace": "Lima",
+            "sex": "Masculino",
+            "education": {},
+            "work_experience": [],
+            "political_history": [],
+            "sentences": [],
+            "finances": {}
+        },
+        {
+            "id": 16,
+            "name": "Armando Joaquín Masse Fernández",
+            "party": "Partido Democrático Federal",
+            "party_abbreviation": "PDF",
+            "birthplace": "Lima",
+            "sex": "Masculino",
+            "education": {},
+            "work_experience": [],
+            "political_history": [],
+            "sentences": [],
+            "finances": {}
+        },
+        {
+            "id": 17,
+            "name": "George Patrick Forsyth Sommer",
+            "party": "Partido Democrático Somos Perú",
+            "party_abbreviation": "SP",
+            "birthplace": "Lima",
+            "sex": "Masculino",
+            "education": {},
+            "work_experience": [],
+            "political_history": [],
+            "sentences": [],
+            "finances": {}
+        },
+        {
+            "id": 18,
+            "name": "Luis Fernando Olivera Vega",
+            "party": "Partido Frente de la Esperanza 2021",
+            "party_abbreviation": "FE21",
+            "birthplace": "Lima",
+            "sex": "Masculino",
+            "education": {},
+            "work_experience": [],
+            "political_history": [],
+            "sentences": [],
+            "finances": {}
+        },
+        {
+            "id": 19,
+            "name": "Mesías Antonio Guevara Amasifuén",
+            "party": "Partido Morado",
+            "party_abbreviation": "PM",
+            "birthplace": "San Martín",
+            "sex": "Masculino",
+            "education": {},
+            "work_experience": [],
+            "political_history": [],
+            "sentences": [],
+            "finances": {}
+        },
+        {
+            "id": 20,
+            "name": "Carlos Gonsalo Alvarez Loayza",
+            "party": "Partido País para Todos",
+            "party_abbreviation": "PPT",
+            "birthplace": "Lima",
+            "sex": "Masculino",
+            "education": {},
+            "work_experience": [],
+            "political_history": [],
+            "sentences": [],
+            "finances": {}
+        },
+        {
+            "id": 21,
+            "name": "Herbert Caller Gutiérrez",
+            "party": "Partido Patriótico del Perú",
+            "party_abbreviation": "PPP",
+            "birthplace": "Lima",
+            "sex": "Masculino",
+            "education": {},
+            "work_experience": [],
+            "political_history": [],
+            "sentences": [],
+            "finances": {}
+        },
+        {
+            "id": 22,
+            "name": "Yonhy Lescano Ancieta",
+            "party": "Partido Político Cooperación Popular",
+            "party_abbreviation": "CP",
+            "birthplace": "Puno",
+            "sex": "Masculino",
+            "education": {},
+            "work_experience": [],
+            "political_history": [],
+            "sentences": [],
+            "finances": {}
+        },
+        {
+            "id": 23,
+            "name": "Wolfgang Mario Grozo Costa",
+            "party": "Partido Político Integridad Democrática",
+            "party_abbreviation": "ID",
+            "birthplace": "Lima",
+            "sex": "Masculino",
+            "education": {},
+            "work_experience": [],
+            "political_history": [],
+            "sentences": [],
+            "finances": {}
+        },
+        {
+            "id": 24,
+            "name": "Vladimir Roy Cerrón Rojas",
+            "party": "Partido Político Nacional Perú Libre",
+            "party_abbreviation": "PL",
+            "birthplace": "Junín",
+            "sex": "Masculino",
+            "education": {},
+            "work_experience": [],
+            "political_history": [],
+            "sentences": [],
+            "finances": {}
+        },
+        {
+            "id": 25,
+            "name": "Francisco Ernesto Diez-Canseco Távara",
+            "party": "Partido Político Perú Acción",
+            "party_abbreviation": "PA",
+            "birthplace": "Lima",
+            "sex": "Masculino",
+            "education": {},
+            "work_experience": [],
+            "political_history": [],
+            "sentences": [],
+            "finances": {}
+        },
+        {
+            "id": 26,
+            "name": "Mario Enrique Vizcarra Cornejo",
+            "party": "Partido Político Perú Primero",
+            "party_abbreviation": "PP",
+            "birthplace": "Lima",
+            "sex": "Masculino",
+            "education": {},
+            "work_experience": [],
+            "political_history": [],
+            "sentences": [],
+            "finances": {}
+        },
+        {
+            "id": 27,
+            "name": "Walter Gilmer Chirinos Purizaga",
+            "party": "Partido Político PRIN",
+            "party_abbreviation": "PRIN",
+            "birthplace": "Lima",
+            "sex": "Masculino",
+            "education": {},
+            "work_experience": [],
+            "political_history": [],
+            "sentences": [],
+            "finances": {}
+        },
+        {
+            "id": 28,
+            "name": "Alfonso Carlos Espa y Garcés-Alvear",
+            "party": "Partido SICREO",
+            "party_abbreviation": "SICREO",
+            "birthplace": "Lima",
+            "sex": "Masculino",
+            "education": {},
+            "work_experience": [],
+            "political_history": [],
+            "sentences": [],
+            "finances": {}
+        },
+        {
+            "id": 29,
+            "name": "Carlos Ernesto Jaico Carranza",
+            "party": "Perú Moderno",
+            "party_abbreviation": "PMOD",
+            "birthplace": "Lima",
+            "sex": "Masculino",
+            "education": {},
+            "work_experience": [],
+            "political_history": [],
+            "sentences": [],
+            "finances": {}
+        },
+        {
+            "id": 30,
+            "name": "José León Luna Gálvez",
+            "party": "Podemos Perú",
+            "party_abbreviation": "POD",
+            "birthplace": "Ayacucho",
+            "sex": "Masculino",
+            "education": {},
+            "work_experience": [],
+            "political_history": [],
+            "sentences": [],
+            "finances": {}
+        },
+        {
+            "id": 31,
+            "name": "María Soledad Pérez Tello de Rodríguez",
+            "party": "Primero la Gente",
+            "party_abbreviation": "PLG",
+            "birthplace": "Lima",
+            "sex": "Femenino",
+            "education": {},
+            "work_experience": [],
+            "political_history": [],
+            "sentences": [],
+            "finances": {}
+        },
+        {
+            "id": 32,
+            "name": "Paul Davis Jaimes Blanco",
+            "party": "Progresemos",
+            "party_abbreviation": "PROG",
+            "birthplace": "Lima",
+            "sex": "Masculino",
+            "education": {},
+            "work_experience": [],
+            "political_history": [],
+            "sentences": [],
+            "finances": {}
+        },
+        {
+            "id": 33,
+            "name": "Rafael Bernardo López Aliaga Cazorla",
+            "party": "Renovación Popular",
+            "party_abbreviation": "RP",
+            "birthplace": "Lima",
+            "sex": "Masculino",
+            "education": {},
+            "work_experience": [],
+            "political_history": [],
+            "sentences": [],
+            "finances": {}
+        },
+        {
+            "id": 34,
+            "name": "Antonio Ortiz Villano",
+            "party": "Salvemos al Perú",
+            "party_abbreviation": "SAP",
+            "birthplace": "",
+            "sex": "Masculino",
+            "education": {},
+            "work_experience": [],
+            "political_history": [],
+            "sentences": [],
+            "finances": {}
+        },
+        {
+            "id": 35,
+            "name": "Rosario del Pilar Fernández Bazán",
+            "party": "Un Camino Diferente",
+            "party_abbreviation": "UCD",
+            "birthplace": "Lambayeque",
+            "sex": "Femenino",
+            "education": {},
+            "work_experience": [],
+            "political_history": [],
+            "sentences": [],
+            "finances": {}
+        },
+        {
+            "id": 36,
+            "name": "Roberto Enrique Chiabra León",
+            "party": "Unidad Nacional",
+            "party_abbreviation": "UN",
+            "birthplace": "Lima",
+            "sex": "Masculino",
+            "education": {},
+            "work_experience": [],
+            "political_history": [],
+            "sentences": [],
+            "finances": {}
+        }
+    ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "votape-backend",
+  "version": "1.0.0",
+  "description": "VOTA.PE - Backend API Server",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "seed": "node src/db/seed.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "ioredis": "^5.9.3",
+    "pg": "^8.13.1",
+    "uuid": "^11.0.5",
+    "ws": "^8.18.0"
+  }
+}

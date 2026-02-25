@@ -1,0 +1,42 @@
+# VOTA.PE — Render Blueprint (100% Free Tier)
+# Deploy: Connect your GitHub repo to Render → it reads this file automatically
+
+services:
+  # ========================
+  # BACKEND — Express API + WebSocket
+  # ========================
+  - type: web
+    name: votape-api
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node src/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "4000"
+      - key: CORS_ORIGIN
+        sync: false  # Set manually after frontend deploys
+      - key: DATABASE_URL
+        sync: false  # Optional: add PostgreSQL connection string
+    healthCheckPath: /api/health
+
+  # ========================
+  # FRONTEND — Next.js
+  # ========================
+  - type: web
+    name: votape-web
+    runtime: node
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_API_URL
+        sync: false  # Set to https://votape-api.onrender.com after backend deploys
+      - key: PORT
+        value: "3000"
