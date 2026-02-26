@@ -96,7 +96,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: 'var(--vp-bg)' }}>
       {/* Shared Navigation Header */}
-      <NavHeader activeTab={activeTab} onTabChange={setActiveTab} totalVotes={totalVotes} />
+      <NavHeader activeTab={activeTab} onTabChange={setActiveTab} />
 
       {/* Main Content */}
       <main className="dashboard-wrapper">
@@ -110,24 +110,34 @@ export default function Home() {
           <PlanchasPanel />
         ) : activeTab === 'votar' ? (
           /* CANCHA VIEW */
-          <div className="cancha-layout grid grid-cols-1 lg:grid-cols-[17.5fr_65fr_17.5fr] gap-[2.5rem]">
-            {/* Left Panel - Live Momentum */}
-            <aside className="desktop-only sidebar-card">
-              <LiveMomentum candidates={momentumList} />
-            </aside>
+          <div>
+            {/* Desktop: 3-column layout */}
+            <div className="cancha-layout grid grid-cols-1 lg:grid-cols-[17.5fr_65fr_17.5fr] gap-[2.5rem]">
+              {/* Left Panel - Live Momentum (desktop only) */}
+              <aside className="desktop-only sidebar-card">
+                <LiveMomentum candidates={momentumList} />
+              </aside>
 
-            {/* Center - Cancha de la Democracia */}
-            <div className="flex flex-col gap-4">
-              <CanchaDemocracia candidates={candidates} onVote={handleVote} />
+              {/* Center - Cancha de la Democracia */}
+              <div className="flex flex-col gap-4">
+                <CanchaDemocracia candidates={candidates} onVote={handleVote} />
+              </div>
+
+              {/* Right Panel - Vote Counter + Cascada (desktop only) */}
+              <aside className="desktop-only sidebar-card">
+                <VoteCounter total={totalVotes} />
+                <div className="mt-3">
+                  <CascadaConsenso />
+                </div>
+              </aside>
             </div>
 
-            {/* Right Panel - Cascada de Consenso */}
-            <aside className="desktop-only sidebar-card">
+            {/* Mobile: Stacked panels below cancha (scrollable) */}
+            <div className="lg:hidden flex flex-col gap-4 mt-4 px-1">
               <VoteCounter total={totalVotes} />
-              <div className="mt-3">
-                <CascadaConsenso />
-              </div>
-            </aside>
+              <LiveMomentum candidates={momentumList} />
+              <CascadaConsenso />
+            </div>
           </div>
         ) : (
           /* RANKING TABLE VIEW — centered layout */
