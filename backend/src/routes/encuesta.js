@@ -87,7 +87,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// POST /api/encuesta/:id/vote — vote on a poll
+// POST /api/encuesta/:id/vote — vote on a poll (1 vote per IP, editable)
 router.post('/:id/vote', async (req, res) => {
     try {
         const pollId = parseInt(req.params.id);
@@ -115,15 +115,34 @@ router.post('/:id/vote', async (req, res) => {
 
         // Check if already voted (by fingerprint)
         const existing = await pool.query(
-            'SELECT id FROM encuesta_votes WHERE poll_id = $1 AND voter_fingerprint = $2',
+            'SELECT id, option_index FROM encuesta_votes WHERE poll_id = $1 AND voter_fingerprint = $2',
             [pollId, voterFingerprint]
         );
 
+        let changed = false;
+        let previousVote = null;
+
         if (existing.rows.length > 0) {
-            return res.status(409).json({
-                error: 'Ya votaste en esta encuesta',
-                already_voted: true
-            });
+            const oldOption = existing.rows[0].option_index;
+
+            // Same vote — no change needed
+            if (oldOption === option_index) {
+                return res.json({
+                    success: true,
+                    poll_id: pollId,
+                    option_voted: option_index,
+                    already_same: true,
+                    message: 'Ya votaste por esta opción'
+                });
+            }
+
+            // Different vote — swap: delete old, insert new (net count stays 1)
+            await pool.query(
+                'DELETE FROM encuesta_votes WHERE poll_id = $1 AND voter_fingerprint = $2',
+                [pollId, voterFingerprint]
+            );
+            changed = true;
+            previousVote = oldOption;
         }
 
         // Cast vote
@@ -152,6 +171,8 @@ router.post('/:id/vote', async (req, res) => {
             success: true,
             poll_id: pollId,
             option_voted: option_index,
+            changed: changed,
+            previous_vote: previousVote,
             vote_counts: voteCounts,
             total_votes: parseInt(totalVotes.rows[0]?.total || 0),
         };

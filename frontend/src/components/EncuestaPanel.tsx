@@ -28,14 +28,17 @@ const OPTION_COLORS = [
 export default function EncuestaPanel() {
     const [polls, setPolls] = useState<EncuestaPoll[]>([]);
     const [loading, setLoading] = useState(true);
-    const [votedPolls, setVotedPolls] = useState<Set<number>>(new Set());
+    // Tracks which option was voted per poll: { pollId: optionIndex }
+    const [votedOptions, setVotedOptions] = useState<Record<number, number>>({});
     const [votingId, setVotingId] = useState<number | null>(null);
 
-    // Load voted polls from localStorage
+    // Load voted options from localStorage
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            const stored = localStorage.getItem('vp_voted_polls');
-            if (stored) setVotedPolls(new Set(JSON.parse(stored)));
+            const stored = localStorage.getItem('vp_voted_options');
+            if (stored) {
+                try { setVotedOptions(JSON.parse(stored)); } catch { /* ignore */ }
+            }
         }
     }, []);
 
@@ -55,18 +58,19 @@ export default function EncuestaPanel() {
     }, []);
 
     const handleVote = async (pollId: number, optionIndex: number) => {
-        if (votedPolls.has(pollId)) return;
+        // Don't re-vote the same option
+        if (votedOptions[pollId] === optionIndex) return;
+
         setVotingId(pollId);
 
         try {
             const result = await voteEncuesta(pollId, optionIndex, getFingerprint());
 
-            if (result.success || result.already_voted) {
-                // Update local state
-                const newVoted = new Set(votedPolls);
-                newVoted.add(pollId);
-                setVotedPolls(newVoted);
-                localStorage.setItem('vp_voted_polls', JSON.stringify([...newVoted]));
+            if (result.success) {
+                // Track which option was voted
+                const updated = { ...votedOptions, [pollId]: optionIndex };
+                setVotedOptions(updated);
+                localStorage.setItem('vp_voted_options', JSON.stringify(updated));
 
                 // Update poll results
                 if (result.vote_counts) {
@@ -102,13 +106,14 @@ export default function EncuestaPanel() {
                     🗳️ Encuestas Ciudadanas
                 </h2>
                 <p className="text-sm mt-2" style={{ color: 'var(--vp-text-dim)' }}>
-                    Tu opinión importa. Vota en las encuestas y mira los resultados en tiempo real.
+                    Tu opinión importa. Vota y cambia tu voto cuando quieras — solo cuenta 1 voto por persona.
                 </p>
             </div>
 
             {/* Poll Cards */}
             {polls.map(poll => {
-                const hasVoted = votedPolls.has(poll.id);
+                const hasVoted = votedOptions[poll.id] !== undefined;
+                const myVote = votedOptions[poll.id];
                 const isVoting = votingId === poll.id;
                 const totalVotes = Object.values(poll.vote_counts || {}).reduce((a, b) => a + b, 0) || 1;
 
@@ -139,32 +144,33 @@ export default function EncuestaPanel() {
                             </div>
                         </div>
 
-                        {/* Options */}
+                        {/* Options — always clickable to change vote */}
                         <div className="flex flex-col gap-3">
                             {poll.options.map((option, idx) => {
                                 const count = poll.vote_counts?.[idx] || 0;
                                 const percentage = totalVotes > 0 ? (count / totalVotes) * 100 : 0;
                                 const color = OPTION_COLORS[idx % OPTION_COLORS.length];
+                                const isMyVote = myVote === idx;
                                 const isWinner = hasVoted && count === Math.max(...Object.values(poll.vote_counts || {}));
 
                                 return (
                                     <button
                                         key={idx}
-                                        onClick={() => !hasVoted && handleVote(poll.id, idx)}
-                                        disabled={hasVoted || isVoting}
+                                        onClick={() => handleVote(poll.id, idx)}
+                                        disabled={isVoting || isMyVote}
                                         className="relative w-full text-left rounded-xl overflow-hidden transition-all"
                                         style={{
-                                            background: 'rgba(255,255,255,0.03)',
-                                            border: `1px solid ${hasVoted && isWinner ? color : 'rgba(255,255,255,0.08)'}`,
-                                            cursor: hasVoted ? 'default' : 'pointer',
+                                            background: isMyVote ? `${color}12` : 'rgba(255,255,255,0.03)',
+                                            border: `1px solid ${isMyVote ? color : isWinner && hasVoted ? `${color}66` : 'rgba(255,255,255,0.08)'}`,
+                                            cursor: isMyVote ? 'default' : 'pointer',
                                             padding: '0.85rem 1.25rem',
                                             opacity: isVoting ? 0.6 : 1,
                                         }}
                                         onMouseEnter={e => {
-                                            if (!hasVoted) (e.currentTarget.style.background = 'rgba(255,255,255,0.07)');
+                                            if (!isMyVote) (e.currentTarget.style.background = 'rgba(255,255,255,0.07)');
                                         }}
                                         onMouseLeave={e => {
-                                            if (!hasVoted) (e.currentTarget.style.background = 'rgba(255,255,255,0.03)');
+                                            if (!isMyVote) (e.currentTarget.style.background = isMyVote ? `${color}12` : 'rgba(255,255,255,0.03)');
                                         }}
                                     >
                                         {/* Progress bar background */}
@@ -182,11 +188,16 @@ export default function EncuestaPanel() {
                                         {/* Content */}
                                         <div className="relative flex items-center justify-between gap-3 z-[1]">
                                             <div className="flex items-center gap-3 min-w-0">
-                                                {/* Color dot */}
-                                                <div className="w-3 h-3 rounded-full shrink-0"
-                                                    style={{ background: color, boxShadow: isWinner ? `0 0 8px ${color}` : 'none' }} />
+                                                {/* Color dot or checkmark for my vote */}
+                                                {isMyVote ? (
+                                                    <div className="w-5 h-5 rounded-full shrink-0 flex items-center justify-center text-[10px]"
+                                                        style={{ background: color, color: '#fff' }}>✓</div>
+                                                ) : (
+                                                    <div className="w-3 h-3 rounded-full shrink-0"
+                                                        style={{ background: color, boxShadow: isWinner ? `0 0 8px ${color}` : 'none' }} />
+                                                )}
                                                 <span className="text-sm font-semibold truncate"
-                                                    style={{ color: isWinner ? color : 'var(--vp-text)' }}>
+                                                    style={{ color: isMyVote ? color : isWinner ? color : 'var(--vp-text)' }}>
                                                     {option}
                                                 </span>
                                             </div>
@@ -217,11 +228,17 @@ export default function EncuestaPanel() {
 
                         {/* Footer */}
                         {hasVoted && (
-                            <div className="mt-4 pt-3 flex items-center gap-2"
+                            <div className="mt-4 pt-3 flex items-center justify-between"
                                 style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                                <span className="text-green-400 text-xs">✅</span>
-                                <span className="text-xs" style={{ color: 'var(--vp-text-dim)' }}>
-                                    Ya votaste en esta encuesta — resultados actualizados en tiempo real
+                                <div className="flex items-center gap-2">
+                                    <span className="text-green-400 text-xs">✅</span>
+                                    <span className="text-xs" style={{ color: 'var(--vp-text-dim)' }}>
+                                        Voto registrado — puedes cambiar tu preferencia
+                                    </span>
+                                </div>
+                                <span className="text-[10px] px-2 py-0.5 rounded-full"
+                                    style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--vp-text-dim)' }}>
+                                    1 voto por IP
                                 </span>
                             </div>
                         )}

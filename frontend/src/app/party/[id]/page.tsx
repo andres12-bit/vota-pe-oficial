@@ -5,6 +5,7 @@ import { Candidate, Party, getPartyFullTicket } from '@/lib/api';
 import { getAvatarUrl } from '@/lib/avatars';
 import Link from 'next/link';
 import { use } from 'react';
+import NavHeader from '@/components/NavHeader';
 
 function StarRating({ rating }: { rating: number }) {
     const stars = [];
@@ -62,11 +63,8 @@ export default function PartyPage({ params }: { params: Promise<{ id: string }> 
 
     return (
         <div className="min-h-screen" style={{ background: 'var(--vp-bg)' }}>
-            {/* Header */}
-            <header className="sticky top-0 z-50 px-4 py-3 flex items-center gap-4" style={{ background: 'rgba(10,10,15,0.95)', borderBottom: '1px solid var(--vp-border)', backdropFilter: 'blur(20px)' }}>
-                <Link href="/" className="text-sm font-semibold" style={{ color: 'var(--vp-text-dim)' }}>← VOTA.PE</Link>
-                <span className="text-xs font-bold tracking-wider uppercase" style={{ color: 'var(--vp-text)' }}>Plancha Completa</span>
-            </header>
+            {/* Full Navigation Header */}
+            <NavHeader />
 
             <main className="internal-page-wrapper">
                 {/* Party Header */}

@@ -18,13 +18,7 @@ const positionLabels: Record<string, string> = {
     andean: 'Parlamento Andino',
 };
 
-const REGIONS = [
-    'Lima', 'Arequipa', 'La Libertad', 'Piura', 'Cajamarca',
-    'Junín', 'Cusco', 'Puno', 'Lambayeque', 'Áncash',
-    'Loreto', 'Ica', 'San Martín', 'Huánuco', 'Ucayali',
-    'Ayacucho', 'Tacna', 'Madre de Dios', 'Amazonas', 'Tumbes',
-    'Apurímac', 'Huancavelica', 'Moquegua', 'Pasco', 'Callao'
-];
+// REGIONS removed — now extracted dynamically from candidate data in the component
 
 const PAGE_SIZE = 50;
 
@@ -49,6 +43,15 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
     const [partyFilter, setPartyFilter] = useState('');
     const [searchFilter, setSearchFilter] = useState('');
     const [page, setPage] = useState(1);
+
+    // Extract unique regions dynamically from actual data
+    const uniqueRegions = useMemo(() => {
+        const regions = new Set<string>();
+        candidates.forEach(c => {
+            if (c.region) regions.add(c.region);
+        });
+        return Array.from(regions).sort();
+    }, [candidates]);
 
     // Calculate unique parties from data
     const uniqueParties = useMemo(() => {
@@ -112,7 +115,7 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
                     style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--vp-border)', color: 'var(--vp-text)', outline: 'none' }}
                 >
                     <option value="">Todas las regiones</option>
-                    {REGIONS.map(r => <option key={r} value={r}>{r}</option>)}
+                    {uniqueRegions.map(r => <option key={r} value={r}>{r}</option>)}
                 </select>
                 <select
                     value={partyFilter}

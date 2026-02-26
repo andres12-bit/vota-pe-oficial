@@ -11,20 +11,12 @@ import MobileTabBar from '@/components/MobileTabBar';
 import VoteCounter from '@/components/VoteCounter';
 import EncuestaPanel from '@/components/EncuestaPanel';
 import PlanchasPanel from '@/components/PlanchasPanel';
-import Link from 'next/link';
+import NavHeader from '@/components/NavHeader';
 import { useRouter } from 'next/navigation';
 
 type TabType = 'votar' | 'encuesta' | 'planchas' | 'president' | 'senator' | 'deputy' | 'andean';
 
-const TABS = [
-  { id: 'encuesta' as TabType, label: 'ENCUESTA' },
-  { id: 'votar' as TabType, label: 'VOTAR' },
-  { id: 'planchas' as TabType, label: 'PLANCHAS' },
-  { id: 'deputy' as TabType, label: 'DIPUTADOS' },
-  { id: 'president' as TabType, label: 'PRESIDENTE(A)' },
-  { id: 'senator' as TabType, label: 'SENADORES' },
-  { id: 'andean' as TabType, label: 'PARL. ANDINO' },
-];
+// TABS array is now in NavHeader component
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<TabType>('votar');
@@ -33,8 +25,7 @@ export default function Home() {
   const [totalVotes, setTotalVotes] = useState(1245882);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
-  const [recentVotes, setRecentVotes] = useState<{ name: string; party: string; time: string }[]>([]);
-  const { isConnected, lastMessage } = useWebSocket();
+  const { lastMessage } = useWebSocket();
   const router = useRouter();
 
   // Fetch data
@@ -70,12 +61,7 @@ export default function Home() {
     if (!lastMessage) return;
 
     if (lastMessage.type === 'vote_cast') {
-      const data = lastMessage.data as { candidate_name: string; position_type: string };
       setTotalVotes(prev => prev + 1);
-      setRecentVotes(prev => [
-        { name: data.candidate_name || 'Anónimo', party: data.position_type || '', time: 'ahora' },
-        ...prev.slice(0, 19)
-      ]);
     }
 
     // Auto-refresh rankings when server recalculates
@@ -109,68 +95,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: 'var(--vp-bg)' }}>
-      {/* Top Navigation — 3-Column: Logo | Centered Nav | Icons + LIVE */}
-      <header className="sticky top-0 z-50" style={{ background: 'rgba(10,10,15,0.95)', borderBottom: '1px solid var(--vp-border)', backdropFilter: 'blur(20px)' }}>
-        <div className="navbar-3col">
-          {/* Column 1: Logo */}
-          <div className="navbar-left">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center font-black text-sm" style={{ background: 'var(--vp-red)', boxShadow: '0 0 16px var(--vp-red-glow)' }}>
-                <span>VP</span>
-              </div>
-              <div className="hidden sm:flex flex-col leading-tight">
-                <span className="text-sm font-extrabold tracking-wider">VOTA<span style={{ color: 'var(--vp-red)' }}>.PE</span></span>
-              </div>
-            </Link>
-          </div>
-
-          {/* Column 2: Centered Navigation Links */}
-          <nav className="navbar-center">
-            {TABS.map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`nav-tab ${activeTab === tab.id ? 'active' : ''}`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </nav>
-
-          {/* Column 3: User Icons + LIVE */}
-          <div className="navbar-right">
-            {/* User icons */}
-            <button className="navbar-icon-btn" title="Perfil">👤</button>
-            <button className="navbar-icon-btn" title="Mensajes">✉️</button>
-            <button className="navbar-icon-btn" onClick={() => setShowSearch(!showSearch)} title="Menú">☰</button>
-            {/* LIVE indicator */}
-            <div className="live-badge" style={{ background: isConnected ? 'rgba(0,230,118,0.15)' : 'rgba(136,136,170,0.15)' }}>
-              <div className={`w-2 h-2 rounded-full ${isConnected ? 'pulse-glow' : ''}`} style={{ background: isConnected ? 'var(--vp-green)' : 'var(--vp-text-dim)' }} />
-              <span style={{ color: isConnected ? 'var(--vp-green)' : 'var(--vp-text-dim)' }}>▶ LIVE</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Search Bar */}
-        {showSearch && (
-          <div className="max-w-[1600px] mx-auto px-4 pb-3 animate-fade-in">
-            <input
-              type="text"
-              placeholder="Buscar candidato, partido, propuesta..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && searchQuery.trim()) {
-                  router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
-                }
-              }}
-              className="w-full px-4 py-2 rounded-lg text-sm"
-              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--vp-border)', color: 'var(--vp-text)', outline: 'none' }}
-              autoFocus
-            />
-          </div>
-        )}
-      </header>
+      {/* Shared Navigation Header */}
+      <NavHeader activeTab={activeTab} onTabChange={setActiveTab} />
 
       {/* Main Content */}
       <main className="dashboard-wrapper">
@@ -203,7 +129,7 @@ export default function Home() {
             <aside className="desktop-only sidebar-card">
               <VoteCounter total={totalVotes} />
               <div className="mt-3">
-                <CascadaConsenso votes={recentVotes} />
+                <CascadaConsenso />
               </div>
             </aside>
           </div>
@@ -214,6 +140,10 @@ export default function Home() {
               <LiveMomentum candidates={momentumList} />
             </aside>
             <div className="ranking-main">
+              {/* Mobile Vote Counter */}
+              <div className="lg:hidden mb-4">
+                <VoteCounter total={totalVotes} />
+              </div>
               <RankingTable
                 candidates={candidates}
                 position={activeTab}

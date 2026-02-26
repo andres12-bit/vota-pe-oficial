@@ -889,7 +889,7 @@ function handleSelect(resolved, q, params) {
     if (resolved.includes('voter_fingerprint') && params.length >= 2) {
       const fp = params[1];
       const found = items.filter(v => v.voter_fingerprint === fp);
-      return { rows: found.map(v => ({ id: v.id })), rowCount: found.length };
+      return { rows: found.map(v => ({ id: v.id, option_index: v.option_index })), rowCount: found.length };
     }
 
     return { rows: items, rowCount: items.length };
@@ -1134,6 +1134,14 @@ function handleDelete(q, params) {
     if (idx === -1) return { rows: [], rowCount: 0 };
     const deleted = store.users.splice(idx, 1);
     return { rows: deleted, rowCount: 1 };
+  }
+  // ==================== ENCUESTA VOTES DELETE (for vote swaps) ====================
+  if (q.includes('from encuesta_votes')) {
+    const pollId = parseInt(params[0]);
+    const fp = params[1];
+    const before = store.encuesta_votes.length;
+    store.encuesta_votes = store.encuesta_votes.filter(v => !(v.poll_id === pollId && v.voter_fingerprint === fp));
+    return { rows: [], rowCount: before - store.encuesta_votes.length };
   }
   return { rows: [], rowCount: 0 };
 }

@@ -5,6 +5,7 @@ import { Candidate, getCandidate } from '@/lib/api';
 import { getAvatarUrl } from '@/lib/avatars';
 import Link from 'next/link';
 import { use } from 'react';
+import NavHeader from '@/components/NavHeader';
 
 function StarRating({ rating }: { rating: number }) {
     const full = Math.floor(rating);
@@ -144,16 +145,8 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
 
     return (
         <div className="min-h-screen" style={{ background: 'var(--vp-bg)' }}>
-            {/* Header */}
-            <header className="sticky top-0 z-50 px-4 py-3 flex items-center justify-between" style={{ background: 'rgba(10,10,15,0.95)', borderBottom: '1px solid var(--vp-border)', backdropFilter: 'blur(20px)' }}>
-                <Link href="/" className="text-sm font-semibold flex items-center gap-2" style={{ color: 'var(--vp-text-dim)' }}>
-                    ← <span className="text-glow-red font-black" style={{ color: 'var(--vp-red)' }}>VOTA<span style={{ color: 'var(--vp-text)' }}>.PE</span></span>
-                </Link>
-                <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-bold tracking-[2px] uppercase" style={{ color: 'var(--vp-text-dim)' }}>Intelligence Report</span>
-                    <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--vp-green)' }} />
-                </div>
-            </header>
+            {/* Full Navigation Header */}
+            <NavHeader />
 
             <main className="internal-page-wrapper space-y-10">
                 {/* Profile Hero Card */}
