@@ -96,7 +96,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: 'var(--vp-bg)' }}>
       {/* Shared Navigation Header */}
-      <NavHeader activeTab={activeTab} onTabChange={setActiveTab} />
+      <NavHeader activeTab={activeTab} onTabChange={setActiveTab} totalVotes={totalVotes} />
 
       {/* Main Content */}
       <main className="dashboard-wrapper">
@@ -118,10 +118,6 @@ export default function Home() {
 
             {/* Center - Cancha de la Democracia */}
             <div className="flex flex-col gap-4">
-              {/* Mobile Vote Counter */}
-              <div className="lg:hidden">
-                <VoteCounter total={totalVotes} />
-              </div>
               <CanchaDemocracia candidates={candidates} onVote={handleVote} />
             </div>
 
@@ -140,10 +136,6 @@ export default function Home() {
               <LiveMomentum candidates={momentumList} />
             </aside>
             <div className="ranking-main">
-              {/* Mobile Vote Counter */}
-              <div className="lg:hidden mb-4">
-                <VoteCounter total={totalVotes} />
-              </div>
               <RankingTable
                 candidates={candidates}
                 position={activeTab}

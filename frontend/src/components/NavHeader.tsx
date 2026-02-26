@@ -21,9 +21,10 @@ const TABS: { id: TabType; label: string }[] = [
 interface NavHeaderProps {
     activeTab?: TabType;
     onTabChange?: (tab: TabType) => void;
+    totalVotes?: number;
 }
 
-export default function NavHeader({ activeTab, onTabChange }: NavHeaderProps) {
+export default function NavHeader({ activeTab, onTabChange, totalVotes }: NavHeaderProps) {
     const { isConnected } = useWebSocket();
     const { user, isLoggedIn, setShowLogin, logout } = useAuth();
     const [showMenu, setShowMenu] = useState(false);
@@ -123,6 +124,18 @@ export default function NavHeader({ activeTab, onTabChange }: NavHeaderProps) {
                     </div>
                 </div>
             </div>
+
+            {/* Mobile Compact Vote Counter */}
+            {totalVotes !== undefined && (
+                <div className="lg:hidden flex items-center justify-center gap-3 py-1.5" style={{ borderTop: '1px solid var(--vp-border)' }}>
+                    <span className="text-[9px] font-bold tracking-[2px] uppercase" style={{ color: 'var(--vp-text-dim)' }}>VOTOS</span>
+                    <span className="text-sm font-black text-glow-red" style={{ color: 'var(--vp-red)' }}>
+                        {totalVotes.toLocaleString('es-PE')}
+                    </span>
+                    <span className="text-[10px] font-bold" style={{ color: 'var(--vp-green)' }}>▲ +12.4%</span>
+                    <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: 'var(--vp-green)' }} />
+                </div>
+            )}
         </header>
     );
 }
