@@ -253,11 +253,41 @@ const PLAN_TEMPLATE = [
 ];
 
 function seedVicePresidentsAndPlans() {
+  // Helper: normalize party name for matching (strip accents, lowercase, remove common prefixes)
+  function normalizeName(n) {
+    return n.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+      .replace(/partido (politico |democratico |nacional )?/g, '')
+      .replace(/alianza (electoral )?/g, 'alianza ')
+      .replace(/\s+/g, ' ').trim();
+  }
+
+  // Build lookup from VP_DATA with normalized keys
+  const vpDataNormalized = {};
+  Object.keys(VP_DATA).forEach(key => {
+    vpDataNormalized[normalizeName(key)] = VP_DATA[key];
+  });
+
   const presidentCandidates = store.candidates.filter(c => c.position === 'president');
   presidentCandidates.forEach(cand => {
     const party = store.parties.find(p => p.id === cand.party_id);
     if (!party) return;
-    const data = VP_DATA[party.name];
+
+    // Try exact match first, then normalized match, then keyword search
+    let data = VP_DATA[party.name];
+    if (!data) {
+      const normalizedPartyName = normalizeName(party.name);
+      data = vpDataNormalized[normalizedPartyName];
+    }
+    if (!data) {
+      // Fuzzy: find VP_DATA key that is a substring of the party name or vice versa
+      const normalizedPartyName = normalizeName(party.name);
+      for (const [normalizedKey, vpData] of Object.entries(vpDataNormalized)) {
+        if (normalizedPartyName.includes(normalizedKey) || normalizedKey.includes(normalizedPartyName)) {
+          data = vpData;
+          break;
+        }
+      }
+    }
     if (!data) return;
 
     // Update candidate with education/experience/birth_date

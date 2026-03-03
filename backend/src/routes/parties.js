@@ -55,8 +55,20 @@ router.get('/:id/full-ticket', async (req, res) => {
         const candidates = candidatesResult.rows;
 
         // Group candidates by position
+        const presidents = candidates.filter(c => c.position === 'president');
+
+        // Fetch vice presidents for each president
+        const vicePresidentsMap = {};
+        for (const pres of presidents) {
+            const vpResult = await pool.query(
+                'SELECT * FROM candidate_vice_presidents WHERE candidate_id = $1 ORDER BY sort_order ASC',
+                [pres.id]
+            );
+            vicePresidentsMap[pres.id] = vpResult.rows;
+        }
+
         const ticket = {
-            president: candidates.filter(c => c.position === 'president'),
+            president: presidents,
             senators: candidates.filter(c => c.position === 'senator'),
             deputies: candidates.filter(c => c.position === 'deputy'),
             andean: candidates.filter(c => c.position === 'andean'),
@@ -65,6 +77,7 @@ router.get('/:id/full-ticket', async (req, res) => {
         res.json({
             party,
             ticket,
+            vice_presidents: vicePresidentsMap,
             total_candidates: candidates.length
         });
     } catch (err) {
