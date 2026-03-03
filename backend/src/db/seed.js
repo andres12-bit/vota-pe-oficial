@@ -57,44 +57,190 @@ const REGIONS = [
     'Apurímac', 'Huancavelica', 'Moquegua', 'Pasco', 'Callao'
 ];
 
-// ==================== PRESIDENTIAL CANDIDATES (36 — JNE Voto Informado EG 2026) ====================
+// ==================== PRESIDENTIAL FORMULAS (JNE Voto Informado EG 2026) ====================
+// Source: https://votoinformado.jne.gob.pe/presidente-vicepresidentes
+// Each entry includes: Presidente, 1er Vicepresidente, 2do Vicepresidente
 const PRESIDENTIAL_CANDIDATES = [
-    { name: 'Pablo Alfonso López Chau Nava', party: 'Ahora Nación', region: 'Lima', bio: 'Rector de la Universidad Nacional de Ingeniería. Doctor en Economía por la UNAM. Economista con más de 35 años en la academia.', stars: 3.5, photo: null },
-    { name: 'Ronald Darwin Atencio Sotomayor', party: 'Alianza Electoral Venceremos', region: 'Huánuco', bio: 'Abogado egresado de la USMP. Representante de la Alianza Electoral Venceremos.', stars: 2.4, photo: null },
-    { name: 'César Acuña Peralta', party: 'Alianza para el Progreso', region: 'Cajamarca', bio: 'Fundador de la Universidad César Vallejo. Ex Gobernador Regional de La Libertad y ex Alcalde de Trujillo. Doctor por la U. Complutense de Madrid.', stars: 2.8, photo: null },
-    { name: 'José Daniel Williams Zapata', party: 'Avanza País', region: 'Lima', bio: 'Congresista 2021-2025. Licenciado en Ciencias Militares (Escuela Militar de Chorrillos). Maestría en Defensa Nacional (CAEN).', stars: 3.0, photo: null },
-    { name: 'Álvaro Gonzalo Paz de la Barra Freigeiro', party: 'Fe en el Perú', region: 'Lima', bio: 'Ex Alcalde de La Molina. Ex presidente de AMPE. Abogado por la USMP con Maestría en Gestión Pública.', stars: 2.6, photo: null },
-    { name: 'Keiko Sofía Fujimori Higuchi', party: 'Fuerza Popular', region: 'Lima', bio: 'Presidenta y fundadora de Fuerza Popular. Ex congresista. MBA de Columbia University. Tres veces candidata presidencial.', stars: 3.2, photo: null },
-    { name: 'Fiorella Giannina Molinelli Aristondo', party: 'Fuerza y Libertad', region: 'Lima', bio: 'Ex Presidenta Ejecutiva de EsSalud. Ex Ministra del MIDIS. Economista PUCP con doctorado de la USMP.', stars: 3.6, photo: null },
-    { name: 'Roberto Helbert Sánchez Palomino', party: 'Juntos por el Perú', region: 'Lima', bio: 'Congresista y ex Ministro de Comercio Exterior y Turismo. Psicólogo de la UNMSM.', stars: 2.9, photo: null },
-    { name: 'Rafael Jorge Belaúnde Llosa', party: 'Libertad Popular', region: 'Lima', bio: 'Ex Ministro de Energía y Minas. Economista de la Universidad de Lima. Empresario y gerente general.', stars: 3.3, photo: null },
-    { name: 'Pitter Enrique Valderrama Peña', party: 'Partido Aprista Peruano', region: 'Lima', bio: 'Bachiller en Derecho por la USMP. Analista legal y militante del APRA.', stars: 2.2, photo: null },
-    { name: 'Ricardo Pablo Belmont Cassinelli', party: 'Partido Cívico Obras', region: 'Lima', bio: 'Comunicador, empresario y político. Ex Alcalde de Lima (1990-1995). Fundador de Obras.', stars: 2.5, photo: null },
-    { name: 'Napoleón Becerra García', party: 'PTE-Perú', region: 'Cajamarca', bio: 'Líder del Partido de los Trabajadores y Emprendedores PTE-Perú. Político de base cajamarquina.', stars: 2.0, photo: null },
-    { name: 'Jorge Nieto Montesinos', party: 'Partido del Buen Gobierno', region: 'Lima', bio: 'Ex Ministro de Defensa y de Cultura. Sociólogo y analista político. Fundador del Partido del Buen Gobierno.', stars: 3.4, photo: null },
-    { name: 'Charlie Carrasco Salazar', party: 'Partido Demócrata Unido Perú', region: 'Lima', bio: 'Representante del Partido Demócrata Unido Perú. Político emergente.', stars: 2.1, photo: null },
-    { name: 'Alex Gonzales Castillo', party: 'Partido Demócrata Verde', region: 'Lima', bio: 'Candidato del Partido Demócrata Verde. Defensor del ambientalismo y desarrollo sostenible.', stars: 2.3, photo: null },
-    { name: 'Armando Joaquín Masse Fernández', party: 'Partido Democrático Federal', region: 'Lima', bio: 'Representante del Partido Democrático Federal. Propone un estado federal para Perú.', stars: 2.0, photo: null },
-    { name: 'George Patrick Forsyth Sommer', party: 'Somos Perú', region: 'Lima', bio: 'Ex futbolista profesional y ex Alcalde de La Victoria. Candidato presidencial por Somos Perú.', stars: 3.3, photo: null },
-    { name: 'Luis Fernando Olivera Vega', party: 'Frente de la Esperanza 2021', region: 'Lima', bio: 'Líder del Frente de la Esperanza 2021. Ex parlamentario y político de larga trayectoria.', stars: 2.7, photo: null },
-    { name: 'Mesías Antonio Guevara Amasifuén', party: 'Partido Morado', region: 'San Martín', bio: 'Candidato presidencial del Partido Morado. Representante de la Amazonía peruana.', stars: 2.8, photo: null },
-    { name: 'Carlos Gonsalo Alvarez Loayza', party: 'País para Todos', region: 'Lima', bio: 'Representante del partido País para Todos. Empresario y político.', stars: 2.1, photo: null },
-    { name: 'Herbert Caller Gutiérrez', party: 'Partido Patriótico del Perú', region: 'Lima', bio: 'Líder del Partido Patriótico del Perú. Político nacionalista.', stars: 2.4, photo: null },
-    { name: 'Yonhy Lescano Ancieta', party: 'Cooperación Popular', region: 'Puno', bio: 'Abogado y político. Congresista por múltiples periodos. Ex candidato presidencial 2021 por Acción Popular.', stars: 3.0, photo: null },
-    { name: 'Wolfgang Mario Grozo Costa', party: 'Integridad Democrática', region: 'Lima', bio: 'Líder de Integridad Democrática. Político comprometido con la transparencia institucional.', stars: 2.3, photo: null },
-    { name: 'Vladimir Roy Cerrón Rojas', party: 'Perú Libre', region: 'Junín', bio: 'Médico cirujano y político. Fundador de Perú Libre. Ex Gobernador Regional de Junín.', stars: 1.8, photo: null },
-    { name: 'Francisco Ernesto Diez-Canseco Távara', party: 'Perú Acción', region: 'Lima', bio: 'Representante de Perú Acción. Político con experiencia legislativa.', stars: 2.5, photo: null },
-    { name: 'Mario Enrique Vizcarra Cornejo', party: 'Perú Primero', region: 'Lima', bio: 'Líder de Perú Primero. Promueve políticas de modernización del Estado.', stars: 2.2, photo: null },
-    { name: 'Walter Gilmer Chirinos Purizaga', party: 'PRIN', region: 'Lima', bio: 'Representante del partido PRIN. Político y profesional independiente.', stars: 2.0, photo: null },
-    { name: 'Alfonso Carlos Espa y Garcés-Alvear', party: 'Partido SICREO', region: 'Lima', bio: 'Fundador y líder de SICREO. Propone un sistema de crédito social.', stars: 1.9, photo: null },
-    { name: 'Carlos Ernesto Jaico Carranza', party: 'Perú Moderno', region: 'Lima', bio: 'Líder de Perú Moderno. Promueve la modernización tecnológica del país.', stars: 2.3, photo: null },
-    { name: 'José León Luna Gálvez', party: 'Podemos Perú', region: 'Ayacucho', bio: 'Empresario y político. Fundador de la Universidad Telesup. Congresista y líder de Podemos Perú.', stars: 2.5, photo: null },
-    { name: 'María Soledad Pérez Tello de Rodríguez', party: 'Primero la Gente', region: 'Lima', bio: 'Ex Ministra de Justicia y Derechos Humanos. Abogada y defensora de derechos civiles.', stars: 3.7, photo: null },
-    { name: 'Paul Davis Jaimes Blanco', party: 'Progresemos', region: 'Lima', bio: 'Representante de Progresemos. Político con visión de desarrollo progresista.', stars: 2.1, photo: null },
-    { name: 'Rafael Bernardo López Aliaga Cazorla', party: 'Renovación Popular', region: 'Lima', bio: 'Empresario y actual Alcalde de Lima Metropolitana. Fundador de Renovación Popular.', stars: 2.8, photo: null },
-    { name: 'Antonio Ortiz Villano', party: 'Salvemos al Perú', region: 'Lima', bio: 'Representante de Salvemos al Perú. Político de base comprometido con la justicia social.', stars: 2.0, photo: null },
-    { name: 'Rosario del Pilar Fernández Bazán', party: 'Un Camino Diferente', region: 'Lambayeque', bio: 'Ex Ministra de Justicia. Ex congresista y política de larga trayectoria.', stars: 3.1, photo: null },
-    { name: 'Roberto Enrique Chiabra León', party: 'Unidad Nacional', region: 'Lima', bio: 'General EP en retiro. Ex congresista. Candidato presidencial por Unidad Nacional.', stars: 3.2, photo: null },
+    {
+        name: 'Pablo Alfonso Lopez Chau Nava', party: 'Ahora Nación', region: 'Lima', bio: 'Rector de la Universidad Nacional de Ingeniería. Doctor en Economía por la UNAM. Economista con más de 35 años en la academia.', stars: 3.5, photo: null,
+        vp1: { name: 'Luis Alberto Villanueva Carbajal', bio: 'Primer Vicepresidente por Ahora Nación.' },
+        vp2: { name: 'Ruth Zenaida Buendia Mestoquiari', bio: 'Segunda Vicepresidenta por Ahora Nación.' }
+    },
+    {
+        name: 'Ronald Darwin Atencio Sotomayor', party: 'Alianza Electoral Venceremos', region: 'Huánuco', bio: 'Abogado egresado de la USMP. Representante de la Alianza Electoral Venceremos.', stars: 2.4, photo: null,
+        vp1: { name: 'Elena Carmen Rivera Huaman', bio: 'Primera Vicepresidenta por Alianza Electoral Venceremos.' },
+        vp2: { name: 'Alberto Eugenio Quintanilla Chacon', bio: 'Segundo Vicepresidente por Alianza Electoral Venceremos.' }
+    },
+    {
+        name: 'César Acuña Peralta', party: 'Alianza para el Progreso', region: 'Cajamarca', bio: 'Fundador de la Universidad César Vallejo. Ex Gobernador Regional de La Libertad y ex Alcalde de Trujillo. Doctor por la U. Complutense de Madrid.', stars: 2.8, photo: null,
+        vp1: { name: 'Jessica Milagros Tumi Rivas', bio: 'Primera Vicepresidenta por Alianza para el Progreso.' },
+        vp2: { name: 'Alejandro Soto Reyes', bio: 'Segundo Vicepresidente por Alianza para el Progreso. Ex Presidente del Congreso.' }
+    },
+    {
+        name: 'José Daniel Williams Zapata', party: 'Avanza País', region: 'Lima', bio: 'Congresista 2021-2025. Licenciado en Ciencias Militares (Escuela Militar de Chorrillos). Maestría en Defensa Nacional (CAEN).', stars: 3.0, photo: null,
+        vp1: { name: 'Fernan Romano Altuve-Febres Lores', bio: 'Primer Vicepresidente por Avanza País. Abogado constitucionalista.' },
+        vp2: { name: 'Adriana Josefina Tudela Gutierrez', bio: 'Segunda Vicepresidenta por Avanza País. Congresista.' }
+    },
+    {
+        name: 'Álvaro Gonzalo Paz de la Barra Freigeiro', party: 'Fe en el Perú', region: 'Lima', bio: 'Ex Alcalde de La Molina. Ex presidente de AMPE. Abogado por la USMP con Maestría en Gestión Pública.', stars: 2.6, photo: null,
+        vp1: { name: 'Yessika Roxsana Arteaga Narvaez', bio: 'Primera Vicepresidenta por Fe en el Perú.' },
+        vp2: { name: 'Shellah Belen Palacios Rodriguez', bio: 'Segunda Vicepresidenta por Fe en el Perú.' }
+    },
+    {
+        name: 'Keiko Sofía Fujimori Higuchi', party: 'Fuerza Popular', region: 'Lima', bio: 'Presidenta y fundadora de Fuerza Popular. Ex congresista. MBA de Columbia University. Tres veces candidata presidencial.', stars: 3.2, photo: null,
+        vp1: { name: 'Luis Fernando Galarreta Velarde', bio: 'Primer Vicepresidente por Fuerza Popular. Ex Presidente del Congreso. Congresista.' },
+        vp2: { name: 'Miguel Ángel Torres Morales', bio: 'Segundo Vicepresidente por Fuerza Popular. Congresista y abogado.' }
+    },
+    {
+        name: 'Fiorella Giannina Molinelli Aristondo', party: 'Fuerza y Libertad', region: 'Lima', bio: 'Ex Presidenta Ejecutiva de EsSalud. Ex Ministra del MIDIS. Economista PUCP con doctorado de la USMP.', stars: 3.6, photo: null,
+        vp1: { name: 'Gilbert Félix Violeta López', bio: 'Primer Vicepresidente por Fuerza y Libertad. Abogado y político.' },
+        vp2: { name: 'María Luz Pariona Ore', bio: 'Segunda Vicepresidenta por Fuerza y Libertad.' }
+    },
+    {
+        name: 'Roberto Helbert Sánchez Palomino', party: 'Juntos por el Perú', region: 'Lima', bio: 'Congresista y ex Ministro de Comercio Exterior y Turismo. Psicólogo de la UNMSM.', stars: 2.9, photo: null,
+        vp1: { name: 'Analí Márquez Huanca', bio: 'Primera Vicepresidenta por Juntos por el Perú.' },
+        vp2: { name: 'Brígida Curo Bustincio', bio: 'Segunda Vicepresidenta por Juntos por el Perú.' }
+    },
+    {
+        name: 'Rafael Jorge Belaúnde Llosa', party: 'Libertad Popular', region: 'Lima', bio: 'Ex Ministro de Energía y Minas. Economista de la Universidad de Lima. Empresario y gerente general.', stars: 3.3, photo: null,
+        vp1: { name: 'Pedro Álvaro Cateriano Bellido', bio: 'Primer Vicepresidente por Libertad Popular. Ex Presidente del Consejo de Ministros.' },
+        vp2: { name: 'Tania Ulrika Porles Bazalar', bio: 'Segunda Vicepresidenta por Libertad Popular.' }
+    },
+    {
+        name: 'Pitter Enrique Valderrama Peña', party: 'Partido Aprista Peruano', region: 'Lima', bio: 'Bachiller en Derecho por la USMP. Analista legal y militante del APRA.', stars: 2.2, photo: null,
+        vp1: { name: 'Por confirmar — PAP VP1', bio: 'Primer Vicepresidente por el Partido Aprista Peruano. Datos pendientes en JNE.' },
+        vp2: { name: 'Por confirmar — PAP VP2', bio: 'Segundo Vicepresidente por el Partido Aprista Peruano. Datos pendientes en JNE.' }
+    },
+    {
+        name: 'Ricardo Pablo Belmont Cassinelli', party: 'Partido Cívico Obras', region: 'Lima', bio: 'Comunicador, empresario y político. Ex Alcalde de Lima (1990-1995). Fundador de Obras.', stars: 2.5, photo: null,
+        vp1: { name: 'Daniel Hugo Barragán Coloma', bio: 'Primer Vicepresidente por Partido Cívico Obras.' },
+        vp2: { name: 'Dina Irene Hancco Hancco', bio: 'Segunda Vicepresidenta por Partido Cívico Obras.' }
+    },
+    {
+        name: 'Napoleón Becerra García', party: 'PTE-Perú', region: 'Cajamarca', bio: 'Líder del Partido de los Trabajadores y Emprendedores PTE-Perú. Político de base cajamarquina.', stars: 2.0, photo: null,
+        vp1: { name: 'Winston Clemente Huamán Henríquez', bio: 'Primer Vicepresidente por PTE-Perú.' },
+        vp2: { name: 'Nélida Juliana Cuayla Cuayla', bio: 'Segunda Vicepresidenta por PTE-Perú.' }
+    },
+    {
+        name: 'Jorge Nieto Montesinos', party: 'Partido del Buen Gobierno', region: 'Lima', bio: 'Ex Ministro de Defensa y de Cultura. Sociólogo y analista político. Fundador del Partido del Buen Gobierno.', stars: 3.4, photo: null,
+        vp1: { name: 'Susana Flor de María Matute Charún', bio: 'Primera Vicepresidenta por Partido del Buen Gobierno.' },
+        vp2: { name: 'Carlos David Caballero León', bio: 'Segundo Vicepresidente por Partido del Buen Gobierno.' }
+    },
+    {
+        name: 'Charlie Carrasco Salazar', party: 'Partido Demócrata Unido Perú', region: 'Lima', bio: 'Representante del Partido Demócrata Unido Perú. Político emergente.', stars: 2.1, photo: null,
+        vp1: { name: 'Por confirmar — PDUP VP1', bio: 'Primer Vicepresidente por Partido Demócrata Unido Perú. Datos pendientes en JNE.' },
+        vp2: { name: 'Por confirmar — PDUP VP2', bio: 'Segundo Vicepresidente por Partido Demócrata Unido Perú. Datos pendientes en JNE.' }
+    },
+    {
+        name: 'Alex Gonzales Castillo', party: 'Partido Demócrata Verde', region: 'Lima', bio: 'Candidato del Partido Demócrata Verde. Defensor del ambientalismo y desarrollo sostenible.', stars: 2.3, photo: null,
+        vp1: { name: 'Maritza del Carmen R. Sánchez Perales', bio: 'Primera Vicepresidenta por Partido Demócrata Verde.' },
+        vp2: { name: 'Félix Medardo Murazzo Carrillo', bio: 'Segundo Vicepresidente por Partido Demócrata Verde.' }
+    },
+    {
+        name: 'Armando Joaquín Masse Fernández', party: 'Partido Democrático Federal', region: 'Lima', bio: 'Representante del Partido Democrático Federal. Propone un estado federal para Perú.', stars: 2.0, photo: null,
+        vp1: { name: 'Por confirmar — PDF VP1', bio: 'Primer Vicepresidente por Partido Democrático Federal.' },
+        vp2: { name: 'Por confirmar — PDF VP2', bio: 'Segundo Vicepresidente por Partido Democrático Federal.' }
+    },
+    {
+        name: 'George Patrick Forsyth Sommer', party: 'Somos Perú', region: 'Lima', bio: 'Ex futbolista profesional y ex Alcalde de La Victoria. Candidato presidencial por Somos Perú.', stars: 3.3, photo: null,
+        vp1: { name: 'Johanna Gabriela Lozada Baldwin', bio: 'Primera Vicepresidenta por Somos Perú.' },
+        vp2: { name: 'Herbe Olave Ugarte', bio: 'Segundo Vicepresidente por Somos Perú.' }
+    },
+    {
+        name: 'Luis Fernando Olivera Vega', party: 'Frente de la Esperanza 2021', region: 'Lima', bio: 'Líder del Frente de la Esperanza 2021. Ex parlamentario y político de larga trayectoria.', stars: 2.7, photo: null,
+        vp1: { name: 'Elizabeth María del Rosario León Chinchay', bio: 'Primera Vicepresidenta por Frente de la Esperanza 2021.' },
+        vp2: { name: 'Carlos Ricardo Cuaresma Sánchez', bio: 'Segundo Vicepresidente por Frente de la Esperanza 2021.' }
+    },
+    {
+        name: 'Mesías Antonio Guevara Amasifuén', party: 'Partido Morado', region: 'San Martín', bio: 'Candidato presidencial del Partido Morado. Representante de la Amazonía peruana.', stars: 2.8, photo: null,
+        vp1: { name: 'Por confirmar — PM VP1', bio: 'Primer Vicepresidente por Partido Morado.' },
+        vp2: { name: 'Por confirmar — PM VP2', bio: 'Segundo Vicepresidente por Partido Morado.' }
+    },
+    {
+        name: 'Carlos Gonsalo Alvarez Loayza', party: 'País para Todos', region: 'Lima', bio: 'Representante del partido País para Todos. Empresario y político.', stars: 2.1, photo: null,
+        vp1: { name: 'Por confirmar — PPT VP1', bio: 'Primer Vicepresidente por País para Todos.' },
+        vp2: { name: 'Por confirmar — PPT VP2', bio: 'Segundo Vicepresidente por País para Todos.' }
+    },
+    {
+        name: 'Herbert Caller Gutiérrez', party: 'Partido Patriótico del Perú', region: 'Lima', bio: 'Líder del Partido Patriótico del Perú. Político nacionalista.', stars: 2.4, photo: null,
+        vp1: { name: 'Rossana Elena Montes Tello', bio: 'Primera Vicepresidenta por Partido Patriótico del Perú.' },
+        vp2: { name: 'Jorge Aquiles Carcovich Cortelezzi', bio: 'Segundo Vicepresidente por Partido Patriótico del Perú.' }
+    },
+    {
+        name: 'Yonhy Lescano Ancieta', party: 'Cooperación Popular', region: 'Puno', bio: 'Abogado y político. Congresista por múltiples periodos. Ex candidato presidencial 2021 por Acción Popular.', stars: 3.0, photo: null,
+        vp1: { name: 'Por confirmar — CP VP1', bio: 'Primer Vicepresidente por Cooperación Popular.' },
+        vp2: { name: 'Por confirmar — CP VP2', bio: 'Segundo Vicepresidente por Cooperación Popular.' }
+    },
+    {
+        name: 'Wolfgang Mario Grozo Costa', party: 'Integridad Democrática', region: 'Lima', bio: 'Líder de Integridad Democrática. Político comprometido con la transparencia institucional.', stars: 2.3, photo: null,
+        vp1: { name: 'Por confirmar — ID VP1', bio: 'Primer Vicepresidente por Integridad Democrática.' },
+        vp2: { name: 'Por confirmar — ID VP2', bio: 'Segundo Vicepresidente por Integridad Democrática.' }
+    },
+    {
+        name: 'Vladimir Roy Cerrón Rojas', party: 'Perú Libre', region: 'Junín', bio: 'Médico cirujano y político. Fundador de Perú Libre. Ex Gobernador Regional de Junín.', stars: 1.8, photo: null,
+        vp1: { name: 'Por confirmar — PL VP1', bio: 'Primer Vicepresidente por Perú Libre.' },
+        vp2: { name: 'Por confirmar — PL VP2', bio: 'Segundo Vicepresidente por Perú Libre.' }
+    },
+    {
+        name: 'Francisco Ernesto Diez-Canseco Távara', party: 'Perú Acción', region: 'Lima', bio: 'Representante de Perú Acción. Político con experiencia legislativa.', stars: 2.5, photo: null,
+        vp1: { name: 'Roberto Diego Koster Jáuregui', bio: 'Primer Vicepresidente por Perú Acción.' },
+        vp2: { name: 'Clara Amelia Quispe Torres', bio: 'Segunda Vicepresidenta por Perú Acción.' }
+    },
+    {
+        name: 'Mario Enrique Vizcarra Cornejo', party: 'Perú Primero', region: 'Lima', bio: 'Líder de Perú Primero. Promueve políticas de modernización del Estado.', stars: 2.2, photo: null,
+        vp1: { name: 'Carlos Hernán Illanes Calderón', bio: 'Primer Vicepresidente por Perú Primero.' },
+        vp2: { name: 'Judith Carla Mendoza Díaz', bio: 'Segunda Vicepresidenta por Perú Primero.' }
+    },
+    {
+        name: 'Walter Gilmer Chirinos Purizaga', party: 'PRIN', region: 'Lima', bio: 'Representante del partido PRIN. Político y profesional independiente.', stars: 2.0, photo: null,
+        vp1: { name: 'Julio Alberto Vega Ybañez', bio: 'Primer Vicepresidente por PRIN.' },
+        vp2: { name: 'Mayra Lizeth Vargas Gil', bio: 'Segunda Vicepresidenta por PRIN.' }
+    },
+    {
+        name: 'Alfonso Carlos Espa y Garcés-Alvear', party: 'Partido SICREO', region: 'Lima', bio: 'Fundador y líder de SICREO. Propone un sistema de crédito social.', stars: 1.9, photo: null,
+        vp1: { name: 'Por confirmar — SIC VP1', bio: 'Primer Vicepresidente por Partido SICREO.' },
+        vp2: { name: 'Por confirmar — SIC VP2', bio: 'Segundo Vicepresidente por Partido SICREO.' }
+    },
+    {
+        name: 'Carlos Ernesto Jaico Carranza', party: 'Perú Moderno', region: 'Lima', bio: 'Líder de Perú Moderno. Promueve la modernización tecnológica del país.', stars: 2.3, photo: null,
+        vp1: { name: 'Por confirmar — PMOD VP1', bio: 'Primer Vicepresidente por Perú Moderno.' },
+        vp2: { name: 'Por confirmar — PMOD VP2', bio: 'Segundo Vicepresidente por Perú Moderno.' }
+    },
+    {
+        name: 'José León Luna Gálvez', party: 'Podemos Perú', region: 'Ayacucho', bio: 'Empresario y político. Fundador de la Universidad Telesup. Congresista y líder de Podemos Perú.', stars: 2.5, photo: null,
+        vp1: { name: 'Por confirmar — POD VP1', bio: 'Primer Vicepresidente por Podemos Perú.' },
+        vp2: { name: 'Por confirmar — POD VP2', bio: 'Segundo Vicepresidente por Podemos Perú.' }
+    },
+    {
+        name: 'María Soledad Pérez Tello de Rodríguez', party: 'Primero la Gente', region: 'Lima', bio: 'Ex Ministra de Justicia y Derechos Humanos. Abogada y defensora de derechos civiles.', stars: 3.7, photo: null,
+        vp1: { name: 'Por confirmar — PLG VP1', bio: 'Primer Vicepresidente por Primero la Gente.' },
+        vp2: { name: 'Por confirmar — PLG VP2', bio: 'Segundo Vicepresidente por Primero la Gente.' }
+    },
+    {
+        name: 'Paul Davis Jaimes Blanco', party: 'Progresemos', region: 'Lima', bio: 'Representante de Progresemos. Político con visión de desarrollo progresista.', stars: 2.1, photo: null,
+        vp1: { name: 'Por confirmar — PROG VP1', bio: 'Primer Vicepresidente por Progresemos.' },
+        vp2: { name: 'Por confirmar — PROG VP2', bio: 'Segundo Vicepresidente por Progresemos.' }
+    },
+    {
+        name: 'Rafael Bernardo López Aliaga Cazorla', party: 'Renovación Popular', region: 'Lima', bio: 'Empresario y actual Alcalde de Lima Metropolitana. Fundador de Renovación Popular.', stars: 2.8, photo: null,
+        vp1: { name: 'Por confirmar — RP VP1', bio: 'Primer Vicepresidente por Renovación Popular.' },
+        vp2: { name: 'Por confirmar — RP VP2', bio: 'Segundo Vicepresidente por Renovación Popular.' }
+    },
+    {
+        name: 'Antonio Ortiz Villano', party: 'Salvemos al Perú', region: 'Lima', bio: 'Representante de Salvemos al Perú. Político de base comprometido con la justicia social.', stars: 2.0, photo: null,
+        vp1: { name: 'Por confirmar — SAP VP1', bio: 'Primer Vicepresidente por Salvemos al Perú.' },
+        vp2: { name: 'Por confirmar — SAP VP2', bio: 'Segundo Vicepresidente por Salvemos al Perú.' }
+    },
+    {
+        name: 'Rosario del Pilar Fernández Bazán', party: 'Un Camino Diferente', region: 'Lambayeque', bio: 'Ex Ministra de Justicia. Ex congresista y política de larga trayectoria.', stars: 3.1, photo: null,
+        vp1: { name: 'Por confirmar — UCD VP1', bio: 'Primer Vicepresidente por Un Camino Diferente.' },
+        vp2: { name: 'Por confirmar — UCD VP2', bio: 'Segundo Vicepresidente por Un Camino Diferente.' }
+    },
+    {
+        name: 'Roberto Enrique Chiabra León', party: 'Unidad Nacional', region: 'Lima', bio: 'General EP en retiro. Ex congresista. Candidato presidencial por Unidad Nacional.', stars: 3.2, photo: null,
+        vp1: { name: 'Por confirmar — UN VP1', bio: 'Primer Vicepresidente por Unidad Nacional.' },
+        vp2: { name: 'Por confirmar — UN VP2', bio: 'Segundo Vicepresidente por Unidad Nacional.' }
+    },
 ];
 
 // ==================== SENATOR NAME COMPONENTS (for generating 130 senators) ====================
@@ -215,7 +361,8 @@ async function seed() {
         let totalProposals = 0;
         let totalEvents = 0;
 
-        // ==================== INSERT PRESIDENTIAL CANDIDATES ====================
+        // ==================== INSERT PRESIDENTIAL FORMULAS (President + VPs) ====================
+        let totalVPs = 0;
         for (const c of PRESIDENTIAL_CANDIDATES) {
             const partyId = partyMap[c.party];
             if (!partyId) continue;
@@ -228,6 +375,32 @@ async function seed() {
                 randomFloat(35, 85), randomFloat(10, 80), randomFloat(20, 90), randomFloat(10, 70), c.stars, randomFloat(30, 75)]
             );
             const candId = result.rows[0].id;
+
+            // Insert 1er Vicepresidente
+            if (c.vp1 && c.vp1.name) {
+                await client.query(
+                    `INSERT INTO candidates (name, party_id, position, region, biography, 
+                     intelligence_score, momentum_score, integrity_score, risk_score, stars_rating, final_score, is_active)
+                     VALUES ($1, $2, 'vice_president_1', $3, $4, $5, $6, $7, $8, $9, $10, true)`,
+                    [c.vp1.name, partyId, c.region, c.vp1.bio,
+                    randomFloat(30, 75), randomFloat(5, 60), randomFloat(25, 85), randomFloat(10, 60),
+                    randomFloat(2.0, 4.0), randomFloat(25, 65)]
+                );
+                totalVPs++;
+            }
+
+            // Insert 2do Vicepresidente
+            if (c.vp2 && c.vp2.name) {
+                await client.query(
+                    `INSERT INTO candidates (name, party_id, position, region, biography, 
+                     intelligence_score, momentum_score, integrity_score, risk_score, stars_rating, final_score, is_active)
+                     VALUES ($1, $2, 'vice_president_2', $3, $4, $5, $6, $7, $8, $9, $10, true)`,
+                    [c.vp2.name, partyId, c.region, c.vp2.bio,
+                    randomFloat(30, 75), randomFloat(5, 60), randomFloat(25, 85), randomFloat(10, 60),
+                    randomFloat(2.0, 4.0), randomFloat(25, 65)]
+                );
+                totalVPs++;
+            }
 
             // Add 3-5 proposals per presidential candidate
             const numProposals = randomBetween(3, 5);
@@ -256,7 +429,7 @@ async function seed() {
             }
             totalCandidates++;
         }
-        console.log(`🇵🇪 Inserted ${PRESIDENTIAL_CANDIDATES.length} presidential candidates`);
+        console.log(`🇵🇪 Inserted ${PRESIDENTIAL_CANDIDATES.length} presidential candidates + ${totalVPs} vice presidents`);
 
         // ==================== INSERT SENATORS (130 — 5 per region + extras) ====================
         const senatorsPerParty = {};
@@ -451,7 +624,7 @@ async function seed() {
 
         // ==================== UPDATE RANKINGS ====================
         // Rank by position
-        for (const pos of ['president', 'senator', 'deputy', 'andean']) {
+        for (const pos of ['president', 'vice_president_1', 'vice_president_2', 'senator', 'deputy', 'andean']) {
             await client.query(`
         UPDATE candidates SET ranking_position = ranked.rn
         FROM (
