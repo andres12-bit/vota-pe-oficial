@@ -52,14 +52,20 @@ function setupWebSocket(server) {
         try {
             const pool = require('../db/pool');
 
-            // Top 5 momentum candidates
-            const momentum = await pool.query(`
-                SELECT c.id, c.name, c.momentum_score, c.final_score, c.vote_count,
-                       p.abbreviation as party_abbreviation, p.color as party_color
-                FROM candidates c JOIN parties p ON c.party_id = p.id
-                WHERE c.is_active = true
-                ORDER BY c.momentum_score DESC LIMIT 5
-            `);
+            // Top 5 momentum candidates PER POSITION
+            const positions = ['president', 'senator', 'deputy', 'andean'];
+            const perPosition = await Promise.all(
+                positions.map(pos =>
+                    pool.query(`
+                        SELECT c.id, c.name, c.position, c.momentum_score, c.final_score, c.vote_count,
+                               p.abbreviation as party_abbreviation, p.color as party_color
+                        FROM candidates c JOIN parties p ON c.party_id = p.id
+                        WHERE c.is_active = true AND c.position = $1
+                        ORDER BY c.momentum_score DESC LIMIT 5
+                    `, [pos])
+                )
+            );
+            const momentum = perPosition.flatMap(r => r.rows);
 
             // Total votes
             const stats = await pool.query('SELECT SUM(vote_count) as total FROM candidates');
@@ -68,7 +74,7 @@ function setupWebSocket(server) {
                 type: 'ranking_snapshot',
                 data: {
                     timestamp: Date.now(),
-                    top_momentum: momentum.rows,
+                    top_momentum: momentum,
                     total_votes: parseInt(stats.rows[0].total) || 0,
                 }
             });

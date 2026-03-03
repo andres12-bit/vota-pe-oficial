@@ -15,7 +15,7 @@ interface SearchResults {
 export default function SearchPage() {
     return (
         <Suspense fallback={
-            <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--vp-bg)' }}>
+            <div className="min-h-screen flex items-center justify-center" style={{ background: 'transparent' }}>
                 <div className="w-12 h-12 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: 'var(--vp-red)', borderTopColor: 'transparent' }} />
             </div>
         }>
@@ -61,8 +61,8 @@ function SearchContent() {
     };
 
     return (
-        <div className="min-h-screen" style={{ background: 'var(--vp-bg)' }}>
-            <header className="sticky top-0 z-50 px-4 py-3 flex items-center gap-4" style={{ background: 'rgba(10,10,15,0.95)', borderBottom: '1px solid var(--vp-border)', backdropFilter: 'blur(20px)' }}>
+        <div className="min-h-screen" style={{ background: 'transparent' }}>
+            <header className="sticky top-0 z-50 px-4 py-3 flex items-center gap-4" style={{ background: 'rgba(255,255,255,0.98)', borderBottom: '1px solid var(--vp-border)', backdropFilter: 'blur(20px)' }}>
                 <Link href="/" className="text-sm" style={{ color: 'var(--vp-text-dim)' }}>← VOTA.PE</Link>
                 <span className="text-sm font-bold tracking-wider" style={{ color: 'var(--vp-text)' }}>BÚSQUEDA GLOBAL</span>
             </header>

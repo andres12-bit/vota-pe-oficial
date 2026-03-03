@@ -1,6 +1,7 @@
 const express = require('express');
 const RankingEngine = require('../engines/rankingEngine');
 const MomentumEngine = require('../engines/momentumEngine');
+const pool = require('../db/pool');
 
 const router = express.Router();
 
@@ -31,10 +32,31 @@ router.get('/:position', async (req, res) => {
     }
 });
 
-// GET /api/ranking - get top momentum candidates
+// GET /api/ranking - get top momentum candidates (from ALL positions)
 router.get('/', async (req, res) => {
     try {
-        const momentum = await MomentumEngine.getTopMomentum(10);
+        // Fetch top candidates per position so filter tabs work
+        const positions = ['president', 'senator', 'deputy', 'andean'];
+        const perPosition = await Promise.all(
+            positions.map(pos =>
+                pool.query(`
+                    SELECT c.id, c.name, c.photo, c.position, c.region, c.momentum_score, c.final_score, c.vote_count,
+                           p.name as party_name, p.abbreviation as party_abbreviation, p.color as party_color
+                    FROM candidates c
+                    JOIN parties p ON c.party_id = p.id
+                    WHERE c.is_active = true AND c.position = $1
+                    ORDER BY c.momentum_score DESC
+                    LIMIT 5
+                `, [pos])
+            )
+        );
+        const momentum = perPosition.flatMap(r => r.rows)
+            .map(c => ({
+                ...c,
+                tendency: parseFloat(c.momentum_score) >= 70 ? 'EN ALZA'
+                    : parseFloat(c.momentum_score) >= 40 ? 'ESTABLE' : 'EN BAJA'
+            }));
+
         const ranking = await RankingEngine.getGlobalRanking();
 
         res.json({

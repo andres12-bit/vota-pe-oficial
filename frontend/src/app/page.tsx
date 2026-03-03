@@ -2,16 +2,22 @@
 
 import { useState, useEffect } from 'react';
 import { Candidate, getGlobalRankingAndMomentum, getRanking, getStats, castVote } from '@/lib/api';
+import { getAvatarUrl } from '@/lib/avatars';
 import { useWebSocket } from '@/lib/websocket';
-import CanchaDemocracia from '@/components/CanchaDemocracia';
+import { useSelection } from '@/lib/selection';
 import LiveMomentum from '@/components/LiveMomentum';
 import CascadaConsenso from '@/components/CascadaConsenso';
 import RankingTable from '@/components/RankingTable';
-import MobileTabBar from '@/components/MobileTabBar';
 import VoteCounter from '@/components/VoteCounter';
 import EncuestaPanel from '@/components/EncuestaPanel';
 import PlanchasPanel from '@/components/PlanchasPanel';
 import NavHeader from '@/components/NavHeader';
+import ExploraCandidatos from '@/components/ExploraCandidatos';
+import EvaluacionPlanchas from '@/components/EvaluacionPlanchas';
+import MetodologiaSection from '@/components/MetodologiaSection';
+import SiteFooter from '@/components/SiteFooter';
+import SelectionCart from '@/components/SelectionCart';
+import PostSelectionBar from '@/components/PostSelectionBar';
 import { useRouter } from 'next/navigation';
 
 type TabType = 'votar' | 'encuesta' | 'planchas' | 'president' | 'senator' | 'deputy' | 'andean';
@@ -23,8 +29,10 @@ export default function Home() {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [momentumList, setMomentumList] = useState<Candidate[]>([]);
   const [totalVotes, setTotalVotes] = useState(1245882);
+  const { state: selState, selection, showDraftBanner, dismissDraftBanner, activateBuilding, hasPresident } = useSelection();
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
   const { lastMessage } = useWebSocket();
   const router = useRouter();
 
@@ -47,7 +55,6 @@ export default function Home() {
         setTotalVotes(stats.total_votes + 1245882);
       } catch (err) {
         console.error('Error fetching data:', err);
-        // Use position-specific demo data if API fails
         const position = activeTab === 'votar' ? 'president' : activeTab;
         setCandidates(getDemoByPosition(position));
         setMomentumList(getDemoByPosition('president').slice(0, 5));
@@ -64,14 +71,12 @@ export default function Home() {
       setTotalVotes(prev => prev + 1);
     }
 
-    // Auto-refresh rankings when server recalculates
     if (lastMessage.type === 'ranking_updated') {
       const position = activeTab === 'votar' ? 'president' : activeTab;
       getRanking(position).then(setCandidates).catch(() => { });
       getGlobalRankingAndMomentum().then(d => setMomentumList(d.top_momentum || [])).catch(() => { });
     }
 
-    // Periodic snapshot — update momentum and totals
     if (lastMessage.type === 'ranking_snapshot') {
       const data = lastMessage.data as { top_momentum: Candidate[]; total_votes: number };
       if (data.top_momentum) setMomentumList(data.top_momentum as Candidate[]);
@@ -84,7 +89,6 @@ export default function Home() {
       const result = await castVote(candidateId, position);
       if (result.success) {
         setTotalVotes(prev => prev + 1);
-        // Refresh ranking
         const ranked = await getRanking(position);
         setCandidates(ranked);
       }
@@ -94,9 +98,35 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: 'var(--vp-bg)' }}>
+    <div className="min-h-screen flex flex-col" style={{ background: 'transparent' }}>
       {/* Shared Navigation Header */}
       <NavHeader activeTab={activeTab} onTabChange={setActiveTab} />
+
+      {/* Search bar — below header, transparent */}
+      <div className="global-search-bar">
+        <form
+          onSubmit={(e) => { e.preventDefault(); const q = (e.currentTarget.elements.namedItem('globalSearch') as HTMLInputElement)?.value?.trim(); if (q) window.location.href = `/search?q=${encodeURIComponent(q)}`; }}
+          className="global-search-form"
+        >
+          <svg className="global-search-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
+          </svg>
+          <input
+            type="text"
+            name="globalSearch"
+            placeholder="Buscar candidatos, partidos..."
+            className="global-search-input"
+          />
+        </form>
+      </div>
+
+      {/* Inline Vote Counter — transparent, single line */}
+      <div className="inline-vote-counter">
+        <span className="ivc-label">🗳️ Votos totales:</span>
+        <span className="ivc-number">{totalVotes.toLocaleString('es-PE')}</span>
+        <span className="ivc-stat ivc-stat-green">↑ 12.4% última hora</span>
+        <span className="ivc-stat ivc-stat-gold">● 24/7 en vivo</span>
+      </div>
 
       {/* Main Content */}
       <main className="dashboard-wrapper">
@@ -109,38 +139,144 @@ export default function Home() {
           /* PLANCHAS VIEW */
           <PlanchasPanel />
         ) : activeTab === 'votar' ? (
-          /* CANCHA VIEW */
-          <div>
-            {/* Desktop: 3-column layout */}
-            <div className="cancha-layout grid grid-cols-1 lg:grid-cols-[17.5fr_65fr_17.5fr] gap-[2.5rem]">
-              {/* Left Panel - Live Momentum (desktop only) */}
-              <aside className="desktop-only sidebar-card">
-                <LiveMomentum candidates={momentumList} />
-              </aside>
+          /* HOME VIEW — Clean centered layout */
+          <>
+            <div>
+              {/* ===== HERO BLOCK: Centered Title + Icons ===== */}
+              <section className="hero-centered-block">
+                {/* Draft banner */}
+                {showDraftBanner && (
+                  <div className="draft-recovery-banner">
+                    <span>Tienes una selección en progreso.</span>
+                    <button onClick={dismissDraftBanner}>Continuar editando →</button>
+                  </div>
+                )}
 
-              {/* Center - Cancha de la Democracia */}
-              <div className="flex flex-col gap-4">
-                <CanchaDemocracia candidates={candidates} onVote={handleVote} />
-              </div>
+                <h1 className="hero-title section-title">Construye tu selección electoral ideal</h1>
+                <p className="hero-subtitle">Elige a tus candidatos y compón tu equipo perfecto para las elecciones.</p>
 
-              {/* Right Panel - Vote Counter + Cascada (desktop only) */}
-              <aside className="desktop-only sidebar-card">
-                <VoteCounter total={totalVotes} />
-                <div className="mt-3">
+                {selState === 'empty' && !showDraftBanner && (
+                  <button onClick={activateBuilding} className="genera-seleccion-btn">
+                    Genera tu selección
+                  </button>
+                )}
+
+                {/* Position Icons — Diamond Layout — dynamic with selection data */}
+                <div className="position-icons-grid">
+                  <h3 className="position-icons-title">Tu Cancha Electoral</h3>
+                  <div className="position-icons-diamond">
+                    {/* PRESIDENTE */}
+                    <div className="position-icon-item position-top" onClick={() => setActiveTab('president')}>
+                      <span className="position-icon-tag tag-president">PRESIDENTE</span>
+                      <div className="position-avatars-row">
+                        {selection.president ? (
+                          <div className="position-icon-circle position-icon-filled" style={{ borderColor: selection.president.party_color || 'var(--vp-red)' }}>
+                            <img src={getAvatarUrl(selection.president.name, 56, selection.president.party_color)} alt={selection.president.name} className="position-icon-avatar" />
+                          </div>
+                        ) : (
+                          <div className="position-icon-circle">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="#9ca3af"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" /></svg>
+                          </div>
+                        )}
+                      </div>
+                      <span className="position-icon-label">{selection.president ? selection.president.name.split(' ').slice(-2).join(' ') : 'Elige candidato'}</span>
+                    </div>
+                    <div className="position-icons-row">
+                      {/* SENADO */}
+                      <div className="position-icon-item" onClick={() => setActiveTab('senator')}>
+                        <span className="position-icon-tag tag-senator">SENADO</span>
+                        <div className="position-avatars-row">
+                          {selection.senators.length > 0 ? selection.senators.map((s, i) => (
+                            <div key={s.id} className="position-icon-circle position-icon-filled position-icon-sm" style={{ borderColor: s.party_color || '#2563eb', marginLeft: i > 0 ? '-12px' : '0', zIndex: 2 - i }}>
+                              <img src={getAvatarUrl(s.name, 48, s.party_color)} alt={s.name} className="position-icon-avatar" />
+                            </div>
+                          )) : (
+                            <div className="position-icon-circle">
+                              <svg width="32" height="32" viewBox="0 0 24 24" fill="#9ca3af"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg>
+                            </div>
+                          )}
+                        </div>
+                        <span className="position-icon-label">{selection.senators.length > 0 ? selection.senators.map(s => s.name.split(' ').pop()).join(', ') : 'Elige senadores'}</span>
+                      </div>
+                      {/* DIPUTADOS */}
+                      <div className="position-icon-item" onClick={() => setActiveTab('deputy')}>
+                        <span className="position-icon-tag tag-deputy">DIPUTADOS</span>
+                        <div className="position-avatars-row">
+                          {selection.deputies.length > 0 ? selection.deputies.map((d, i) => (
+                            <div key={d.id} className="position-icon-circle position-icon-filled position-icon-sm" style={{ borderColor: d.party_color || '#16a34a', marginLeft: i > 0 ? '-12px' : '0', zIndex: 2 - i }}>
+                              <img src={getAvatarUrl(d.name, 48, d.party_color)} alt={d.name} className="position-icon-avatar" />
+                            </div>
+                          )) : (
+                            <div className="position-icon-circle">
+                              <svg width="32" height="32" viewBox="0 0 24 24" fill="#9ca3af"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" /></svg>
+                            </div>
+                          )}
+                        </div>
+                        <span className="position-icon-label">{selection.deputies.length > 0 ? selection.deputies.map(d => d.name.split(' ').pop()).join(', ') : 'Elige diputados'}</span>
+                      </div>
+                    </div>
+                    {/* PARL. ANDINO */}
+                    <div className="position-icon-item position-bottom" onClick={() => setActiveTab('andean')}>
+                      <span className="position-icon-tag tag-andean">P. ANDINO</span>
+                      <div className="position-avatars-row">
+                        {selection.andean.length > 0 ? selection.andean.slice(0, 2).map((a, i) => (
+                          <div key={a.id} className="position-icon-circle position-icon-filled position-icon-sm" style={{ borderColor: a.party_color || '#7c3aed', marginLeft: i > 0 ? '-12px' : '0', zIndex: 2 - i }}>
+                            <img src={getAvatarUrl(a.name, 48, a.party_color)} alt={a.name} className="position-icon-avatar" />
+                          </div>
+                        )) : (
+                          <div className="position-icon-circle">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="#9ca3af"><path d="M12 2L2 22h20L12 2zm0 4l7 14H5l7-14z" /></svg>
+                          </div>
+                        )}
+                      </div>
+                      <span className="position-icon-label">{selection.andean.length > 0 ? selection.andean.slice(0, 2).map(a => a.name.split(' ').pop()).join(', ') : 'Elige andinos'}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {selState === 'empty' && !showDraftBanner && (
+                  <p className="hero-hint">Haz clic en &quot;Genera tu selección&quot; para empezar ›</p>
+                )}
+              </section>
+
+              {/* ===== DYNAMIC MODULES — distributed below ===== */}
+              <div className="homepage-modules">
+                <div className="modules-row modules-row-2col">
+                  <LiveMomentum candidates={momentumList} />
                   <CascadaConsenso />
                 </div>
-              </aside>
+              </div>
+
+              {/* ===== FULL-WIDTH SECTIONS ===== */}
+              <div className="homepage-sections">
+                <ExploraCandidatos onNavigate={setActiveTab} />
+                <EvaluacionPlanchas onNavigate={setActiveTab} />
+                <MetodologiaSection />
+              </div>
             </div>
 
-            {/* Mobile: Stacked panels below cancha (scrollable) */}
-            <div className="lg:hidden flex flex-col gap-4 mt-4 px-1">
-              <VoteCounter total={totalVotes} />
-              <LiveMomentum candidates={momentumList} />
-              <CascadaConsenso />
+            {/* ===== FLOATING SELECTION CHAT WIDGET ===== */}
+            <div className={`floating-selection-chat ${chatOpen ? 'fsc-open' : 'fsc-collapsed'}`}>
+              <button className="fsc-header" onClick={() => setChatOpen(!chatOpen)}>
+                <span className="fsc-title">🗳️ Tu Selección</span>
+                <span className="fsc-toggle">{chatOpen ? '▾' : '▴'}</span>
+              </button>
+              {chatOpen && (
+                <div className="fsc-body">
+                  <div className="fsc-slot"><span className="fsc-dot fsc-dot-president" /> <strong>Presidente:</strong> {selection.president?.name?.split(' ').slice(-2).join(' ') || '—'}</div>
+                  <div className="fsc-slot"><span className="fsc-dot fsc-dot-senator" /> <strong>Senado:</strong> {selection.senators.length > 0 ? selection.senators.map(s => s.name?.split(' ').pop()).join(', ') : '—'}</div>
+                  <div className="fsc-slot"><span className="fsc-dot fsc-dot-deputy" /> <strong>Diputados:</strong> {selection.deputies.length > 0 ? selection.deputies.map(d => d.name?.split(' ').pop()).join(', ') : '—'}</div>
+                  <div className="fsc-slot"><span className="fsc-dot fsc-dot-andean" /> <strong>P. Andino:</strong> {selection.andean.length > 0 ? selection.andean.map(a => a.name?.split(' ').pop()).join(', ') : '—'}</div>
+                  {selState === 'empty' && <p className="fsc-empty">Aún no has seleccionado candidatos.</p>}
+                  {hasPresident && (
+                    <button className="fsc-compare-btn" onClick={() => { }}>Comparar selección</button>
+                  )}
+                </div>
+              )}
             </div>
-          </div>
+          </>
         ) : (
-          /* RANKING TABLE VIEW — centered layout */
+          /* RANKING TABLE VIEW */
           <div className="ranking-layout">
             <aside className="desktop-only sidebar-card ranking-sidebar">
               <LiveMomentum candidates={momentumList} />
@@ -156,8 +292,13 @@ export default function Home() {
         )}
       </main>
 
-      {/* Mobile Tab Bar */}
-      <MobileTabBar activeTab={activeTab} onTabChange={setActiveTab} />
+      {/* Selection Cart — always visible when active */}
+      <SelectionCart />
+
+      {/* Footer — always visible on all pages */}
+      <SiteFooter />
+
+
     </div>
   );
 }

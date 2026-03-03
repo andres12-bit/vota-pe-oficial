@@ -2,6 +2,7 @@
 
 import { Candidate } from '@/lib/api';
 import { getAvatarUrl } from '@/lib/avatars';
+import { useSelection } from '@/lib/selection';
 import PeruMapSVG from './PeruMapSVG';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
@@ -13,28 +14,35 @@ interface Props {
 
 // Desktop positions — spread wider
 const POSITIONS_DESKTOP = [
-    { label: 'SENADORES', top: '18%', left: '20%' },
-    { label: 'SENADORES', top: '18%', left: '80%' },
-    { label: 'DIPUTADOS', top: '48%', left: '12%' },
-    { label: 'PRESIDENTE', top: '48%', left: '50%' },
-    { label: 'DIPUTADOS', top: '48%', left: '88%' },
-    { label: 'PARL. ANDINO', top: '82%', left: '25%' },
-    { label: 'PARL. ANDINO', top: '82%', left: '75%' },
+    { label: 'SENADORES', top: '18%', left: '20%', posKey: 'senator', delay: 200 },
+    { label: 'SENADORES', top: '18%', left: '80%', posKey: 'senator', delay: 350 },
+    { label: 'DIPUTADOS', top: '48%', left: '12%', posKey: 'deputy', delay: 500 },
+    { label: 'PRESIDENTE', top: '48%', left: '50%', posKey: 'president', delay: 0 },
+    { label: 'DIPUTADOS', top: '48%', left: '88%', posKey: 'deputy', delay: 650 },
+    { label: 'PARL. ANDINO', top: '82%', left: '25%', posKey: 'andean', delay: 800 },
+    { label: 'PARL. ANDINO', top: '82%', left: '75%', posKey: 'andean', delay: 950 },
 ];
 
 // Mobile positions — tighter, avoids edge overflow
 const POSITIONS_MOBILE = [
-    { label: 'SENADORES', top: '15%', left: '22%' },
-    { label: 'SENADORES', top: '15%', left: '78%' },
-    { label: 'DIPUTADOS', top: '45%', left: '15%' },
-    { label: 'PRESIDENTE', top: '45%', left: '50%' },
-    { label: 'DIPUTADOS', top: '45%', left: '85%' },
-    { label: 'P. ANDINO', top: '78%', left: '28%' },
-    { label: 'P. ANDINO', top: '78%', left: '72%' },
+    { label: 'SENADORES', top: '15%', left: '22%', posKey: 'senator', delay: 200 },
+    { label: 'SENADORES', top: '15%', left: '78%', posKey: 'senator', delay: 350 },
+    { label: 'DIPUTADOS', top: '45%', left: '15%', posKey: 'deputy', delay: 500 },
+    { label: 'PRESIDENTE', top: '45%', left: '50%', posKey: 'president', delay: 0 },
+    { label: 'DIPUTADOS', top: '45%', left: '85%', posKey: 'deputy', delay: 650 },
+    { label: 'P. ANDINO', top: '78%', left: '28%', posKey: 'andean', delay: 800 },
+    { label: 'P. ANDINO', top: '78%', left: '72%', posKey: 'andean', delay: 950 },
 ];
 
 export default function CanchaDemocracia({ candidates, onVote }: Props) {
     const [isMobile, setIsMobile] = useState(false);
+    const {
+        state, selection, activateBuilding, qualityStars,
+        showDraftBanner, dismissDraftBanner,
+        justConfirmed, clearJustConfirmed,
+    } = useSelection();
+    const [showConfirmMsg, setShowConfirmMsg] = useState(false);
+    const [animatingNodes, setAnimatingNodes] = useState(false);
 
     useEffect(() => {
         const check = () => setIsMobile(window.innerWidth < 768);
@@ -43,20 +51,88 @@ export default function CanchaDemocracia({ candidates, onVote }: Props) {
         return () => window.removeEventListener('resize', check);
     }, []);
 
+    // Trigger save animation when justConfirmed flips to true
+    useEffect(() => {
+        if (justConfirmed) {
+            setAnimatingNodes(true);
+            setShowConfirmMsg(true);
+            // Clear animation flag after all nodes have appeared
+            const timer1 = setTimeout(() => setAnimatingNodes(false), 1200);
+            // Clear confirmation message after 4 seconds
+            const timer2 = setTimeout(() => setShowConfirmMsg(false), 4000);
+            // Clear justConfirmed flag
+            clearJustConfirmed();
+            return () => { clearTimeout(timer1); clearTimeout(timer2); };
+        }
+    }, [justConfirmed, clearJustConfirmed]);
+
     const POSITIONS = isMobile ? POSITIONS_MOBILE : POSITIONS_DESKTOP;
     const imgSize = isMobile ? 42 : 56;
 
-    // Get top candidates for each position node
-    const getNodeCandidate = (index: number): Candidate | null => {
+    const isConfirmed = state === 'confirmed';
+
+    // Get candidate for each position node
+    const hasSelection = selection.president || selection.senators.length > 0 || selection.deputies.length > 0 || selection.andean.length > 0;
+    const useSelectionData = hasSelection && (state === 'confirmed' || state === 'draft' || state === 'editing' || animatingNodes);
+
+    const getNodeCandidate = (index: number, posKey: string): Candidate | null => {
+        if (useSelectionData) {
+            // Use user's selection
+            if (posKey === 'president') return selection.president;
+            if (posKey === 'senator') {
+                const senatorIndex = POSITIONS.slice(0, index + 1).filter(p => p.posKey === 'senator').length - 1;
+                return selection.senators[senatorIndex] || null;
+            }
+            if (posKey === 'deputy') {
+                const deputyIndex = POSITIONS.slice(0, index + 1).filter(p => p.posKey === 'deputy').length - 1;
+                return selection.deputies[deputyIndex] || null;
+            }
+            if (posKey === 'andean') {
+                const andeanIndex = POSITIONS.slice(0, index + 1).filter(p => p.posKey === 'andean').length - 1;
+                return selection.andean[andeanIndex] || null;
+            }
+            return null;
+        }
+        // Default: show API candidates
         if (!candidates.length) return null;
         return candidates[index % candidates.length] || null;
     };
 
     return (
         <div className="panel-glow p-3 sm:p-4" style={{ overflow: 'hidden' }}>
-            <h2 className="text-center text-xs sm:text-sm font-bold tracking-[3px] uppercase mb-3 sm:mb-4" style={{ color: 'var(--vp-text-dim)' }}>
-                CANCHA DE LA DEMOCRACIA
-            </h2>
+            <div className="text-center mb-4 sm:mb-5">
+                {/* Confirmation message overlay */}
+                {showConfirmMsg && (
+                    <div className="cancha-confirm-msg animate-fade-in">
+                        <div className="cancha-confirm-title">Tu selección electoral ha sido creada</div>
+                        <div className="cancha-confirm-sub">Puedes editarla en cualquier momento.</div>
+                    </div>
+                )}
+
+                {/* Draft recovery banner */}
+                {showDraftBanner && (
+                    <div className="draft-recovery-banner animate-fade-in">
+                        <span>Tienes una selección en progreso.</span>
+                        <button onClick={dismissDraftBanner} className="draft-recovery-btn">
+                            Continuar editando →
+                        </button>
+                    </div>
+                )}
+
+                <h2 className="text-base sm:text-lg font-extrabold tracking-wide" style={{ color: 'var(--vp-text)' }}>
+                    Construye tu selección electoral ideal
+                </h2>
+                <p className="text-[11px] sm:text-xs mt-1" style={{ color: 'var(--vp-text-dim)' }}>
+                    Analiza candidatos y comprende la calidad de tu elección
+                </p>
+
+                {/* "Genera tu selección" button — only when state is empty */}
+                {state === 'empty' && !showDraftBanner && (
+                    <button onClick={activateBuilding} className="genera-seleccion-btn mt-3">
+                        👉 Genera tu selección
+                    </button>
+                )}
+            </div>
 
             {/* Field */}
             <div className="cancha-field relative" style={{ minHeight: isMobile ? '420px' : '500px', aspectRatio: isMobile ? '3/4' : '4/5' }}>
@@ -67,23 +143,29 @@ export default function CanchaDemocracia({ candidates, onVote }: Props) {
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-[12%] border border-white/20 border-t-0 rounded-b-lg" />
                 <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[40%] h-[12%] border border-white/20 border-b-0 rounded-t-lg" />
 
-                {/* PERÚ HEAT MAP label */}
+                {/* PERÚ label */}
                 <div className="absolute top-2 right-3 text-[10px] font-bold tracking-wider" style={{ color: 'var(--vp-text-dim)' }}>
                     PERÚ
                 </div>
 
                 {/* Position Nodes */}
                 {POSITIONS.map((pos, index) => {
-                    const candidate = getNodeCandidate(index);
+                    const candidate = getNodeCandidate(index, pos.posKey);
+                    const isAnimating = animatingNodes && candidate;
                     return (
                         <div
                             key={index}
-                            className="absolute flex flex-col items-center gap-0.5 sm:gap-1 -translate-x-1/2 -translate-y-1/2"
-                            style={{ top: pos.top, left: pos.left, zIndex: 3 }}
+                            className={`absolute flex flex-col items-center gap-0.5 sm:gap-1 -translate-x-1/2 -translate-y-1/2 ${isAnimating ? 'cancha-node-appear' : ''}`}
+                            style={{
+                                top: pos.top,
+                                left: pos.left,
+                                zIndex: 3,
+                                animationDelay: isAnimating ? `${pos.delay}ms` : undefined,
+                            }}
                         >
                             {candidate ? (
                                 <Link href={`/candidate/${candidate.id}`}>
-                                    <div className="candidate-node pulse-glow">
+                                    <div className={`candidate-node pulse-glow ${isConfirmed ? 'candidate-node-saved' : ''}`}>
                                         <img
                                             src={getAvatarUrl(candidate.name, imgSize, candidate.party_color)}
                                             alt={candidate.name}
@@ -117,7 +199,33 @@ export default function CanchaDemocracia({ candidates, onVote }: Props) {
                     </div>
                 </div>
             </div>
+
+            {/* Election Quality Result — show when confirmed OR when candidates available */}
+            {(isConfirmed || candidates.length > 0) && (
+                <div className="election-quality-card">
+                    <div className="election-quality-title">
+                        Calidad promedio de tu elección
+                    </div>
+                    <div className="election-quality-stars">
+                        {isConfirmed ? (
+                            <>{'★'.repeat(qualityStars)}{'☆'.repeat(5 - qualityStars)}</>
+                        ) : (
+                            (() => {
+                                const avgStars = candidates.length > 0
+                                    ? candidates.reduce((sum, c) => sum + Number(c.stars_rating || 0), 0) / candidates.length
+                                    : 0;
+                                const full = Math.floor(avgStars);
+                                const half = avgStars - full >= 0.5 ? 1 : 0;
+                                const empty = 5 - full - half;
+                                return <>{'★'.repeat(full)}{half ? '★' : ''}{'☆'.repeat(empty)}</>;
+                            })()
+                        )}
+                    </div>
+                    <p className="election-quality-description">
+                        Basado en trayectoria, formación y antecedentes verificados. Esta evaluación se calcula automáticamente según información pública y valoración ciudadana.
+                    </p>
+                </div>
+            )}
         </div>
     );
 }
-

@@ -149,9 +149,9 @@ export default function AdminPage() {
     ];
 
     return (
-        <div className="min-h-screen" style={{ background: 'var(--vp-bg)' }}>
+        <div className="min-h-screen" style={{ background: 'transparent' }}>
             {/* Header */}
-            <header className="sticky top-0 z-50 px-4 py-3 flex items-center gap-4" style={{ background: 'rgba(10,10,15,0.95)', borderBottom: '1px solid var(--vp-border)', backdropFilter: 'blur(20px)' }}>
+            <header className="sticky top-0 z-50 px-4 py-3 flex items-center gap-4" style={{ background: 'rgba(255,255,255,0.98)', borderBottom: '1px solid var(--vp-border)', backdropFilter: 'blur(20px)' }}>
                 <a href="/" className="text-sm" style={{ color: 'var(--vp-text-dim)' }}>← VOTA.PE</a>
                 <span className="text-sm font-black tracking-wider" style={{ color: 'var(--vp-red)' }}>ADMIN CONTROL CENTER</span>
                 <div className="ml-auto flex items-center gap-2">

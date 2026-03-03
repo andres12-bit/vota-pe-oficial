@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { Candidate } from '@/lib/api';
 import { getAvatarUrl } from '@/lib/avatars';
+import { useSelection } from '@/lib/selection';
 import Link from 'next/link';
 
 interface Props {
@@ -43,6 +44,8 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
     const [partyFilter, setPartyFilter] = useState('');
     const [searchFilter, setSearchFilter] = useState('');
     const [page, setPage] = useState(1);
+    const { state: selState, addCandidate, isInCart } = useSelection();
+    const cartActive = selState === 'draft' || selState === 'editing';
 
     // Extract unique regions dynamically from actual data
     const uniqueRegions = useMemo(() => {
@@ -138,7 +141,7 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
             </div>
 
             {/* Table Header */}
-            <div className="hidden md:grid grid-cols-[50px_1fr_100px_40px_100px_100px_80px_80px] gap-2 px-6 py-2 text-[10px] font-bold tracking-wider uppercase" style={{ color: 'var(--vp-text-dim)', borderBottom: '1px solid var(--vp-border)' }}>
+            <div className="hidden md:grid grid-cols-[50px_1fr_100px_40px_100px_100px_80px_80px_90px] gap-2 px-6 py-2 text-[10px] font-bold tracking-wider uppercase" style={{ color: 'var(--vp-text-dim)', borderBottom: '1px solid var(--vp-border)' }}>
                 <span>#</span>
                 <span>Candidato</span>
                 <span className="text-center">Score</span>
@@ -147,6 +150,7 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
                 <span className="text-center">Inteligencia</span>
                 <span className="text-center">Estrellas</span>
                 <span className="text-center">Votar</span>
+                {cartActive && <span className="text-center">Selección</span>}
             </div>
 
             {/* Candidates */}
@@ -156,7 +160,7 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
                     return (
                         <div key={candidate.id}>
                             {/* Desktop */}
-                            <div className="hidden md:grid grid-cols-[50px_1fr_100px_40px_100px_100px_80px_80px] gap-2 items-center px-6 py-4 rounded-lg transition-colors hover:bg-white/5 ranking-row" style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
+                            <div className={`hidden md:grid ${cartActive ? 'grid-cols-[50px_1fr_100px_40px_100px_100px_80px_80px_90px]' : 'grid-cols-[50px_1fr_100px_40px_100px_100px_80px_80px]'} gap-2 items-center px-6 py-4 rounded-lg transition-colors hover:bg-white/5 ranking-row`} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
                                 <span className="text-sm font-bold" style={{ color: globalRank <= 3 ? 'var(--vp-gold)' : 'var(--vp-text-dim)' }}>
                                     {globalRank}
                                 </span>
@@ -201,6 +205,22 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
                                         VOTAR
                                     </button>
                                 </div>
+                                {cartActive && (
+                                    <div className="text-center">
+                                        {isInCart(candidate.id) ? (
+                                            <span className="text-[10px] font-bold px-2 py-1 rounded-lg" style={{ color: 'var(--vp-green)', background: 'rgba(0,230,118,0.1)' }}>
+                                                ✅ Agregado
+                                            </span>
+                                        ) : (
+                                            <button
+                                                onClick={() => addCandidate(candidate)}
+                                                className="agregar-seleccion-btn text-[10px] font-bold px-2 py-1 rounded-lg transition-all hover:scale-105"
+                                            >
+                                                ➕ Agregar
+                                            </button>
+                                        )}
+                                    </div>
+                                )}
                             </div>
 
                             {/* Mobile — vertical card layout */}
@@ -232,14 +252,30 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
                                         <span className="score-badge">{Number(candidate.final_score).toFixed(1)}</span>
                                     </div>
                                 </div>
-                                {/* Bottom: full-width vote button */}
-                                <button
-                                    onClick={() => onVote(candidate.id, candidate.position)}
-                                    className="w-full text-xs font-bold py-2 rounded-lg transition-all hover:scale-[1.02] active:scale-95"
-                                    style={{ background: 'var(--vp-red)', color: 'white', boxShadow: '0 0 12px var(--vp-red-glow)' }}
-                                >
-                                    🗳️ VOTAR
-                                </button>
+                                {/* Bottom: buttons */}
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => onVote(candidate.id, candidate.position)}
+                                        className="flex-1 text-xs font-bold py-2 rounded-lg transition-all hover:scale-[1.02] active:scale-95"
+                                        style={{ background: 'var(--vp-red)', color: 'white', boxShadow: '0 0 12px var(--vp-red-glow)' }}
+                                    >
+                                        🗳️ VOTAR
+                                    </button>
+                                    {cartActive && (
+                                        isInCart(candidate.id) ? (
+                                            <span className="flex-1 text-xs font-bold py-2 rounded-lg text-center" style={{ color: 'var(--vp-green)', background: 'rgba(0,230,118,0.1)' }}>
+                                                ✅ Agregado
+                                            </span>
+                                        ) : (
+                                            <button
+                                                onClick={() => addCandidate(candidate)}
+                                                className="agregar-seleccion-btn flex-1 text-xs font-bold py-2 rounded-lg transition-all hover:scale-[1.02] active:scale-95"
+                                            >
+                                                ➕ Agregar
+                                            </button>
+                                        )
+                                    )}
+                                </div>
                             </div>
                         </div>
                     );
