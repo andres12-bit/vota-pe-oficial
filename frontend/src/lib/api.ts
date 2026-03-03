@@ -30,6 +30,7 @@ export interface Candidate {
     plan_gobierno?: PlanGobierno[];
     plan_pdf_url?: string;
     plan_pdf_local?: string;
+    list_position?: number;
 }
 
 export interface VicePresident {

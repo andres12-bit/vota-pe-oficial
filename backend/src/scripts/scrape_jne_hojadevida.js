@@ -119,99 +119,128 @@ function parseHojaDeVida(hv) {
     if (!hv) return null;
 
     const personal = hv.oDatosPersonales || {};
+
+    // Education - University uses strUniversidad, strCarreraUni
     const education = {
+        basic: hv.oEduBasica ? {
+            primary: hv.oEduBasica.strEduPrimaria === '1',
+            primary_completed: hv.oEduBasica.strConcluidoEduPrimaria === '1',
+            secondary: hv.oEduBasica.strEduSecundaria === '1',
+            secondary_completed: hv.oEduBasica.strConcluidoEduSecundaria === '1',
+        } : null,
         university: (hv.lEduUniversitaria || []).map(e => ({
-            institution: e.strCentroEstudio || '',
-            degree: e.strCarrera || '',
-            completed: e.strConcluido === 'CONCLUIDA',
-            year: e.intAnioInicio || null,
+            institution: e.strUniversidad || e.strCentroEstudio || '',
+            degree: e.strCarreraUni || e.strCarrera || '',
+            completed: e.strConcluidoEduUni === '1' || e.strConcluido === 'CONCLUIDA',
+            year: e.strAnioBachiller || e.intAnioInicio || null,
+            comment: e.strComentario || '',
         })),
-        postgraduate: (hv.lEduPosgrado || hv.oEduPosgrado?.lEduPosgrado || []).map(e => ({
-            institution: e.strCentroEstudio || '',
-            specialty: e.strEspecialidad || e.strCarrera || '',
-            degree: e.strGradoObtenido || '',
-            completed: e.strConcluido === 'CONCLUIDA',
-            year: e.intAnioInicio || null,
+        postgraduate: (hv.lEduPosgrado || []).map(e => ({
+            institution: e.strCenEstudioPosgrado || e.strCentroEstudio || '',
+            specialty: e.strEspecialidadPosgrado || e.strEspecialidad || e.strCarrera || '',
+            degree: e.strEsMaestro === '1' ? 'Maestría' : e.strEsDoctor === '1' ? 'Doctorado' : (e.strGradoObtenido || ''),
+            completed: e.strConcluidoPosgrado === '1' || e.strConcluido === 'CONCLUIDA',
+            year: e.strAnioPosgrado || e.intAnioInicio || null,
+            comment: e.strComentario || '',
         })),
         technical: (hv.lEduTecnica || []).map(e => ({
             institution: e.strCentroEstudio || '',
             specialty: e.strCarrera || '',
-            completed: e.strConcluido === 'CONCLUIDA',
+            completed: e.strConcluido === 'CONCLUIDA' || e.strConcluidoEduTec === '1',
         })),
     };
 
+    // Work Experience - uses strAnioTrabajoDesde/strAnioTrabajoHasta
     const workExperience = (hv.lExperienciaLaboral || []).map(e => ({
         employer: e.strCentroTrabajo || '',
-        position: e.strCargo || e.strOcupacionProfesion || '',
-        start_year: e.intAnioInicio || null,
-        end_year: e.intAnioFin || null,
-        period: `${e.intAnioInicio || '?'} - ${e.intAnioFin || 'Actualidad'}`,
+        position: e.strOcupacionProfesion || e.strCargo || '',
+        start_year: e.strAnioTrabajoDesde || e.intAnioInicio || null,
+        end_year: e.strAnioTrabajoHasta || e.intAnioFin || null,
+        period: `${e.strAnioTrabajoDesde || e.intAnioInicio || '?'} - ${e.strAnioTrabajoHasta === '0000' ? 'Actualidad' : e.strAnioTrabajoHasta || e.intAnioFin || 'Actualidad'}`,
+        comment: e.strComentario || '',
     }));
 
+    // Political History (Cargos Partidarios) - uses strCargoPartidario, strAnioCargoPartiDesde/Hasta
     const politicalHistory = (hv.lCargoPartidario || []).map(e => ({
-        organization: e.strOrganizacionPolitica || '',
-        position: e.strCargo || '',
-        start_year: e.intAnioInicio || null,
-        end_year: e.intAnioFin || null,
+        organization: e.strOrgPolCargoPartidario || e.strOrganizacionPolitica || '',
+        position: e.strCargoPartidario || e.strCargo || '',
+        start_year: e.strAnioCargoPartiDesde || e.intAnioInicio || null,
+        end_year: e.strAnioCargoPartiHasta === '0000' ? 'Actualidad' : (e.strAnioCargoPartiHasta || e.intAnioFin || null),
+        comment: e.strComentario || '',
     }));
 
+    // Resignations
     const resignations = (hv.lRenunciaOP || []).map(e => ({
         organization: e.strOrganizacionPolitica || '',
         year: e.intAnio || null,
     }));
 
-    const elections = (hv.lEleccion || []).map(e => ({
-        process: e.strProcesoElectoral || '',
-        organization: e.strOrganizacionPolitica || '',
-        position: e.strCargo || '',
+    // Elections (Cargos de Elección Popular) - lCargoEleccion uses strOrgPolCargoElec, strCargoEleccion2
+    const elections = (hv.lCargoEleccion || []).map(e => ({
+        organization: e.strOrgPolCargoElec || e.strOrganizacionPolitica || '',
+        position: e.strCargoEleccion2 || e.strCargo || '',
+        start_year: e.strAnioCargoElecDesde || null,
+        end_year: e.strAnioCargoElecHasta || null,
+        period: `${e.strAnioCargoElecDesde || '?'} - ${e.strAnioCargoElecHasta || '?'}`,
         elected: e.blElegido || false,
+        comment: e.strComentario || '',
     }));
 
+    // Finances - uses decRemuBrutaPublico/Privado
     const income = hv.oIngresos || {};
     const finances = {
-        public_income: parseFloat(income.decRemuBruta || 0),
-        private_income: parseFloat(income.decRentaIndividual || 0),
-        other_income: parseFloat(income.decOtroIngresoAnual || 0),
-        total_income: parseFloat(income.decTotalIngresos || 0),
+        year: income.strAnioIngresos || null,
+        public_income: parseFloat(income.decRemuBrutaPublico || 0),
+        private_income: parseFloat(income.decRemuBrutaPrivado || 0),
+        individual_public: parseFloat(income.decRentaIndividualPublico || 0),
+        individual_private: parseFloat(income.decRentaIndividualPrivado || 0),
+        other_public: parseFloat(income.decOtroIngresoPublico || 0),
+        other_private: parseFloat(income.decOtroIngresoPrivado || 0),
+        total_income: parseFloat(
+            (income.decRemuBrutaPublico || 0) + (income.decRemuBrutaPrivado || 0) +
+            (income.decRentaIndividualPublico || 0) + (income.decRentaIndividualPrivado || 0) +
+            (income.decOtroIngresoPublico || 0) + (income.decOtroIngresoPrivado || 0)
+        ),
         properties: (hv.lBienInmueble || []).map(p => ({
             type: p.strTipoBien || 'Inmueble',
-            value: parseFloat(p.decAutoavaluo || 0),
+            value: parseFloat(p.decAutoavaluo || p.decValor || 0),
             location: p.strDireccion || '',
         })),
-        vehicles: (hv.lBienVehiculo || []).map(v => ({
-            type: v.strTipoBien || 'Vehículo',
-            description: v.strMarca || '',
-            year: v.intAnio || null,
+        vehicles: (hv.lBienMueble || []).map(v => ({
+            type: v.strVehiculo || v.strTipoBien || 'Vehículo',
+            plate: v.strPlaca || '',
             value: parseFloat(v.decValor || 0),
         })),
     };
 
-    const sentences = (hv.lSentencia || []).map(s => ({
-        type: s.strTipoSentencia || '',
-        description: s.strModalidad || s.strDelitoPenal || '',
-        court: s.strOrganoJurisdiccional || '',
-        date: s.strFecha || '',
-    }));
-
-    const penal = (hv.lSentenciaPenal || []).map(s => ({
+    // Sentences
+    const sentences = (hv.lSentenciaPenal || []).map(s => ({
         type: 'Penal',
         crime: s.strDelitoPenal || '',
         court: s.strOrganoJurisdiccional || '',
         sentence: s.strSentencia || '',
     }));
 
+    const obligaSentences = (hv.lSentenciaObliga || []).map(s => ({
+        type: s.strTipoSentencia || 'Obligación',
+        description: s.strModalidad || '',
+        court: s.strOrganoJurisdiccional || '',
+        date: s.strFecha || '',
+    }));
+
     return {
         dni: personal.strDocumentoIdentidad || '',
         sex: personal.strSexo || '',
-        birthplace: personal.strLugarNacimiento || personal.strUbigeoNacimiento || '',
-        residence: personal.strDomicilioActual || personal.strUbigeoDomicilio || '',
+        birth_date: personal.strFechaNacimiento || '',
+        birthplace: [personal.strNaciDepartamento, personal.strNaciProvincia, personal.strNaciDistrito].filter(Boolean).join(', '),
+        residence: [personal.strDomiDepartamento, personal.strDomiProvincia, personal.strDomiDistrito].filter(Boolean).join(', '),
         education,
         work_experience: workExperience,
         political_history: politicalHistory,
         resignations,
         elections,
         finances,
-        sentences: [...sentences, ...penal],
+        sentences: [...sentences, ...obligaSentences],
     };
 }
 

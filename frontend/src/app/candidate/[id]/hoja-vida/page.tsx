@@ -5,6 +5,8 @@ import { Candidate, getCandidate } from '@/lib/api';
 import { getCandidatePhoto } from '@/lib/avatars';
 import Link from 'next/link';
 import { use } from 'react';
+import NavHeader from '@/components/NavHeader';
+import SiteFooter from '@/components/SiteFooter';
 
 // Collapsible section like JNE
 function Section({ title, children, defaultOpen = true }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
@@ -57,19 +59,19 @@ export default function HojaDeVidaPage({ params }: { params: Promise<{ id: strin
     }, [id]);
 
     if (loading) return (
-        <div style={{ minHeight: '100vh', background: '#f3f4f6', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 40, marginBottom: 12 }}>🗳️</div>
-                <div style={{ color: '#6b7280', fontSize: 14 }}>Cargando Hoja de Vida...</div>
+                <div className="w-14 h-14 rounded-full border-2 border-t-transparent animate-spin mx-auto" style={{ borderColor: 'var(--vp-red)', borderTopColor: 'transparent' }} />
+                <p className="mt-4 text-sm font-semibold" style={{ color: 'var(--vp-text-dim)' }}>Cargando Hoja de Vida...</p>
             </div>
         </div>
     );
 
     if (!candidate) return (
-        <div style={{ minHeight: '100vh', background: '#f3f4f6', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <div style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: 40, marginBottom: 12 }}>❌</div>
-                <div style={{ color: '#6b7280', fontSize: 14 }}>Candidato no encontrado</div>
+                <div style={{ color: 'var(--vp-text-dim)', fontSize: 14 }}>Candidato no encontrado</div>
                 <Link href="/" style={{ color: '#bc1d19', marginTop: 12, display: 'inline-block' }}>← Volver</Link>
             </div>
         </div>
@@ -89,27 +91,13 @@ export default function HojaDeVidaPage({ params }: { params: Promise<{ id: strin
     const photoUrl = candidate.photo ? getCandidatePhoto(candidate.photo, candidate.name) : getCandidatePhoto(null, candidate.name);
 
     return (
-        <div style={{ minHeight: '100vh', background: '#f3f4f6' }}>
-            {/* JNE-style red header */}
-            <div style={{ background: 'linear-gradient(90deg, #bc1d19 0%, #8b0000 100%)', padding: '12px 0' }}>
-                <div style={{ maxWidth: 1000, margin: '0 auto', padding: '0 20px', display: 'flex', alignItems: 'center', gap: 16 }}>
-                    <Link href="/" style={{ color: '#fff', textDecoration: 'none', fontSize: 13, display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <span style={{ fontSize: 20 }}>🗳️</span>
-                        <span style={{ fontWeight: 700, fontSize: 16 }}>VOTA.PE</span>
-                    </Link>
-                    <span style={{ color: 'rgba(255,255,255,0.5)' }}>|</span>
-                    <span style={{ color: '#fff', fontSize: 13, fontWeight: 500 }}>Hoja de Vida</span>
-                    <div style={{ flex: 1 }} />
-                    <Link href={`/candidate/${id}`} style={{ color: '#fff', fontSize: 12, textDecoration: 'none', background: 'rgba(255,255,255,0.15)', padding: '6px 14px', borderRadius: 4 }}>
-                        ← Volver al perfil
-                    </Link>
-                </div>
-            </div>
+        <div style={{ minHeight: '100vh', background: 'transparent' }}>
+            <NavHeader />
 
             {/* Back navigation */}
             <div style={{ maxWidth: 1000, margin: '0 auto', padding: '12px 20px' }}>
                 <Link href={`/candidate/${id}`} style={{ color: '#bc1d19', fontSize: 13, textDecoration: 'none', fontWeight: 600 }}>
-                    ← CANDIDATOS EG 2026
+                    ← Volver al perfil del candidato
                 </Link>
             </div>
 
@@ -460,6 +448,8 @@ export default function HojaDeVidaPage({ params }: { params: Promise<{ id: strin
                     Fuente: Jurado Nacional de Elecciones — Voto Informado | VOTA.PE
                 </div>
             </div>
+
+            <SiteFooter />
         </div>
     );
 }

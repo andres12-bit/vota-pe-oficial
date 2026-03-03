@@ -104,7 +104,7 @@ export default function NavHeader({ activeTab, onTabChange }: NavHeaderProps) {
                         <div className="relative" ref={explorarRef}>
                             <button
                                 onClick={() => setShowExplorar(!showExplorar)}
-                                className={`vp-nav-item ${isExplorarActive ? 'vp-nav-active' : ''}`}
+                                className={`vp-nav-item ${activeTab !== 'encuesta' && activeTab !== 'planchas' ? 'vp-nav-active' : ''}`}
                             >
                                 EXPLORAR CANDIDATOS
                                 <span className="explorar-chevron" style={{ transform: showExplorar ? 'rotate(180deg)' : 'none', marginLeft: 4, fontSize: 10 }}>▾</span>

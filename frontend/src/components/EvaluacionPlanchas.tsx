@@ -77,7 +77,7 @@ export default function EvaluacionPlanchas({ onNavigate }: Props) {
                 });
 
                 const scored = Array.from(partyMap.values())
-                    .filter(p => p.avgScore > 0)
+                    .filter(p => p.avgScore > 0 && p.presidentName)
                     .sort((a, b) => b.avgScore - a.avgScore);
 
                 setPartyScores(scored);

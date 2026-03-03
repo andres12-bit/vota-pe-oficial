@@ -20,14 +20,18 @@ import SelectionCart from '@/components/SelectionCart';
 import PostSelectionBar from '@/components/PostSelectionBar';
 import ShareModal from '@/components/ShareModal';
 import AnalisisSeleccion from '@/components/AnalisisSeleccion';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 type TabType = 'votar' | 'encuesta' | 'planchas' | 'president' | 'senator' | 'deputy' | 'andean';
+const VALID_TABS: TabType[] = ['votar', 'encuesta', 'planchas', 'president', 'senator', 'deputy', 'andean'];
 
 // TABS array is now in NavHeader component
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<TabType>('votar');
+  const searchParams = useSearchParams();
+  const tabFromUrl = searchParams.get('tab') as TabType | null;
+  const initialTab = (tabFromUrl && VALID_TABS.includes(tabFromUrl)) ? tabFromUrl : 'votar';
+  const [activeTab, setActiveTab] = useState<TabType>(initialTab);
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [momentumList, setMomentumList] = useState<Candidate[]>([]);
   const [totalVotes, setTotalVotes] = useState(1245882);
@@ -39,6 +43,16 @@ export default function Home() {
   const [showAnalysis, setShowAnalysis] = useState(false);
   const { lastMessage } = useWebSocket();
   const router = useRouter();
+
+  // Sync tab with URL changes (when user clicks back/forward)
+  useEffect(() => {
+    const newTab = searchParams.get('tab') as TabType | null;
+    if (newTab && VALID_TABS.includes(newTab) && newTab !== activeTab) {
+      setActiveTab(newTab);
+    } else if (!newTab && activeTab !== 'votar') {
+      setActiveTab('votar');
+    }
+  }, [searchParams]);
 
   // Fetch data
   useEffect(() => {

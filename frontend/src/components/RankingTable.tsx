@@ -141,16 +141,15 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
             </div>
 
             {/* Table Header */}
-            <div className="hidden md:grid grid-cols-[50px_1fr_100px_40px_100px_100px_80px_80px_90px] gap-2 px-6 py-2 text-[10px] font-bold tracking-wider uppercase" style={{ color: 'var(--vp-text-dim)', borderBottom: '1px solid var(--vp-border)' }}>
+            <div className="hidden md:grid grid-cols-[40px_1fr_80px_40px_90px_90px_80px_90px] gap-2 px-6 py-2 text-[10px] font-bold tracking-wider uppercase" style={{ color: 'var(--vp-text-dim)', borderBottom: '1px solid var(--vp-border)' }}>
                 <span>#</span>
                 <span>Candidato</span>
                 <span className="text-center">Score</span>
                 <span className="text-center">Tend.</span>
                 <span className="text-center">Momentum</span>
                 <span className="text-center">Inteligencia</span>
-                <span className="text-center">Estrellas</span>
                 <span className="text-center">Votar</span>
-                {cartActive && <span className="text-center">Selección</span>}
+                <span className="text-center">Selección</span>
             </div>
 
             {/* Candidates */}
@@ -160,23 +159,33 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
                     return (
                         <div key={candidate.id}>
                             {/* Desktop */}
-                            <div className={`hidden md:grid ${cartActive ? 'grid-cols-[50px_1fr_100px_40px_100px_100px_80px_80px_90px]' : 'grid-cols-[50px_1fr_100px_40px_100px_100px_80px_80px]'} gap-2 items-center px-6 py-4 rounded-lg transition-colors hover:bg-white/5 ranking-row`} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
+                            <div className="hidden md:grid grid-cols-[40px_1fr_80px_40px_90px_90px_80px_90px] gap-2 items-center px-6 py-4 rounded-lg transition-colors hover:bg-white/5 ranking-row" style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
                                 <span className="text-sm font-bold" style={{ color: globalRank <= 3 ? 'var(--vp-gold)' : 'var(--vp-text-dim)' }}>
                                     {globalRank}
                                 </span>
                                 <Link href={`/candidate/${candidate.id}`} className="flex items-center gap-3 pl-1">
                                     <img
-                                        src={getCandidatePhoto(candidate.photo, candidate.name, 40, candidate.party_color)}
-                                        onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(candidate.name, 40, candidate.party_color); }}
+                                        src={getCandidatePhoto(candidate.photo, candidate.name, 48, candidate.party_color)}
+                                        onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(candidate.name, 48, candidate.party_color); }}
                                         alt={candidate.name}
-                                        width={40}
-                                        height={40}
+                                        width={48}
+                                        height={48}
                                         className="candidate-avatar"
+                                        style={{ width: 48, height: 48 }}
                                         loading="lazy"
                                     />
                                     <div>
                                         <div className="text-sm font-semibold" style={{ color: 'var(--vp-text)' }}>{candidate.name}</div>
-                                        <div className="text-[10px]" style={{ color: candidate.party_color }}>{candidate.party_abbreviation} — {candidate.region}</div>
+                                        <div className="text-[10px] flex items-center gap-1" style={{ color: candidate.party_color }}>
+                                            {candidate.party_abbreviation}
+                                            {candidate.list_position ? (
+                                                <span className="inline-flex items-center justify-center px-1.5 py-0 rounded text-[9px] font-black" style={{ background: candidate.party_color + '22', color: candidate.party_color, border: `1px solid ${candidate.party_color}44` }}>
+                                                    N°{candidate.list_position}
+                                                </span>
+                                            ) : null}
+                                            <span style={{ color: 'var(--vp-text-dim)' }}>— {candidate.region}</span>
+                                        </div>
+                                        <div className="mt-0.5"><StarRating rating={Number(candidate.stars_rating)} /></div>
                                     </div>
                                 </Link>
                                 <div className="text-center">
@@ -195,9 +204,6 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
                                     {Number(candidate.intelligence_score).toFixed(1)}
                                 </div>
                                 <div className="text-center">
-                                    <StarRating rating={Number(candidate.stars_rating)} />
-                                </div>
-                                <div className="text-center">
                                     <button
                                         onClick={() => onVote(candidate.id, candidate.position)}
                                         className="text-xs font-bold px-3 py-1 rounded-lg transition-all hover:scale-105"
@@ -206,22 +212,20 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
                                         VOTAR
                                     </button>
                                 </div>
-                                {cartActive && (
-                                    <div className="text-center">
-                                        {isInCart(candidate.id) ? (
-                                            <span className="text-[10px] font-bold px-2 py-1 rounded-lg" style={{ color: 'var(--vp-green)', background: 'rgba(0,230,118,0.1)' }}>
-                                                ✅ Agregado
-                                            </span>
-                                        ) : (
-                                            <button
-                                                onClick={() => addCandidate(candidate)}
-                                                className="agregar-seleccion-btn text-[10px] font-bold px-2 py-1 rounded-lg transition-all hover:scale-105"
-                                            >
-                                                ➕ Agregar
-                                            </button>
-                                        )}
-                                    </div>
-                                )}
+                                <div className="text-center">
+                                    {isInCart(candidate.id) ? (
+                                        <span className="text-[10px] font-bold px-2 py-1 rounded-lg" style={{ color: 'var(--vp-green)', background: 'rgba(0,230,118,0.1)' }}>
+                                            ✅ Agregado
+                                        </span>
+                                    ) : (
+                                        <button
+                                            onClick={() => addCandidate(candidate)}
+                                            className="agregar-seleccion-btn text-[10px] font-bold px-2 py-1 rounded-lg transition-all hover:scale-105"
+                                        >
+                                            ➕ Agregar
+                                        </button>
+                                    )}
+                                </div>
                             </div>
 
                             {/* Mobile — vertical card layout */}
@@ -243,7 +247,15 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
                                         />
                                         <div className="min-w-0 flex-1">
                                             <div className="text-[13px] font-semibold leading-tight" style={{ color: 'var(--vp-text)' }}>{candidate.name}</div>
-                                            <div className="text-[10px] mt-0.5" style={{ color: candidate.party_color }}>{candidate.party_abbreviation} — {candidate.region}</div>
+                                            <div className="text-[10px] mt-0.5 flex items-center gap-1" style={{ color: candidate.party_color }}>
+                                                {candidate.party_abbreviation}
+                                                {candidate.list_position ? (
+                                                    <span className="inline-flex items-center justify-center px-1 py-0 rounded text-[8px] font-black" style={{ background: candidate.party_color + '22', color: candidate.party_color }}>
+                                                        N°{candidate.list_position}
+                                                    </span>
+                                                ) : null}
+                                                <span style={{ color: 'var(--vp-text-dim)' }}>— {candidate.region}</span>
+                                            </div>
                                             <div className="flex items-center gap-1.5 mt-1">
                                                 <TrendIndicator momentum={Number(candidate.momentum_score)} />
                                                 <StarRating rating={Number(candidate.stars_rating)} />

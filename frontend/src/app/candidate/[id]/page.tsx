@@ -6,6 +6,7 @@ import { getAvatarUrl, getCandidatePhoto } from '@/lib/avatars';
 import Link from 'next/link';
 import { use } from 'react';
 import NavHeader from '@/components/NavHeader';
+import SiteFooter from '@/components/SiteFooter';
 
 function StarRating({ rating }: { rating: number }) {
     const full = Math.floor(rating);
@@ -106,7 +107,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--vp-bg)' }}>
+            <div className="min-h-screen flex items-center justify-center" style={{ background: 'transparent' }}>
                 <div className="text-center">
                     <div className="w-14 h-14 rounded-full border-2 border-t-transparent animate-spin mx-auto" style={{ borderColor: 'var(--vp-red)', borderTopColor: 'transparent' }} />
                     <p className="mt-4 text-sm font-semibold" style={{ color: 'var(--vp-text-dim)' }}>Cargando Intelligence Report...</p>
@@ -117,7 +118,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
 
     if (!candidate) {
         return (
-            <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--vp-bg)' }}>
+            <div className="min-h-screen flex items-center justify-center" style={{ background: 'transparent' }}>
                 <div className="text-center">
                     <div className="text-5xl mb-4">🔍</div>
                     <p className="text-lg font-bold" style={{ color: 'var(--vp-red)' }}>Candidato no encontrado</p>
@@ -144,7 +145,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
     };
 
     return (
-        <div className="min-h-screen" style={{ background: 'var(--vp-bg)' }}>
+        <div className="min-h-screen" style={{ background: 'transparent' }}>
             {/* Full Navigation Header */}
             <NavHeader />
 
@@ -518,6 +519,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                     </Link>
                 </div>
             </main>
+            <SiteFooter />
         </div>
     );
 }

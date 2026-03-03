@@ -5,6 +5,8 @@ import { Candidate, search } from '@/lib/api';
 import { getAvatarUrl, getCandidatePhoto } from '@/lib/avatars';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import NavHeader from '@/components/NavHeader';
+import SiteFooter from '@/components/SiteFooter';
 
 interface SearchResults {
     candidates: Candidate[];
@@ -62,10 +64,7 @@ function SearchContent() {
 
     return (
         <div className="min-h-screen" style={{ background: 'transparent' }}>
-            <header className="sticky top-0 z-50 px-4 py-3 flex items-center gap-4" style={{ background: 'rgba(255,255,255,0.98)', borderBottom: '1px solid var(--vp-border)', backdropFilter: 'blur(20px)' }}>
-                <Link href="/" className="text-sm" style={{ color: 'var(--vp-text-dim)' }}>← VOTA.PE</Link>
-                <span className="text-sm font-bold tracking-wider" style={{ color: 'var(--vp-text)' }}>BÚSQUEDA GLOBAL</span>
-            </header>
+            <NavHeader />
 
             <main className="internal-page-wrapper">
                 {/* Search Form */}
@@ -196,6 +195,7 @@ function SearchContent() {
                     </div>
                 )}
             </main>
+            <SiteFooter />
         </div>
     );
 }

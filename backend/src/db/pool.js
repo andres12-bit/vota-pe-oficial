@@ -1337,6 +1337,7 @@ function handleDelete(q, params) {
 // Mimics pg.Pool so all existing routes work without changes
 
 const pool = {
+  _store: store,
   query: async (sql, params = []) => {
     try {
       return parseQuery(sql, params);
