@@ -252,87 +252,182 @@ const PLAN_TEMPLATE = [
   },
 ];
 
-function seedVicePresidentsAndPlans() {
-  // Helper: normalize party name for matching (strip accents, lowercase, remove common prefixes)
-  function normalizeName(n) {
-    return n.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
-      .replace(/partido (politico |democratico |nacional )?/g, '')
-      .replace(/alianza (electoral )?/g, 'alianza ')
-      .replace(/\s+/g, ' ').trim();
-  }
+function seedVicePresidentsAndPlans(jneData) {
+  // ==================== REAL JNE VP DATA ====================
+  // Load VPs from jneData.candidates.vice_presidents (real scraped data with photos)
+  const jneVPs = jneData.candidates.vice_presidents || [];
 
-  // Build lookup from VP_DATA with normalized keys
-  const vpDataNormalized = {};
-  Object.keys(VP_DATA).forEach(key => {
-    vpDataNormalized[normalizeName(key)] = VP_DATA[key];
+  // Build lookup: party_jne_id → array of VPs
+  const vpsByParty = {};
+  jneVPs.forEach(vp => {
+    if (!vpsByParty[vp.party_jne_id]) vpsByParty[vp.party_jne_id] = [];
+    vpsByParty[vp.party_jne_id].push(vp);
   });
 
+  // Build reverse lookup: our party id → jne party id
+  const partyIdToJneId = {};
+  jneData.parties.forEach(jp => {
+    const ourParty = store.parties.find(p => {
+      // Match by name similarity
+      const jpName = jp.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+      const ourName = p.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+      return jpName === ourName || jpName.includes(ourName) || ourName.includes(jpName);
+    });
+    if (ourParty) partyIdToJneId[ourParty.id] = jp.jne_id;
+  });
+
+  // Load plan de gobierno data ONCE (used for all candidates)
+  let planGobiernoData;
+  try {
+    planGobiernoData = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'jne_plan_gobierno.json'), 'utf-8'));
+  } catch (e) { planGobiernoData = { plans: [] }; }
+
+  // ==================== SEED VPs FOR PRESIDENTIAL CANDIDATES ====================
   const presidentCandidates = store.candidates.filter(c => c.position === 'president');
+  let vpCount = 0;
+
   presidentCandidates.forEach(cand => {
     const party = store.parties.find(p => p.id === cand.party_id);
     if (!party) return;
 
-    // Try exact match first, then normalized match, then keyword search
-    let data = VP_DATA[party.name];
-    if (!data) {
-      const normalizedPartyName = normalizeName(party.name);
-      data = vpDataNormalized[normalizedPartyName];
-    }
-    if (!data) {
-      // Fuzzy: find VP_DATA key that is a substring of the party name or vice versa
-      const normalizedPartyName = normalizeName(party.name);
-      for (const [normalizedKey, vpData] of Object.entries(vpDataNormalized)) {
-        if (normalizedPartyName.includes(normalizedKey) || normalizedKey.includes(normalizedPartyName)) {
-          data = vpData;
-          break;
-        }
-      }
-    }
-    if (!data) return;
+    const jnePartyId = partyIdToJneId[party.id];
+    if (!jnePartyId) return;
 
-    // Update candidate with education/experience/birth_date
-    cand.education = data.edu;
-    cand.experience = data.exp;
-    cand.birth_date = data.birth;
+    // Get VPs for this party
+    const partyVPs = vpsByParty[jnePartyId] || [];
 
-    // Insert vice-presidents
-    data.vps.forEach((vp, i) => {
-      store.candidate_vice_presidents.push({
-        id: nextId.vps++, candidate_id: cand.id,
-        name: vp.name, position_label: vp.label, photo: null,
-        biography: vp.bio, sort_order: i + 1,
-        created_at: new Date().toISOString(),
-      });
+    // Sort: VP1 first, VP2 second
+    partyVPs.sort((a, b) => {
+      const posA = a.position === 'vice_president_1' ? 1 : 2;
+      const posB = b.position === 'vice_president_1' ? 1 : 2;
+      return posA - posB;
     });
 
-    // Insert plan de gobierno
-    let sortOrder = 1;
-    PLAN_TEMPLATE.forEach(dim => {
-      dim.items.forEach(item => {
-        store.candidate_plan_gobierno.push({
-          id: nextId.plan++, candidate_id: cand.id,
-          dimension: dim.dim, problem: item.prob,
-          objective: item.obj, goals: item.goals,
-          indicator: item.ind, sort_order: sortOrder++,
-          created_at: new Date().toISOString(),
-        });
+    // Insert real VPs with photos and education
+    partyVPs.forEach((vp, i) => {
+      const vpEdu = extractEducation(vp.hoja_de_vida);
+      const vpExp = extractExperience(vp.hoja_de_vida);
+      const vpBio = [vpEdu, vpExp].filter(Boolean).join(' ') || `Candidato(a) ${vp.cargo || 'Vicepresidente'}.`;
+
+      store.candidate_vice_presidents.push({
+        id: nextId.vps++, candidate_id: cand.id,
+        name: vp.name,
+        position_label: vp.cargo || (i === 0 ? 'Primer(a) Vicepresidente(a) de la República' : 'Segundo(a) Vicepresidente(a) de la República'),
+        photo: vp.photo_url || null,
+        biography: vpBio,
+        sort_order: i + 1,
+        created_at: new Date().toISOString(),
       });
+      vpCount++;
     });
   });
 
-  console.log(`[MEM-DB] Seeded ${store.candidate_vice_presidents.length} VPs, ${store.candidate_plan_gobierno.length} plan items for ${presidentCandidates.length} presidents`);
+  console.log(`[MEM-DB] Seeded ${vpCount} VPs (REAL JNE DATA)`);
+
+  // ==================== SEED PLAN DE GOBIERNO FOR ALL CANDIDATES ====================
+  // Plan de Gobierno is per-party, so assign to ALL candidates (president, senator, deputy, andean)
+  const allCandidates = store.candidates.filter(c => c.is_active);
+  let planItemCount = 0;
+  const planByPosition = { president: 0, senator: 0, deputy: 0, andean: 0 };
+
+  allCandidates.forEach(cand => {
+    const party = store.parties.find(p => p.id === cand.party_id);
+    if (!party) return;
+
+    const jnePartyId = partyIdToJneId[party.id];
+    if (!jnePartyId) return;
+
+    const partyPlan = planGobiernoData.plans.find(p => p.party_jne_id === jnePartyId);
+    if (partyPlan && partyPlan.dimensions.length > 0) {
+      let sortOrder = 1;
+      partyPlan.dimensions.forEach(dim => {
+        dim.items.forEach(item => {
+          store.candidate_plan_gobierno.push({
+            id: nextId.plan++, candidate_id: cand.id,
+            dimension: dim.dimension, problem: item.problem,
+            objective: item.objective, goals: item.goals,
+            indicator: item.indicator, sort_order: sortOrder++,
+            created_at: new Date().toISOString(),
+          });
+          planItemCount++;
+        });
+      });
+      // Store PDF URL on candidate
+      if (partyPlan.plan_pdf_url) cand.plan_pdf_url = partyPlan.plan_pdf_url;
+      if (partyPlan.plan_pdf_local) cand.plan_pdf_local = partyPlan.plan_pdf_local;
+      planByPosition[cand.position] = (planByPosition[cand.position] || 0) + 1;
+    } else {
+      // Fallback to template if no real data
+      let sortOrder = 1;
+      PLAN_TEMPLATE.forEach(dim => {
+        dim.items.forEach(item => {
+          store.candidate_plan_gobierno.push({
+            id: nextId.plan++, candidate_id: cand.id,
+            dimension: dim.dim, problem: item.prob,
+            objective: item.obj, goals: item.goals,
+            indicator: item.ind, sort_order: sortOrder++,
+            created_at: new Date().toISOString(),
+          });
+          planItemCount++;
+        });
+      });
+      planByPosition[cand.position] = (planByPosition[cand.position] || 0) + 1;
+    }
+  });
+
+  console.log(`[MEM-DB] Seeded ${planItemCount} plan de gobierno items for ALL candidates:`);
+  console.log(`[MEM-DB]   Presidents: ${planByPosition.president || 0}, Senators: ${planByPosition.senator || 0}, Deputies: ${planByPosition.deputy || 0}, Andean: ${planByPosition.andean || 0}`);
+
+  // Helper functions used by VP bio generation
+  function extractEducation(hv) {
+    if (!hv || !hv.education) return null;
+    const edu = hv.education;
+    const parts = [];
+    if (edu.postgraduate && edu.postgraduate.length > 0) {
+      edu.postgraduate.forEach(pg => {
+        if (pg.degree || pg.specialty) parts.push(`${pg.degree || 'Posgrado'}${pg.specialty ? ' en ' + pg.specialty : ''}${pg.institution ? ' (' + pg.institution + ')' : ''}`);
+      });
+    }
+    if (edu.university && edu.university.length > 0) {
+      edu.university.forEach(u => {
+        if (u.degree || u.specialty) parts.push(`${u.degree || 'Profesional'}${u.specialty ? ' en ' + u.specialty : ''}${u.institution ? ' (' + u.institution + ')' : ''}`);
+      });
+    }
+    if (edu.technical && edu.technical.length > 0) {
+      edu.technical.forEach(t => {
+        if (t.specialty) parts.push(`Técnico en ${t.specialty}${t.institution ? ' (' + t.institution + ')' : ''}`);
+      });
+    }
+    return parts.length > 0 ? parts.join('. ') + '.' : null;
+  }
+
+  function extractExperience(hv) {
+    if (!hv || !hv.work_experience || hv.work_experience.length === 0) return null;
+    const top = hv.work_experience.slice(0, 3);
+    const parts = top.filter(w => w.position || w.employer).map(w => {
+      return `${w.position || 'Cargo'}${w.employer ? ' en ' + w.employer : ''}${w.period ? ' (' + w.period + ')' : ''}`;
+    });
+    return parts.length > 0 ? parts.join('. ') + '.' : null;
+  }
 }
 
 // ==================== INITIALIZE DATA FROM REAL JNE DATA ====================
 function initializeData() {
-  // Load real JNE data
-  const jnePath = path.join(__dirname, '..', 'data', 'jne_candidates.json');
+  // Load real JNE data (full hoja de vida)
+  const jnePathFull = path.join(__dirname, '..', 'data', 'jne_hojadevida_full.json');
+  const jnePathBasic = path.join(__dirname, '..', 'data', 'jne_candidates.json');
   let jneData;
   try {
-    jneData = JSON.parse(fs.readFileSync(jnePath, 'utf-8'));
+    jneData = JSON.parse(fs.readFileSync(jnePathFull, 'utf-8'));
+    console.log('[MEM-DB] ✅ Loaded jne_hojadevida_full.json (complete hoja de vida)');
   } catch (err) {
-    console.error('[MEM-DB] ❌ Could not load jne_candidates.json. Run: node src/scripts/scrape_jne.js');
-    process.exit(1);
+    try {
+      jneData = JSON.parse(fs.readFileSync(jnePathBasic, 'utf-8'));
+      console.log('[MEM-DB] ⚠️ Using jne_candidates.json (basic data, no hoja de vida)');
+    } catch (err2) {
+      console.error('[MEM-DB] ❌ Could not load JNE data. Run: node src/scripts/scrape_jne_hojadevida.js');
+      process.exit(1);
+    }
   }
 
   // Party color palette (cycle through these for parties)
@@ -359,6 +454,58 @@ function initializeData() {
     jnePartyMap[jp.jne_id] = id;
   });
 
+  // Helper: extract education summary from hoja de vida
+  function extractEducation(hv) {
+    if (!hv || !hv.education) return null;
+    const edu = hv.education;
+    const parts = [];
+    if (edu.postgraduate && edu.postgraduate.length > 0) {
+      edu.postgraduate.forEach(pg => {
+        if (pg.degree || pg.specialty) parts.push(`${pg.degree || 'Posgrado'}${pg.specialty ? ' en ' + pg.specialty : ''}${pg.institution ? ' (' + pg.institution + ')' : ''}`);
+      });
+    }
+    if (edu.university && edu.university.length > 0) {
+      edu.university.forEach(u => {
+        if (u.degree || u.specialty) parts.push(`${u.degree || 'Profesional'}${u.specialty ? ' en ' + u.specialty : ''}${u.institution ? ' (' + u.institution + ')' : ''}`);
+      });
+    }
+    if (edu.technical && edu.technical.length > 0) {
+      edu.technical.forEach(t => {
+        if (t.specialty) parts.push(`Técnico en ${t.specialty}${t.institution ? ' (' + t.institution + ')' : ''}`);
+      });
+    }
+    return parts.length > 0 ? parts.join('. ') + '.' : null;
+  }
+
+  // Helper: extract work experience summary from hoja de vida
+  function extractExperience(hv) {
+    if (!hv || !hv.work_experience || hv.work_experience.length === 0) return null;
+    const top = hv.work_experience.slice(0, 3);
+    const parts = top.filter(w => w.position || w.employer).map(w => {
+      return `${w.position || 'Cargo'}${w.employer ? ' en ' + w.employer : ''}${w.period ? ' (' + w.period + ')' : ''}`;
+    });
+    return parts.length > 0 ? parts.join('. ') + '.' : null;
+  }
+
+  // Helper: extract birth date
+  function extractBirthDate(hv) {
+    if (!hv || !hv.personal) return null;
+    return hv.personal.birth_date || null;
+  }
+
+  // Helper: build biography from hoja de vida
+  function buildBio(raw, position) {
+    const hv = raw.hoja_de_vida;
+    const baseBio = `Candidato(a) ${raw.cargo || position}. ${raw.party_name || ''}.`;
+    if (!hv) return baseBio;
+    const parts = [];
+    const edu = extractEducation(hv);
+    const exp = extractExperience(hv);
+    if (edu) parts.push(edu);
+    if (exp) parts.push(exp);
+    return parts.length > 0 ? parts.join(' ') : baseBio;
+  }
+
   // Helper: create a candidate from JNE raw data
   function seedCandidate(raw, position) {
     const partyId = jnePartyMap[raw.party_jne_id];
@@ -374,6 +521,7 @@ function initializeData() {
     const finalScore = parseFloat(((voteNorm * 0.40) + (intScore * 0.25) + (momScore * 0.20) + (integScore * 0.15)).toFixed(2));
 
     const isActive = raw.status !== 'EXCLUIDO' && raw.status !== 'IMPROCEDENTE';
+    const hv = raw.hoja_de_vida;
 
     store.candidates.push({
       id,
@@ -382,7 +530,15 @@ function initializeData() {
       party_id: partyId,
       position: position,
       region: raw.region || 'Lima',
-      biography: `Candidato(a) ${raw.cargo || position}. ${raw.party_name || ''}.`,
+      biography: buildBio(raw, position),
+      education: extractEducation(hv),
+      experience: extractExperience(hv),
+      birth_date: extractBirthDate(hv),
+      dni: raw.dni || null,
+      sex: hv ? hv.sex : null,
+      cargo: raw.cargo || position,
+      party_jne_name: raw.party_name || '',
+      hoja_de_vida: hv || null,
       intelligence_score: intScore,
       momentum_score: momScore,
       integrity_score: integScore,
@@ -418,9 +574,6 @@ function initializeData() {
   );
   presidentCandidates.forEach(c => seedCandidate(c, 'president'));
 
-  // ==================== SEED VP DATA ====================
-  seedVicePresidentsAndPlans();
-
   // ==================== SEED SENATORS ====================
   jneData.candidates.senators.forEach(c => seedCandidate(c, 'senator'));
 
@@ -429,6 +582,10 @@ function initializeData() {
 
   // ==================== SEED ANDEAN PARLIAMENT ====================
   jneData.candidates.andean.forEach(c => seedCandidate(c, 'andean'));
+
+  // ==================== SEED VP DATA & PLAN DE GOBIERNO FOR ALL ====================
+  // Must be called AFTER all candidates are seeded so plan de gobierno is assigned to all
+  seedVicePresidentsAndPlans(jneData);
 
   // ==================== CALCULATE PARTY SCORES ====================
   store.parties.forEach(party => {

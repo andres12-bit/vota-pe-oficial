@@ -28,6 +28,8 @@ export interface Candidate {
     events?: CandidateEvent[];
     vice_presidents?: VicePresident[];
     plan_gobierno?: PlanGobierno[];
+    plan_pdf_url?: string;
+    plan_pdf_local?: string;
 }
 
 export interface VicePresident {

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Candidate } from '@/lib/api';
-import { getAvatarUrl } from '@/lib/avatars';
+import { getAvatarUrl, getCandidatePhoto } from '@/lib/avatars';
 import Link from 'next/link';
 
 interface Props {
@@ -101,7 +101,8 @@ export default function LiveMomentum({ candidates }: Props) {
                             <div className="flex items-center gap-3 p-2 rounded-lg transition-colors hover:bg-white/5">
                                 {/* Avatar */}
                                 <img
-                                    src={getAvatarUrl(candidate.name, 40, candidate.party_color)}
+                                    src={getCandidatePhoto(candidate.photo, candidate.name, 40, candidate.party_color)}
+                                    onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(candidate.name, 40, candidate.party_color); }}
                                     alt={candidate.name}
                                     width={40}
                                     height={40}
@@ -174,7 +175,8 @@ export default function LiveMomentum({ candidates }: Props) {
                                 <div className="flex items-center gap-2 mb-1.5">
                                     <span className="text-sm">{medals[i]}</span>
                                     <img
-                                        src={getAvatarUrl(c.name, 28, c.party_color)}
+                                        src={getCandidatePhoto(c.photo, c.name, 28, c.party_color)}
+                                        onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(c.name, 28, c.party_color); }}
                                         alt={c.name}
                                         width={28}
                                         height={28}
@@ -222,27 +224,6 @@ export default function LiveMomentum({ candidates }: Props) {
                     <span className="text-[9px] font-bold" style={{ color: 'var(--vp-text-dim)' }}>
                         Actualización: cada 5s
                     </span>
-                </div>
-
-                {/* Activity chart with time labels */}
-                <div className="mt-3">
-                    <div className="h-20 rounded-lg flex items-end gap-[2px] overflow-hidden" style={{ background: 'rgba(0,0,0,0.02)' }}>
-                        {Array.from({ length: 24 }).map((_, i) => (
-                            <div key={i} className="flex-1 rounded-t transition-all duration-300"
-                                style={{
-                                    height: `${20 + Math.sin(i * 0.5) * 30 + ((i * 17 + 7) % 25)}%`,
-                                    background: `linear-gradient(to top, var(--vp-red), rgba(198,40,40,0.2))`,
-                                    opacity: 0.3 + (i / 24) * 0.7
-                                }} />
-                        ))}
-                    </div>
-                    <div className="flex justify-between mt-1">
-                        <span className="text-[8px]" style={{ color: 'var(--vp-text-dim)' }}>00:00</span>
-                        <span className="text-[8px]" style={{ color: 'var(--vp-text-dim)' }}>06:00</span>
-                        <span className="text-[8px]" style={{ color: 'var(--vp-text-dim)' }}>12:00</span>
-                        <span className="text-[8px]" style={{ color: 'var(--vp-text-dim)' }}>18:00</span>
-                        <span className="text-[8px] font-bold" style={{ color: 'var(--vp-red)' }}>Ahora</span>
-                    </div>
                 </div>
             </div>
         </div>

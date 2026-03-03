@@ -208,135 +208,236 @@ export default function EncuestaPanel() {
                 </div>
             </div>
 
-            {/* ═══════════ POLL CARDS ═══════════ */}
-            <div className="enc-polls-grid">
-                {polls.map(poll => {
-                    const hasVoted = votedOptions[poll.id] !== undefined;
-                    const myVote = votedOptions[poll.id];
-                    const isVoting = votingId === poll.id;
-                    const totalVotes = Object.values(poll.vote_counts || {}).reduce((a, b) => a + b, 0) || 1;
+            {/* ═══════════ POLLS + SIDEBAR LAYOUT ═══════════ */}
+            <div className="enc-content-layout">
+                {/* LEFT: Poll Cards */}
+                <div className="enc-polls-grid">
+                    {polls.map(poll => {
+                        const hasVoted = votedOptions[poll.id] !== undefined;
+                        const myVote = votedOptions[poll.id];
+                        const isVoting = votingId === poll.id;
+                        const totalVotes = Object.values(poll.vote_counts || {}).reduce((a, b) => a + b, 0) || 1;
 
-                    // Find leader
-                    const counts = poll.vote_counts || {};
-                    const maxCount = Math.max(...Object.values(counts), 0);
-                    const leaderIdx = Object.entries(counts).find(([, v]) => v === maxCount)?.[0];
-                    const leaderName = leaderIdx !== undefined ? poll.options[Number(leaderIdx)] : null;
-                    const leaderPct = totalVotes > 0 ? (maxCount / totalVotes) * 100 : 0;
+                        // Find leader
+                        const counts = poll.vote_counts || {};
+                        const maxCount = Math.max(...Object.values(counts), 0);
+                        const leaderIdx = Object.entries(counts).find(([, v]) => v === maxCount)?.[0];
+                        const leaderName = leaderIdx !== undefined ? poll.options[Number(leaderIdx)] : null;
+                        const leaderPct = totalVotes > 0 ? (maxCount / totalVotes) * 100 : 0;
 
-                    // Competition: margin between 1st and 2nd
-                    const sortedCounts = Object.values(counts).sort((a, b) => b - a);
-                    const margin = sortedCounts.length >= 2 ? (sortedCounts[0] - sortedCounts[1]) / totalVotes * 100 : 100;
-                    const competitiveness = margin < 5 ? 'Muy reñida' : margin < 15 ? 'Competitiva' : 'Dominante';
-                    const compColor = margin < 5 ? '#dc2626' : margin < 15 ? '#ca8a04' : '#16a34a';
+                        // Competition: margin between 1st and 2nd
+                        const sortedCounts = Object.values(counts).sort((a, b) => b - a);
+                        const margin = sortedCounts.length >= 2 ? (sortedCounts[0] - sortedCounts[1]) / totalVotes * 100 : 100;
+                        const competitiveness = margin < 5 ? 'Muy reñida' : margin < 15 ? 'Competitiva' : 'Dominante';
+                        const compColor = margin < 5 ? '#dc2626' : margin < 15 ? '#ca8a04' : '#16a34a';
 
-                    return (
-                        <div key={poll.id} className="enc-poll-card">
-                            {/* Card Header */}
-                            <div className="enc-poll-header">
-                                <div className="enc-poll-meta">
-                                    <span className="enc-poll-emoji">{poll.emoji}</span>
-                                    <div>
-                                        <h3 className="enc-poll-question">{poll.question}</h3>
-                                        <div className="enc-poll-tags">
-                                            <span className="enc-poll-cat-tag">{poll.category}</span>
-                                            <span className="enc-poll-comp-tag" style={{ background: `${compColor}15`, color: compColor }}>
-                                                {competitiveness}
-                                            </span>
+                        return (
+                            <div key={poll.id} className="enc-poll-card">
+                                {/* Card Header */}
+                                <div className="enc-poll-header">
+                                    <div className="enc-poll-meta">
+                                        <span className="enc-poll-emoji">{poll.emoji}</span>
+                                        <div>
+                                            <h3 className="enc-poll-question">{poll.question}</h3>
+                                            <div className="enc-poll-tags">
+                                                <span className="enc-poll-cat-tag">{poll.category}</span>
+                                                <span className="enc-poll-comp-tag" style={{ background: `${compColor}15`, color: compColor }}>
+                                                    {competitiveness}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
+                                    <div className="enc-poll-votes-col">
+                                        <span className="enc-poll-votes-num">{totalVotes.toLocaleString()}</span>
+                                        <span className="enc-poll-votes-lbl">VOTOS</span>
+                                    </div>
                                 </div>
-                                <div className="enc-poll-votes-col">
-                                    <span className="enc-poll-votes-num">{totalVotes.toLocaleString()}</span>
-                                    <span className="enc-poll-votes-lbl">VOTOS</span>
-                                </div>
-                            </div>
 
-                            {/* Leader Indicator */}
-                            {hasVoted && leaderName && (
-                                <div className="enc-leader-strip">
-                                    <span className="enc-leader-icon">👑</span>
-                                    <span className="enc-leader-name">{leaderName}</span>
-                                    <span className="enc-leader-pct" style={{ color: OPTION_COLORS[Number(leaderIdx) % OPTION_COLORS.length] }}>
-                                        {leaderPct.toFixed(1)}%
-                                    </span>
-                                    <span className="enc-leader-margin">margen: {margin.toFixed(1)}%</span>
-                                </div>
-                            )}
-
-                            {/* Options */}
-                            <div className="enc-poll-options">
-                                {poll.options.map((option, idx) => {
-                                    const count = poll.vote_counts?.[idx] || 0;
-                                    const percentage = totalVotes > 0 ? (count / totalVotes) * 100 : 0;
-                                    const color = OPTION_COLORS[idx % OPTION_COLORS.length];
-                                    const isMyVote = myVote === idx;
-                                    const isLeader = hasVoted && count === maxCount && count > 0;
-
-                                    return (
-                                        <button
-                                            key={idx}
-                                            onClick={() => handleVote(poll.id, idx)}
-                                            disabled={isVoting || isMyVote}
-                                            className="enc-option-btn"
-                                            style={{
-                                                borderColor: isMyVote ? color : isLeader ? `${color}66` : 'rgba(0,0,0,0.06)',
-                                                background: isMyVote ? `${color}08` : '#fff',
-                                                opacity: isVoting ? 0.6 : 1,
-                                            }}
-                                        >
-                                            {/* Bar fill */}
-                                            {hasVoted && (
-                                                <div className="enc-option-fill" style={{ width: `${percentage}%`, background: `${color}12` }} />
-                                            )}
-
-                                            {/* Content */}
-                                            <div className="enc-option-content">
-                                                <div className="enc-option-left">
-                                                    {isMyVote ? (
-                                                        <span className="enc-option-check" style={{ background: color }}>✓</span>
-                                                    ) : (
-                                                        <span className="enc-option-dot" style={{ background: color }} />
-                                                    )}
-                                                    <span className="enc-option-name" style={{ color: isMyVote || isLeader ? color : 'var(--vp-text)' }}>
-                                                        {option}
-                                                    </span>
-                                                </div>
-
-                                                {hasVoted ? (
-                                                    <div className="enc-option-stats">
-                                                        <span className="enc-option-pct" style={{ color: isLeader ? color : 'var(--vp-text-dim)' }}>
-                                                            {percentage.toFixed(1)}%
-                                                        </span>
-                                                        <span className="enc-option-count">({count.toLocaleString()})</span>
-                                                    </div>
-                                                ) : (
-                                                    <span className="enc-option-vote-tag" style={{ background: `${color}15`, color }}>
-                                                        VOTAR
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </button>
-                                    );
-                                })}
-                            </div>
-
-                            {/* Footer */}
-                            <div className="enc-poll-footer">
-                                {hasVoted ? (
-                                    <>
-                                        <div className="enc-poll-foot-left">
-                                            <span className="enc-foot-check">✅</span>
-                                            <span>Voto registrado — puedes cambiar tu preferencia</span>
-                                        </div>
-                                        <span className="enc-foot-badge">1 voto por IP</span>
-                                    </>
-                                ) : (
-                                    <span className="enc-foot-hint">👆 Selecciona una opción para ver los resultados en vivo</span>
+                                {/* Leader Indicator */}
+                                {hasVoted && leaderName && (
+                                    <div className="enc-leader-strip">
+                                        <span className="enc-leader-icon">👑</span>
+                                        <span className="enc-leader-name">{leaderName}</span>
+                                        <span className="enc-leader-pct" style={{ color: OPTION_COLORS[Number(leaderIdx) % OPTION_COLORS.length] }}>
+                                            {leaderPct.toFixed(1)}%
+                                        </span>
+                                        <span className="enc-leader-margin">margen: {margin.toFixed(1)}%</span>
+                                    </div>
                                 )}
+
+                                {/* Options */}
+                                <div className="enc-poll-options">
+                                    {poll.options.map((option, idx) => {
+                                        const count = poll.vote_counts?.[idx] || 0;
+                                        const percentage = totalVotes > 0 ? (count / totalVotes) * 100 : 0;
+                                        const color = OPTION_COLORS[idx % OPTION_COLORS.length];
+                                        const isMyVote = myVote === idx;
+                                        const isLeader = hasVoted && count === maxCount && count > 0;
+
+                                        return (
+                                            <button
+                                                key={idx}
+                                                onClick={() => handleVote(poll.id, idx)}
+                                                disabled={isVoting || isMyVote}
+                                                className="enc-option-btn"
+                                                style={{
+                                                    borderColor: isMyVote ? color : isLeader ? `${color}66` : 'rgba(0,0,0,0.06)',
+                                                    background: isMyVote ? `${color}08` : '#fff',
+                                                    opacity: isVoting ? 0.6 : 1,
+                                                }}
+                                            >
+                                                {/* Bar fill */}
+                                                {hasVoted && (
+                                                    <div className="enc-option-fill" style={{ width: `${percentage}%`, background: `${color}12` }} />
+                                                )}
+
+                                                {/* Content */}
+                                                <div className="enc-option-content">
+                                                    <div className="enc-option-left">
+                                                        {isMyVote ? (
+                                                            <span className="enc-option-check" style={{ background: color }}>✓</span>
+                                                        ) : (
+                                                            <span className="enc-option-dot" style={{ background: color }} />
+                                                        )}
+                                                        <span className="enc-option-name" style={{ color: isMyVote || isLeader ? color : 'var(--vp-text)' }}>
+                                                            {option}
+                                                        </span>
+                                                    </div>
+
+                                                    {hasVoted ? (
+                                                        <div className="enc-option-stats">
+                                                            <span className="enc-option-pct" style={{ color: isLeader ? color : 'var(--vp-text-dim)' }}>
+                                                                {percentage.toFixed(1)}%
+                                                            </span>
+                                                            <span className="enc-option-count">({count.toLocaleString()})</span>
+                                                        </div>
+                                                    ) : (
+                                                        <span className="enc-option-vote-tag" style={{ background: `${color}15`, color }}>
+                                                            VOTAR
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+
+                                {/* Footer */}
+                                <div className="enc-poll-footer">
+                                    {hasVoted ? (
+                                        <>
+                                            <div className="enc-poll-foot-left">
+                                                <span className="enc-foot-check">✅</span>
+                                                <span>Voto registrado — puedes cambiar tu preferencia</span>
+                                            </div>
+                                            <span className="enc-foot-badge">1 voto por IP</span>
+                                        </>
+                                    ) : (
+                                        <span className="enc-foot-hint">👆 Selecciona una opción para ver los resultados en vivo</span>
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+
+                {/* RIGHT: Stats Sidebar */}
+                <aside className="enc-sidebar">
+                    {/* Trending Insights */}
+                    <div className="enc-side-card">
+                        <h4 className="enc-side-title">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>
+                            Tendencias en Vivo
+                        </h4>
+                        {polls.map(poll => {
+                            const counts = poll.vote_counts || {};
+                            const total = Object.values(counts).reduce((a, b) => a + b, 0) || 1;
+                            const sorted = Object.entries(counts).sort(([, a], [, b]) => b - a);
+                            const leader = sorted[0];
+                            const leaderPct = leader ? (leader[1] / total) * 100 : 0;
+                            const color = leader ? OPTION_COLORS[Number(leader[0]) % OPTION_COLORS.length] : '#999';
+
+                            return (
+                                <div key={poll.id} className="enc-trend-item">
+                                    <span className="enc-trend-emoji">{poll.emoji}</span>
+                                    <div className="enc-trend-info">
+                                        <div className="enc-trend-q">{poll.question.length > 30 ? poll.question.slice(0, 30) + '...' : poll.question}</div>
+                                        <div className="enc-trend-bar-track">
+                                            <div className="enc-trend-bar-fill" style={{ width: `${leaderPct}%`, background: color }} />
+                                        </div>
+                                    </div>
+                                    <span className="enc-trend-pct" style={{ color }}>{leaderPct.toFixed(0)}%</span>
+                                </div>
+                            );
+                        })}
+                    </div>
+
+                    {/* Vote Distribution */}
+                    <div className="enc-side-card">
+                        <h4 className="enc-side-title">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.21 15.89A10 10 0 118 2.83" /><path d="M22 12A10 10 0 0012 2v10z" /></svg>
+                            Distribución de Votos
+                        </h4>
+                        <div className="enc-dist-items">
+                            {polls.map((poll, pi) => {
+                                const total = Object.values(poll.vote_counts || {}).reduce((a, b) => a + b, 0);
+                                const pct = analytics.totalVotes > 0 ? (total / analytics.totalVotes) * 100 : 0;
+                                const catColors = ['#c62828', '#1565c0', '#2e7d32', '#7c3aed', '#ca8a04'];
+                                return (
+                                    <div key={poll.id} className="enc-dist-row">
+                                        <span className="enc-dist-label">{poll.emoji}</span>
+                                        <div className="enc-dist-bar-track">
+                                            <div className="enc-dist-bar-fill" style={{ width: `${pct}%`, background: catColors[pi % catColors.length] }} />
+                                        </div>
+                                        <span className="enc-dist-val">{pct.toFixed(0)}%</span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {/* Engagement Stats */}
+                    <div className="enc-side-card">
+                        <h4 className="enc-side-title">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
+                            Engagement
+                        </h4>
+                        <div className="enc-engage-grid">
+                            <div className="enc-engage-item">
+                                <div className="enc-engage-val" style={{ color: '#c62828' }}>
+                                    {analytics.totalVotes > 0 ? (analytics.totalVotes / polls.length).toFixed(0) : 0}
+                                </div>
+                                <div className="enc-engage-lbl">Promedio votos/encuesta</div>
+                            </div>
+                            <div className="enc-engage-item">
+                                <div className="enc-engage-val" style={{ color: '#1565c0' }}>
+                                    {analytics.totalOptions > 0 ? (analytics.totalOptions / polls.length).toFixed(1) : 0}
+                                </div>
+                                <div className="enc-engage-lbl">Opciones promedio</div>
+                            </div>
+                            <div className="enc-engage-item">
+                                <div className="enc-engage-val" style={{ color: '#16a34a' }}>
+                                    {analytics.participationPct.toFixed(0)}%
+                                </div>
+                                <div className="enc-engage-lbl">Tu participación</div>
+                            </div>
+                            <div className="enc-engage-item">
+                                <div className="enc-engage-val" style={{ color: '#7c3aed' }}>
+                                    {Object.entries(analytics.categories).length}
+                                </div>
+                                <div className="enc-engage-lbl">Categorías</div>
                             </div>
                         </div>
-                    );
-                })}
+                    </div>
+
+                    {/* Quick tip */}
+                    <div className="enc-side-card enc-side-tip">
+                        <span className="enc-tip-icon">💡</span>
+                        <p className="enc-tip-text">
+                            Puedes cambiar tu voto en cualquier momento. Solo cuenta <strong>1 voto por persona</strong> por encuesta.
+                        </p>
+                    </div>
+                </aside>
             </div>
         </div>
     );

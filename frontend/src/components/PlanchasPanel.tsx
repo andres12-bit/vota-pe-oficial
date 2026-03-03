@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { Party, Candidate, getParties, getRanking } from '@/lib/api';
-import { getAvatarUrl } from '@/lib/avatars';
+import { getAvatarUrl, getCandidatePhoto } from '@/lib/avatars';
 import Link from 'next/link';
 
 interface PlanchaData {
@@ -333,7 +333,8 @@ function PlanchaCard({ plancha, rank }: { plancha: PlanchaData; rank: number }) 
             {presidential && (
                 <Link href={`/candidate/${presidential.id}`} className="plancha-presidential">
                     <img
-                        src={getAvatarUrl(presidential.name, 40, party.color)}
+                        src={getCandidatePhoto(presidential.photo, presidential.name, 40, party.color)}
+                        onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(presidential.name, 40, party.color); }}
                         alt={presidential.name}
                         width={40}
                         height={40}

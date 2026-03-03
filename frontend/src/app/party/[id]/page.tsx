@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Candidate, Party, getPartyFullTicket } from '@/lib/api';
-import { getAvatarUrl } from '@/lib/avatars';
+import { getAvatarUrl, getCandidatePhoto } from '@/lib/avatars';
 import Link from 'next/link';
 import { use } from 'react';
 import NavHeader from '@/components/NavHeader';
@@ -117,7 +117,8 @@ export default function PartyPage({ params }: { params: Promise<{ id: string }> 
                                     <Link href={`/candidate/${candidate.id}`}>
                                         <div className="panel-glow-subtle flex items-center gap-4 transition-colors hover:bg-white/5 mb-4" style={{ border: `1px solid ${party.color}33`, background: `${party.color}08` }}>
                                             <img
-                                                src={getAvatarUrl(candidate.name, 56, party.color)}
+                                                src={getCandidatePhoto(candidate.photo, candidate.name, 56, party.color)}
+                                                onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(candidate.name, 56, party.color); }}
                                                 alt={candidate.name}
                                                 width={56}
                                                 height={56}
@@ -146,7 +147,8 @@ export default function PartyPage({ params }: { params: Promise<{ id: string }> 
                                             {candidateVPs.map(vp => (
                                                 <div key={vp.id} className="panel-glow-subtle flex items-center gap-3 p-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.02)' }}>
                                                     <img
-                                                        src={getAvatarUrl(vp.name, 44, party.color)}
+                                                        src={getCandidatePhoto(vp.photo, vp.name, 44, party.color)}
+                                                        onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(vp.name, 44, party.color); }}
                                                         alt={vp.name}
                                                         width={44}
                                                         height={44}
@@ -184,7 +186,8 @@ export default function PartyPage({ params }: { params: Promise<{ id: string }> 
                                     <Link href={`/candidate/${candidate.id}`} key={candidate.id}>
                                         <div className="panel-glow-subtle flex items-center gap-4 transition-colors hover:bg-white/5">
                                             <img
-                                                src={getAvatarUrl(candidate.name, 48, party.color)}
+                                                src={getCandidatePhoto(candidate.photo, candidate.name, 48, party.color)}
+                                                onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(candidate.name, 48, party.color); }}
                                                 alt={candidate.name}
                                                 width={48}
                                                 height={48}

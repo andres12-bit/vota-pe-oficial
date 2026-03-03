@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { Candidate } from '@/lib/api';
-import { getAvatarUrl } from '@/lib/avatars';
+import { getAvatarUrl, getCandidatePhoto } from '@/lib/avatars';
 import { useSelection } from '@/lib/selection';
 import Link from 'next/link';
 
@@ -166,7 +166,8 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
                                 </span>
                                 <Link href={`/candidate/${candidate.id}`} className="flex items-center gap-3 pl-1">
                                     <img
-                                        src={getAvatarUrl(candidate.name, 40, candidate.party_color)}
+                                        src={getCandidatePhoto(candidate.photo, candidate.name, 40, candidate.party_color)}
+                                        onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(candidate.name, 40, candidate.party_color); }}
                                         alt={candidate.name}
                                         width={40}
                                         height={40}
@@ -232,7 +233,8 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
                                     </span>
                                     <Link href={`/candidate/${candidate.id}`} className="flex items-start gap-2.5 flex-1 min-w-0">
                                         <img
-                                            src={getAvatarUrl(candidate.name, 40, candidate.party_color)}
+                                            src={getCandidatePhoto(candidate.photo, candidate.name, 40, candidate.party_color)}
+                                            onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(candidate.name, 40, candidate.party_color); }}
                                             alt={candidate.name}
                                             width={40}
                                             height={40}

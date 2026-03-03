@@ -311,7 +311,7 @@ export default function NavHeader({ activeTab, onTabChange }: NavHeaderProps) {
                                 onClick={() => { setShowLogin(true); setShowMobileMenu(false); }}
                                 className="mobile-nav-login-btn"
                             >
-                                {NAV_ICONS.user}
+                                <span style={{ color: 'white', display: 'flex', alignItems: 'center' }}>{NAV_ICONS.user}</span>
                                 Mi Cuenta
                             </button>
                         )}

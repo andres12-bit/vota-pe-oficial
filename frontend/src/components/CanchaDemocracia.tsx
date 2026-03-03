@@ -1,9 +1,11 @@
 'use client';
 
 import { Candidate } from '@/lib/api';
-import { getAvatarUrl } from '@/lib/avatars';
+import { getAvatarUrl, getCandidatePhoto } from '@/lib/avatars';
 import { useSelection } from '@/lib/selection';
 import PeruMapSVG from './PeruMapSVG';
+import ShareModal from './ShareModal';
+import AnalisisSeleccion from './AnalisisSeleccion';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
@@ -37,12 +39,15 @@ const POSITIONS_MOBILE = [
 export default function CanchaDemocracia({ candidates, onVote }: Props) {
     const [isMobile, setIsMobile] = useState(false);
     const {
-        state, selection, activateBuilding, qualityStars,
+        state, selection, activateBuilding, editSelection, qualityStars,
         showDraftBanner, dismissDraftBanner,
         justConfirmed, clearJustConfirmed,
     } = useSelection();
     const [showConfirmMsg, setShowConfirmMsg] = useState(false);
     const [animatingNodes, setAnimatingNodes] = useState(false);
+    const [showShare, setShowShare] = useState(false);
+    const [showCompare, setShowCompare] = useState(false);
+    const [showAnalysis, setShowAnalysis] = useState(false);
 
     useEffect(() => {
         const check = () => setIsMobile(window.innerWidth < 768);
@@ -132,6 +137,13 @@ export default function CanchaDemocracia({ candidates, onVote }: Props) {
                         👉 Genera tu selección
                     </button>
                 )}
+
+                {/* "Editar selección" button — when confirmed */}
+                {isConfirmed && (
+                    <button onClick={editSelection} className="genera-seleccion-btn mt-3">
+                        ✏️ Editar selección
+                    </button>
+                )}
             </div>
 
             {/* Field */}
@@ -167,7 +179,8 @@ export default function CanchaDemocracia({ candidates, onVote }: Props) {
                                 <Link href={`/candidate/${candidate.id}`}>
                                     <div className={`candidate-node pulse-glow ${isConfirmed ? 'candidate-node-saved' : ''}`}>
                                         <img
-                                            src={getAvatarUrl(candidate.name, imgSize, candidate.party_color)}
+                                            src={getCandidatePhoto(candidate.photo, candidate.name, imgSize, candidate.party_color)}
+                                            onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(candidate.name, imgSize, candidate.party_color); }}
                                             alt={candidate.name}
                                             width={imgSize}
                                             height={imgSize}
@@ -200,6 +213,22 @@ export default function CanchaDemocracia({ candidates, onVote }: Props) {
                 </div>
             </div>
 
+            {/* ── POST-SELECTION ACTIONS: Compartir, Comparar, Ver análisis ── */}
+            {/* Placed right below the cancha field (below P. Andino icons) */}
+            {isConfirmed && (
+                <div className="cancha-post-actions animate-fade-in">
+                    <button onClick={() => setShowShare(true)} className="cancha-post-btn cancha-post-share">
+                        📤 Compartir
+                    </button>
+                    <button onClick={() => setShowCompare(true)} className="cancha-post-btn cancha-post-compare">
+                        ⚖️ Comparar
+                    </button>
+                    <button onClick={() => setShowAnalysis(true)} className="cancha-post-btn cancha-post-analysis">
+                        📊 Ver análisis completo
+                    </button>
+                </div>
+            )}
+
             {/* Election Quality Result — show when confirmed OR when candidates available */}
             {(isConfirmed || candidates.length > 0) && (
                 <div className="election-quality-card">
@@ -224,6 +253,45 @@ export default function CanchaDemocracia({ candidates, onVote }: Props) {
                     <p className="election-quality-description">
                         Basado en trayectoria, formación y antecedentes verificados. Esta evaluación se calcula automáticamente según información pública y valoración ciudadana.
                     </p>
+                </div>
+            )}
+
+            {/* Share Modal */}
+            {showShare && <ShareModal onClose={() => setShowShare(false)} />}
+
+            {/* Compare Modal */}
+            {showCompare && (
+                <div className="share-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowCompare(false); }}>
+                    <div className="share-modal animate-fade-in" style={{ width: 440 }}>
+                        <div className="share-modal-header">
+                            <h3>⚖️ Comparar selecciones</h3>
+                            <button onClick={() => setShowCompare(false)} className="share-modal-close">✕</button>
+                        </div>
+                        <div style={{ textAlign: 'center', padding: '20px 0' }}>
+                            <span style={{ fontSize: 48, display: 'block', marginBottom: 12 }}>⚖️</span>
+                            <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--vp-text)', marginBottom: 8 }}>Comparar selecciones</p>
+                            <p style={{ fontSize: 12, color: 'var(--vp-text-dim)', lineHeight: 1.6 }}>Esta funcionalidad estará disponible próximamente. Podrás comparar tu selección con la de otros usuarios.</p>
+                        </div>
+                        <button onClick={() => setShowCompare(false)} style={{
+                            width: '100%', padding: '10px', borderRadius: 10, fontSize: 13, fontWeight: 700,
+                            color: '#fff', background: 'var(--vp-red)', border: 'none', cursor: 'pointer'
+                        }}>Entendido</button>
+                    </div>
+                </div>
+            )}
+
+            {/* Analysis Panel */}
+            {showAnalysis && (
+                <div className="share-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowAnalysis(false); }}
+                    style={{ alignItems: 'flex-start', overflowY: 'auto', padding: '40px 16px' }}>
+                    <div className="animate-fade-in" style={{
+                        background: '#fff', borderRadius: 16, padding: '24px 28px', width: 640, maxWidth: '95vw',
+                        boxShadow: '0 8px 40px rgba(0,0,0,0.15)', border: '1px solid var(--vp-border)', position: 'relative'
+                    }}>
+                        <button onClick={() => setShowAnalysis(false)} className="share-modal-close"
+                            style={{ position: 'absolute', top: 16, right: 16 }}>✕</button>
+                        <AnalisisSeleccion />
+                    </div>
                 </div>
             )}
         </div>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { Candidate, search } from '@/lib/api';
-import { getAvatarUrl } from '@/lib/avatars';
+import { getAvatarUrl, getCandidatePhoto } from '@/lib/avatars';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
@@ -115,7 +115,8 @@ function SearchContent() {
                                         <Link href={`/candidate/${c.id}`} key={c.id}>
                                             <div className="panel-glow-subtle flex items-center gap-3 transition-colors hover:bg-white/5">
                                                 <img
-                                                    src={getAvatarUrl(c.name, 48, c.party_color)}
+                                                    src={getCandidatePhoto(c.photo, c.name, 48, c.party_color)}
+                                                    onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(c.name, 48, c.party_color); }}
                                                     alt={c.name}
                                                     width={48}
                                                     height={48}

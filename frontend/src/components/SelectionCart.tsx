@@ -1,21 +1,29 @@
 'use client';
 
 import { useSelection } from '@/lib/selection';
-import { getAvatarUrl } from '@/lib/avatars';
+import { getAvatarUrl, getCandidatePhoto } from '@/lib/avatars';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 
 const POSITION_LABELS: Record<string, string> = {
     president: 'Presidente',
     senator: 'Senado',
     deputy: 'Diputados',
-    andean: 'Parl. Andino',
+    andean: 'P. Andino',
 };
 
-const POSITION_ICONS: Record<string, string> = {
-    president: '🏛️',
-    senator: '👔',
-    deputy: '📋',
-    andean: '🌎',
+const MAX_PER_POSITION: Record<string, number> = {
+    president: 1,
+    senator: 2,
+    deputy: 2,
+    andean: 2,
+};
+
+const POSITION_DOTS: Record<string, string> = {
+    president: '#c62828',
+    senator: '#1565c0',
+    deputy: '#2e7d32',
+    andean: '#6a1b9a',
 };
 
 export default function SelectionCart() {
@@ -32,232 +40,256 @@ export default function SelectionCart() {
         totalSelected,
     } = useSelection();
 
-    // Don't render if not visible or empty state
-    if (!cartVisible || state === 'empty') return null;
+    const [minimized, setMinimized] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
 
-    // ── CONFIRMED STATE: compact view ──
-    if (state === 'confirmed') {
+    useEffect(() => {
+        const check = () => setIsMobile(window.innerWidth < 768);
+        check();
+        window.addEventListener('resize', check);
+        return () => window.removeEventListener('resize', check);
+    }, []);
+
+    // Don't render if empty state and no candidates
+    if (state === 'empty') return null;
+
+    const getNames = (candidates: import('@/lib/api').Candidate[]) =>
+        candidates.map(c => c.name.split(' ').slice(-1)[0]).join(', ');
+
+    const isConfirmed = state === 'confirmed';
+    const isEditing = state === 'editing';
+    const isDraft = state === 'draft';
+    const canSave = hasPresident;
+    const showDetailed = isDraft || isEditing;
+
+    // ── MINIMIZED PILL at bottom-right ──
+    if (minimized) {
         return (
-            <div className="selection-cart selection-cart-saved animate-fade-in">
-                <div className="cart-header-saved">
-                    <span className="cart-saved-check">✔</span>
-                    <span className="cart-saved-title">Tu selección actual</span>
-                    <span className="cart-saved-count">{totalSelected}</span>
-                </div>
-
-                {/* Quality stars */}
-                <div className="cart-quality">
-                    <div className="cart-quality-label">Calidad de tu elección</div>
-                    <div className="cart-quality-stars">
-                        {'★'.repeat(qualityStars)}{'☆'.repeat(5 - qualityStars)}
-                    </div>
-                </div>
-
-                {/* Mini preview */}
-                <div className="cart-mini-preview">
-                    {selection.president && (
-                        <div className="cart-mini-item">
-                            <span className="cart-mini-icon">🏛️</span>
-                            <span className="cart-mini-name">{selection.president.name.split(' ').slice(-2).join(' ')}</span>
-                        </div>
-                    )}
-                    {selection.senators.length > 0 && (
-                        <div className="cart-mini-item">
-                            <span className="cart-mini-icon">👔</span>
-                            <span className="cart-mini-name">{selection.senators.length} senador(es)</span>
-                        </div>
-                    )}
-                    {selection.deputies.length > 0 && (
-                        <div className="cart-mini-item">
-                            <span className="cart-mini-icon">📋</span>
-                            <span className="cart-mini-name">{selection.deputies.length} diputado(s)</span>
-                        </div>
-                    )}
-                    {selection.andean.length > 0 && (
-                        <div className="cart-mini-item">
-                            <span className="cart-mini-icon">🌎</span>
-                            <span className="cart-mini-name">{selection.andean.length} parl. andino</span>
-                        </div>
-                    )}
-                </div>
-
-                <button onClick={editSelection} className="cart-edit-btn">
-                    ✏️ Editar selección
-                </button>
+            <div className="rcart-pill animate-fade-in" onClick={() => setMinimized(false)}>
+                <span className="rcart-pill-icon">🗳️</span>
+                <span className="rcart-pill-text">Tu Selección ({totalSelected})</span>
+                <span className="rcart-pill-chevron">▴</span>
             </div>
         );
     }
 
-    // ── DRAFT / EDITING STATE: full cart ──
-    const isEditing = state === 'editing';
-    const canSave = hasPresident;
-
     return (
-        <div className="selection-cart animate-fade-in">
-            {/* Header */}
-            <div className="cart-header">
-                <h3 className="cart-title">
-                    {isEditing ? '✏️ Editando selección' : '🗳️ Tu selección'}
-                </h3>
-                <span className="cart-status">
-                    {state === 'draft' && !hasPresident && 'en progreso'}
-                    {state === 'draft' && hasPresident && '✔ mínima completa'}
-                    {state === 'editing' && 'editando'}
+        <div className="rcart animate-fade-in">
+            {/* ── RED HEADER with minimize toggle ── */}
+            <div className="rcart-header" onClick={() => setMinimized(true)} style={{ cursor: 'pointer' }}>
+                <span className="rcart-header-icon">{isEditing ? '✏️' : '🗳️'}</span>
+                <span className="rcart-header-title">
+                    {isEditing ? 'Editando selección' : 'Tu Selección'}
                 </span>
+                {isConfirmed && (
+                    <span className="rcart-header-badge">{totalSelected}</span>
+                )}
+                {isDraft && (
+                    <span className="rcart-header-badge">{hasPresident ? '✔ lista' : 'en progreso'}</span>
+                )}
+                {isEditing && (
+                    <span className="rcart-header-badge">editando</span>
+                )}
+                <span className="rcart-header-arrow">▾</span>
             </div>
 
-            {/* Slots */}
-            <div className="cart-slots">
-                {/* President slot */}
-                <CartSlot
-                    position="president"
-                    label={POSITION_LABELS.president}
-                    icon={POSITION_ICONS.president}
-                    candidate={selection.president}
-                    onRemove={isEditing ? undefined : () => removeCandidate('president', selection.president?.id || 0)}
-                    isProtected={isEditing}
-                />
+            {/* ── BODY ── */}
+            <div className="rcart-body">
+                {/* ─── CONFIRMED: compact summary rows ─── */}
+                {isConfirmed && (
+                    <>
+                        {selection.president && (
+                            <div className="rcart-row">
+                                <span className="rcart-dot" style={{ background: POSITION_DOTS.president }} />
+                                <span className="rcart-row-label">Presidente:</span>
+                                <span className="rcart-row-value">{selection.president.name.split(' ').slice(-2).join(' ')}</span>
+                            </div>
+                        )}
+                        {selection.senators.length > 0 && (
+                            <div className="rcart-row">
+                                <span className="rcart-dot" style={{ background: POSITION_DOTS.senator }} />
+                                <span className="rcart-row-label">Senado:</span>
+                                <span className="rcart-row-value">{getNames(selection.senators)}</span>
+                            </div>
+                        )}
+                        {selection.deputies.length > 0 && (
+                            <div className="rcart-row">
+                                <span className="rcart-dot" style={{ background: POSITION_DOTS.deputy }} />
+                                <span className="rcart-row-label">Diputados:</span>
+                                <span className="rcart-row-value">{getNames(selection.deputies)}</span>
+                            </div>
+                        )}
+                        {selection.andean.length > 0 && (
+                            <div className="rcart-row">
+                                <span className="rcart-dot" style={{ background: POSITION_DOTS.andean }} />
+                                <span className="rcart-row-label">P. Andino:</span>
+                                <span className="rcart-row-value">{getNames(selection.andean)}</span>
+                            </div>
+                        )}
+                        <div className="rcart-quality">
+                            <span className="rcart-quality-stars">
+                                {'★'.repeat(qualityStars)}{'☆'.repeat(5 - qualityStars)}
+                            </span>
+                            <span className="rcart-quality-text">Calidad de tu elección</span>
+                        </div>
+                        <button onClick={editSelection} className="rcart-action-btn rcart-action-compare">
+                            ✏️ Editar selección
+                        </button>
+                    </>
+                )}
 
-                {/* Senators */}
-                <CartGroup
-                    position="senator"
-                    label={POSITION_LABELS.senator}
-                    icon={POSITION_ICONS.senator}
-                    candidates={selection.senators}
-                    onRemove={(id) => removeCandidate('senator', id)}
-                />
+                {/* ─── DRAFT / EDITING: detailed candidate slots ─── */}
+                {showDetailed && (
+                    <>
+                        <CartSlotRed
+                            position="president"
+                            label={POSITION_LABELS.president}
+                            dotColor={POSITION_DOTS.president}
+                            candidate={selection.president}
+                            onRemove={() => removeCandidate('president', selection.president?.id || 0)}
+                            maxCount={MAX_PER_POSITION.president}
+                            currentCount={selection.president ? 1 : 0}
+                        />
+                        <CartGroupRed
+                            position="senator"
+                            label={POSITION_LABELS.senator}
+                            dotColor={POSITION_DOTS.senator}
+                            candidates={selection.senators}
+                            onRemove={(id) => removeCandidate('senator', id)}
+                            maxCount={MAX_PER_POSITION.senator}
+                        />
+                        <CartGroupRed
+                            position="deputy"
+                            label={POSITION_LABELS.deputy}
+                            dotColor={POSITION_DOTS.deputy}
+                            candidates={selection.deputies}
+                            onRemove={(id) => removeCandidate('deputy', id)}
+                            maxCount={MAX_PER_POSITION.deputy}
+                        />
+                        <CartGroupRed
+                            position="andean"
+                            label={POSITION_LABELS.andean}
+                            dotColor={POSITION_DOTS.andean}
+                            candidates={selection.andean}
+                            onRemove={(id) => removeCandidate('andean', id)}
+                            maxCount={MAX_PER_POSITION.andean}
+                        />
 
-                {/* Deputies */}
-                <CartGroup
-                    position="deputy"
-                    label={POSITION_LABELS.deputy}
-                    icon={POSITION_ICONS.deputy}
-                    candidates={selection.deputies}
-                    onRemove={(id) => removeCandidate('deputy', id)}
-                />
+                        {isDraft && !hasPresident && (
+                            <p className="rcart-hint">
+                                Selecciona un <strong>Presidente</strong> para poder guardar.
+                            </p>
+                        )}
 
-                {/* Andean */}
-                <CartGroup
-                    position="andean"
-                    label={POSITION_LABELS.andean}
-                    icon={POSITION_ICONS.andean}
-                    candidates={selection.andean}
-                    onRemove={(id) => removeCandidate('andean', id)}
-                />
+                        {canSave && (
+                            <button onClick={confirmSelection} className="rcart-save-btn">
+                                {isEditing ? '💾 Guardar cambios' : '💾 Guardar selección'}
+                            </button>
+                        )}
+                    </>
+                )}
             </div>
-
-            {/* Hint text */}
-            {state === 'draft' && !hasPresident && (
-                <p className="cart-hint">
-                    Selecciona un <strong>Presidente</strong> para poder guardar.
-                </p>
-            )}
-
-            {/* Save / Save Changes button */}
-            {canSave && (
-                <button onClick={confirmSelection} className="cart-save-btn">
-                    {isEditing ? '💾 Guardar cambios' : '💾 Guardar selección'}
-                </button>
-            )}
-
-            {/* Close / minimize */}
-            <button onClick={() => setCartVisible(false)} className="cart-minimize-btn">
-                Minimizar ▾
-            </button>
         </div>
     );
 }
 
-// ── Single candidate slot (president) ──
-function CartSlot({
+// ── Single candidate slot ──
+function CartSlotRed({
     label,
-    icon,
+    dotColor,
     candidate,
     onRemove,
-    isProtected,
+    maxCount,
+    currentCount,
 }: {
     position: string;
     label: string;
-    icon: string;
+    dotColor: string;
     candidate: import('@/lib/api').Candidate | null;
     onRemove?: () => void;
-    isProtected?: boolean;
+    maxCount: number;
+    currentCount: number;
 }) {
+    const isFull = currentCount >= maxCount;
     return (
-        <div className="cart-slot">
-            <div className="cart-slot-header">
-                <span className="cart-slot-icon">{icon}</span>
-                <span className="cart-slot-label">{label}</span>
+        <div className="rcart-slot">
+            <div className="rcart-slot-header">
+                <span className="rcart-dot" style={{ background: dotColor }} />
+                <span className="rcart-slot-label">{label}</span>
+                {isFull && <span className="rcart-slot-complete">✓ Completo</span>}
             </div>
             {candidate ? (
-                <div className="cart-slot-candidate">
-                    <Link href={`/candidate/${candidate.id}`} className="cart-slot-info">
+                <div className="rcart-slot-candidate">
+                    <Link href={`/candidate/${candidate.id}`} className="rcart-slot-info">
                         <img
-                            src={getAvatarUrl(candidate.name, 28, candidate.party_color)}
+                            src={getCandidatePhoto(candidate.photo, candidate.name, 32, candidate.party_color)}
+                            onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(candidate.name, 32, candidate.party_color); }}
                             alt={candidate.name}
-                            width={28}
-                            height={28}
-                            className="cart-slot-avatar"
+                            width={32}
+                            height={32}
+                            className="rcart-slot-avatar"
                         />
-                        <div className="cart-slot-details">
-                            <span className="cart-slot-name">{candidate.name.split(' ').slice(-2).join(' ')}</span>
-                            <span className="cart-slot-party">{candidate.party_abbreviation}</span>
+                        <div className="rcart-slot-details">
+                            <span className="rcart-slot-name">{candidate.name.split(' ').slice(-2).join(' ')}</span>
+                            <span className="rcart-slot-party">{candidate.party_abbreviation}</span>
                         </div>
                     </Link>
-                    {!isProtected && onRemove && (
-                        <button onClick={onRemove} className="cart-slot-remove" title="Quitar">✕</button>
-                    )}
-                    {isProtected && (
-                        <span className="cart-slot-lock" title="Cambia pero no elimines">🔒</span>
+                    {onRemove && (
+                        <button onClick={onRemove} className="rcart-slot-remove" title="Quitar">✕</button>
                     )}
                 </div>
             ) : (
-                <div className="cart-slot-empty">—</div>
+                <div className="rcart-slot-empty">—</div>
             )}
         </div>
     );
 }
 
-// ── Group of candidates (senators, deputies, andean) ──
-function CartGroup({
-    position,
+// ── Group of candidates ──
+function CartGroupRed({
     label,
-    icon,
+    dotColor,
     candidates,
     onRemove,
+    maxCount,
 }: {
     position: string;
     label: string;
-    icon: string;
+    dotColor: string;
     candidates: import('@/lib/api').Candidate[];
     onRemove: (id: number) => void;
+    maxCount: number;
 }) {
+    const isFull = candidates.length >= maxCount;
     return (
-        <div className="cart-slot">
-            <div className="cart-slot-header">
-                <span className="cart-slot-icon">{icon}</span>
-                <span className="cart-slot-label">{label}</span>
+        <div className="rcart-slot">
+            <div className="rcart-slot-header">
+                <span className="rcart-dot" style={{ background: dotColor }} />
+                <span className="rcart-slot-label">{label}</span>
+                <span className="rcart-slot-max">(máx. {maxCount})</span>
                 {candidates.length > 0 && (
-                    <span className="cart-slot-count">{candidates.length}</span>
+                    <span className="rcart-slot-count">{candidates.length}</span>
                 )}
+                {isFull && <span className="rcart-slot-complete">✓ Completo</span>}
             </div>
             {candidates.length === 0 ? (
-                <div className="cart-slot-empty">—</div>
+                <div className="rcart-slot-empty">—</div>
             ) : (
-                <div className="cart-group-list">
+                <div className="rcart-group-list">
                     {candidates.map(c => (
-                        <div key={c.id} className="cart-slot-candidate cart-slot-candidate-sm">
-                            <Link href={`/candidate/${c.id}`} className="cart-slot-info">
+                        <div key={c.id} className="rcart-slot-candidate rcart-slot-candidate-sm">
+                            <Link href={`/candidate/${c.id}`} className="rcart-slot-info">
                                 <img
-                                    src={getAvatarUrl(c.name, 22, c.party_color)}
+                                    src={getCandidatePhoto(c.photo, c.name, 26, c.party_color)}
+                                    onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(c.name, 26, c.party_color); }}
                                     alt={c.name}
-                                    width={22}
-                                    height={22}
-                                    className="cart-slot-avatar"
+                                    width={26}
+                                    height={26}
+                                    className="rcart-slot-avatar"
                                 />
-                                <span className="cart-slot-name">{c.name.split(' ').slice(-2).join(' ')}</span>
+                                <span className="rcart-slot-name">{c.name.split(' ').slice(-2).join(' ')}</span>
                             </Link>
-                            <button onClick={() => onRemove(c.id)} className="cart-slot-remove" title="Quitar">✕</button>
+                            <button onClick={() => onRemove(c.id)} className="rcart-slot-remove" title="Quitar">✕</button>
                         </div>
                     ))}
                 </div>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Candidate, getGlobalRankingAndMomentum, getRanking, getStats, castVote } from '@/lib/api';
-import { getAvatarUrl } from '@/lib/avatars';
+import { getAvatarUrl, getCandidatePhoto } from '@/lib/avatars';
 import { useWebSocket } from '@/lib/websocket';
 import { useSelection } from '@/lib/selection';
 import LiveMomentum from '@/components/LiveMomentum';
@@ -18,6 +18,8 @@ import MetodologiaSection from '@/components/MetodologiaSection';
 import SiteFooter from '@/components/SiteFooter';
 import SelectionCart from '@/components/SelectionCart';
 import PostSelectionBar from '@/components/PostSelectionBar';
+import ShareModal from '@/components/ShareModal';
+import AnalisisSeleccion from '@/components/AnalisisSeleccion';
 import { useRouter } from 'next/navigation';
 
 type TabType = 'votar' | 'encuesta' | 'planchas' | 'president' | 'senator' | 'deputy' | 'andean';
@@ -29,10 +31,12 @@ export default function Home() {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [momentumList, setMomentumList] = useState<Candidate[]>([]);
   const [totalVotes, setTotalVotes] = useState(1245882);
-  const { state: selState, selection, showDraftBanner, dismissDraftBanner, activateBuilding, hasPresident } = useSelection();
+  const { state: selState, selection, showDraftBanner, dismissDraftBanner, activateBuilding, editSelection, confirmSelection, hasPresident } = useSelection();
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
-  const [chatOpen, setChatOpen] = useState(false);
+  const [showShare, setShowShare] = useState(false);
+  const [showCompare, setShowCompare] = useState(false);
+  const [showAnalysis, setShowAnalysis] = useState(false);
   const { lastMessage } = useWebSocket();
   const router = useRouter();
 
@@ -132,7 +136,7 @@ export default function Home() {
       <main className="dashboard-wrapper">
         {activeTab === 'encuesta' ? (
           /* ENCUESTA VIEW */
-          <div className="max-w-[900px] mx-auto w-full px-2">
+          <div className="w-full px-2">
             <EncuestaPanel />
           </div>
         ) : activeTab === 'planchas' ? (
@@ -161,6 +165,18 @@ export default function Home() {
                   </button>
                 )}
 
+                {selState === 'confirmed' && (
+                  <button onClick={editSelection} className="genera-seleccion-btn">
+                    ✏️ Editar selección
+                  </button>
+                )}
+
+                {selState === 'draft' && hasPresident && !showDraftBanner && (
+                  <button onClick={confirmSelection} className="genera-seleccion-btn">
+                    💾 Guardar selección
+                  </button>
+                )}
+
                 {/* Position Icons — Diamond Layout — dynamic with selection data */}
                 <div className="position-icons-grid">
                   <h3 className="position-icons-title">Tu Cancha Electoral</h3>
@@ -171,11 +187,11 @@ export default function Home() {
                       <div className="position-avatars-row">
                         {selection.president ? (
                           <div className="position-icon-circle position-icon-filled" style={{ borderColor: selection.president.party_color || 'var(--vp-red)' }}>
-                            <img src={getAvatarUrl(selection.president.name, 56, selection.president.party_color)} alt={selection.president.name} className="position-icon-avatar" />
+                            <img src={getCandidatePhoto(selection.president!.photo, selection.president!.name, 56, selection.president!.party_color)} onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(selection.president!.name, 56, selection.president!.party_color); }} alt={selection.president!.name} className="position-icon-avatar" />
                           </div>
                         ) : (
                           <div className="position-icon-circle">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="#9ca3af"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" /></svg>
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="#6b7280"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" /></svg>
                           </div>
                         )}
                       </div>
@@ -188,11 +204,11 @@ export default function Home() {
                         <div className="position-avatars-row">
                           {selection.senators.length > 0 ? selection.senators.map((s, i) => (
                             <div key={s.id} className="position-icon-circle position-icon-filled position-icon-sm" style={{ borderColor: s.party_color || '#2563eb', marginLeft: i > 0 ? '-12px' : '0', zIndex: 2 - i }}>
-                              <img src={getAvatarUrl(s.name, 48, s.party_color)} alt={s.name} className="position-icon-avatar" />
+                              <img src={getCandidatePhoto(s.photo, s.name, 48, s.party_color)} onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(s.name, 48, s.party_color); }} alt={s.name} className="position-icon-avatar" />
                             </div>
                           )) : (
                             <div className="position-icon-circle">
-                              <svg width="32" height="32" viewBox="0 0 24 24" fill="#9ca3af"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg>
+                              <svg width="32" height="32" viewBox="0 0 24 24" fill="#6b7280"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg>
                             </div>
                           )}
                         </div>
@@ -204,11 +220,11 @@ export default function Home() {
                         <div className="position-avatars-row">
                           {selection.deputies.length > 0 ? selection.deputies.map((d, i) => (
                             <div key={d.id} className="position-icon-circle position-icon-filled position-icon-sm" style={{ borderColor: d.party_color || '#16a34a', marginLeft: i > 0 ? '-12px' : '0', zIndex: 2 - i }}>
-                              <img src={getAvatarUrl(d.name, 48, d.party_color)} alt={d.name} className="position-icon-avatar" />
+                              <img src={getCandidatePhoto(d.photo, d.name, 48, d.party_color)} onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(d.name, 48, d.party_color); }} alt={d.name} className="position-icon-avatar" />
                             </div>
                           )) : (
                             <div className="position-icon-circle">
-                              <svg width="32" height="32" viewBox="0 0 24 24" fill="#9ca3af"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" /></svg>
+                              <svg width="32" height="32" viewBox="0 0 24 24" fill="#6b7280"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" /></svg>
                             </div>
                           )}
                         </div>
@@ -221,11 +237,11 @@ export default function Home() {
                       <div className="position-avatars-row">
                         {selection.andean.length > 0 ? selection.andean.slice(0, 2).map((a, i) => (
                           <div key={a.id} className="position-icon-circle position-icon-filled position-icon-sm" style={{ borderColor: a.party_color || '#7c3aed', marginLeft: i > 0 ? '-12px' : '0', zIndex: 2 - i }}>
-                            <img src={getAvatarUrl(a.name, 48, a.party_color)} alt={a.name} className="position-icon-avatar" />
+                            <img src={getCandidatePhoto(a.photo, a.name, 48, a.party_color)} onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(a.name, 48, a.party_color); }} alt={a.name} className="position-icon-avatar" />
                           </div>
                         )) : (
                           <div className="position-icon-circle">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="#9ca3af"><path d="M12 2L2 22h20L12 2zm0 4l7 14H5l7-14z" /></svg>
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="#6b7280"><path d="M12 2L2 22h20L12 2zm0 4l7 14H5l7-14z" /></svg>
                           </div>
                         )}
                       </div>
@@ -234,12 +250,30 @@ export default function Home() {
                   </div>
                 </div>
 
+                {/* ── POST-SELECTION ACTIONS below candidate icons ── */}
+                {(selState === 'confirmed' || (hasPresident && selState !== 'empty')) && (
+                  <div className="cancha-post-actions animate-fade-in" style={{ marginTop: 16 }}>
+                    <button onClick={() => setShowShare(true)} className="cancha-post-btn cancha-post-share">
+                      <span className="cancha-post-btn-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" /><polyline points="16 6 12 2 8 6" /><line x1="12" y1="2" x2="12" y2="15" /></svg></span>
+                      <span className="cancha-post-btn-label">Compartir</span>
+                    </button>
+                    <button onClick={() => setShowCompare(true)} className="cancha-post-btn cancha-post-compare">
+                      <span className="cancha-post-btn-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v18" /><path d="M8 7l-4 4 4 4" /><path d="M16 7l4 4-4 4" /></svg></span>
+                      <span className="cancha-post-btn-label">Comparar</span>
+                    </button>
+                    <button onClick={() => setShowAnalysis(true)} className="cancha-post-btn cancha-post-analysis">
+                      <span className="cancha-post-btn-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 20V10" /><path d="M12 20V4" /><path d="M6 20v-6" /></svg></span>
+                      <span className="cancha-post-btn-label">Ver análisis</span>
+                    </button>
+                  </div>
+                )}
+
                 {selState === 'empty' && !showDraftBanner && (
                   <p className="hero-hint">Haz clic en &quot;Genera tu selección&quot; para empezar ›</p>
                 )}
               </section>
 
-              {/* ===== DYNAMIC MODULES — distributed below ===== */}
+              {/* ===== DYNAMIC MODULES ===== */}
               <div className="homepage-modules">
                 <div className="modules-row modules-row-2col">
                   <LiveMomentum candidates={momentumList} />
@@ -253,26 +287,6 @@ export default function Home() {
                 <EvaluacionPlanchas onNavigate={setActiveTab} />
                 <MetodologiaSection />
               </div>
-            </div>
-
-            {/* ===== FLOATING SELECTION CHAT WIDGET ===== */}
-            <div className={`floating-selection-chat ${chatOpen ? 'fsc-open' : 'fsc-collapsed'}`}>
-              <button className="fsc-header" onClick={() => setChatOpen(!chatOpen)}>
-                <span className="fsc-title">🗳️ Tu Selección</span>
-                <span className="fsc-toggle">{chatOpen ? '▾' : '▴'}</span>
-              </button>
-              {chatOpen && (
-                <div className="fsc-body">
-                  <div className="fsc-slot"><span className="fsc-dot fsc-dot-president" /> <strong>Presidente:</strong> {selection.president?.name?.split(' ').slice(-2).join(' ') || '—'}</div>
-                  <div className="fsc-slot"><span className="fsc-dot fsc-dot-senator" /> <strong>Senado:</strong> {selection.senators.length > 0 ? selection.senators.map(s => s.name?.split(' ').pop()).join(', ') : '—'}</div>
-                  <div className="fsc-slot"><span className="fsc-dot fsc-dot-deputy" /> <strong>Diputados:</strong> {selection.deputies.length > 0 ? selection.deputies.map(d => d.name?.split(' ').pop()).join(', ') : '—'}</div>
-                  <div className="fsc-slot"><span className="fsc-dot fsc-dot-andean" /> <strong>P. Andino:</strong> {selection.andean.length > 0 ? selection.andean.map(a => a.name?.split(' ').pop()).join(', ') : '—'}</div>
-                  {selState === 'empty' && <p className="fsc-empty">Aún no has seleccionado candidatos.</p>}
-                  {hasPresident && (
-                    <button className="fsc-compare-btn" onClick={() => { }}>Comparar selección</button>
-                  )}
-                </div>
-              )}
             </div>
           </>
         ) : (
@@ -292,8 +306,44 @@ export default function Home() {
         )}
       </main>
 
-      {/* Selection Cart — always visible when active */}
-      <SelectionCart />
+      {/* Share Modal */}
+      {showShare && <ShareModal onClose={() => setShowShare(false)} />}
+
+      {/* Compare Modal */}
+      {showCompare && (
+        <div className="share-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowCompare(false); }}>
+          <div className="share-modal animate-fade-in" style={{ width: 440 }}>
+            <div className="share-modal-header">
+              <h3>⚖️ Comparar selecciones</h3>
+              <button onClick={() => setShowCompare(false)} className="share-modal-close">✕</button>
+            </div>
+            <div style={{ textAlign: 'center', padding: '20px 0' }}>
+              <span style={{ fontSize: 48, display: 'block', marginBottom: 12 }}>⚖️</span>
+              <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--vp-text)', marginBottom: 8 }}>Comparar selecciones</p>
+              <p style={{ fontSize: 12, color: 'var(--vp-text-dim)', lineHeight: 1.6 }}>Esta funcionalidad estará disponible próximamente. Podrás comparar tu selección con la de otros usuarios.</p>
+            </div>
+            <button onClick={() => setShowCompare(false)} style={{
+              width: '100%', padding: '10px', borderRadius: 10, fontSize: 13, fontWeight: 700,
+              color: '#fff', background: 'var(--vp-red)', border: 'none', cursor: 'pointer'
+            }}>Entendido</button>
+          </div>
+        </div>
+      )}
+
+      {/* Analysis Panel */}
+      {showAnalysis && (
+        <div className="share-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowAnalysis(false); }}
+          style={{ alignItems: 'flex-start', overflowY: 'auto', padding: '40px 16px' }}>
+          <div className="animate-fade-in" style={{
+            background: '#fff', borderRadius: 16, padding: '24px 28px', width: 640, maxWidth: '95vw',
+            boxShadow: '0 8px 40px rgba(0,0,0,0.15)', border: '1px solid var(--vp-border)', position: 'relative'
+          }}>
+            <button onClick={() => setShowAnalysis(false)} className="share-modal-close"
+              style={{ position: 'absolute', top: 16, right: 16 }}>✕</button>
+            <AnalisisSeleccion />
+          </div>
+        </div>
+      )}
 
       {/* Footer — always visible on all pages */}
       <SiteFooter />

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Candidate, getCandidate } from '@/lib/api';
-import { getAvatarUrl } from '@/lib/avatars';
+import { getAvatarUrl, getCandidatePhoto } from '@/lib/avatars';
 import Link from 'next/link';
 import { use } from 'react';
 import NavHeader from '@/components/NavHeader';
@@ -159,7 +159,8 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         <div className="w-32 h-32 rounded-2xl shrink-0 relative overflow-hidden"
                             style={{ background: `linear-gradient(135deg, ${candidate.party_color}33, ${candidate.party_color}11)`, border: `2px solid ${candidate.party_color}66`, boxShadow: `0 0 40px ${candidate.party_color}22` }}>
                             <img
-                                src={getAvatarUrl(candidate.name, 128, candidate.party_color)}
+                                src={getCandidatePhoto(candidate.photo, candidate.name, 128, candidate.party_color)}
+                                onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(candidate.name, 128, candidate.party_color); }}
                                 alt={candidate.name}
                                 width={128}
                                 height={128}
@@ -314,7 +315,8 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                             {/* El candidato principal */}
                             <div className="flex flex-col items-center text-center p-6 rounded-2xl" style={{ background: `${candidate.party_color}11`, border: `1px solid ${candidate.party_color}33` }}>
                                 <img
-                                    src={getAvatarUrl(candidate.name, 96, candidate.party_color)}
+                                    src={getCandidatePhoto(candidate.photo, candidate.name, 96, candidate.party_color)}
+                                    onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(candidate.name, 96, candidate.party_color); }}
                                     alt={candidate.name}
                                     width={96} height={96}
                                     className="w-24 h-24 rounded-full mb-4 object-cover"
@@ -330,7 +332,8 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                             {candidate.vice_presidents.map(vp => (
                                 <div key={vp.id} className="flex flex-col items-center text-center p-6 rounded-2xl" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--vp-border)' }}>
                                     <img
-                                        src={getAvatarUrl(vp.name, 96, candidate.party_color)}
+                                        src={getCandidatePhoto(vp.photo, vp.name, 96, candidate.party_color)}
+                                        onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(vp.name, 96, candidate.party_color); }}
                                         alt={vp.name}
                                         width={96} height={96}
                                         className="w-24 h-24 rounded-full mb-4 object-cover"
@@ -394,6 +397,17 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                                 📅 Fecha de nacimiento: <span className="font-semibold" style={{ color: 'var(--vp-text)' }}>{candidate.birth_date}</span>
                             </div>
                         )}
+                        <div className="mt-5 pt-4" style={{ borderTop: '1px solid var(--vp-border)' }}>
+                            <Link href={`/candidate/${resolvedParams.id}/hoja-vida`}
+                                className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-bold uppercase tracking-wider transition-all hover:scale-[1.02]"
+                                style={{
+                                    background: 'linear-gradient(135deg, rgba(188,29,25,0.12), rgba(188,29,25,0.05))',
+                                    border: '1px solid rgba(188,29,25,0.25)',
+                                    color: '#bc1d19',
+                                }}>
+                                📋 Ver Hoja de Vida Completa (JNE) →
+                            </Link>
+                        </div>
                     </div>
                 )}
 
@@ -422,9 +436,26 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
 
                     return (
                         <div className="panel-glow">
-                            <h3 className="text-xs font-bold tracking-[2px] uppercase mb-6" style={{ color: 'var(--vp-text-dim)' }}>
-                                📜 Resumen de Plan de Gobierno
-                            </h3>
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className="text-xs font-bold tracking-[2px] uppercase" style={{ color: 'var(--vp-text-dim)' }}>
+                                    📜 Resumen de Plan de Gobierno
+                                </h3>
+                                {candidate.plan_pdf_url && (
+                                    <a
+                                        href={candidate.plan_pdf_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all hover:scale-105"
+                                        style={{
+                                            background: 'linear-gradient(135deg, rgba(255,23,68,0.15), rgba(255,23,68,0.05))',
+                                            border: '1px solid rgba(255,23,68,0.3)',
+                                            color: 'var(--vp-red)',
+                                        }}
+                                    >
+                                        📄 Descargar Plan Completo (PDF)
+                                    </a>
+                                )}
+                            </div>
                             <div className="flex flex-col gap-6 data-block-gap">
                                 {Object.entries(dimensions).map(([dimension, items]) => {
                                     const color = dimensionColors[dimension] || 'var(--vp-text-dim)';

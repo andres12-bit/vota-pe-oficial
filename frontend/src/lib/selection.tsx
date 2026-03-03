@@ -101,9 +101,10 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
                         setState('confirmed');
                         setCartVisible(true);
                     } else if (hasCandidates) {
-                        // User had a draft — show recovery banner
+                        // User had a draft — show recovery banner AND cart
                         setState('draft');
                         setShowDraftBanner(true);
+                        setCartVisible(true);
                     }
                 } catch { /* ignore */ }
             }

@@ -30,22 +30,42 @@ function computeConsistency(candidates: Candidate[]): string {
     return 'Baja';
 }
 
+function computeDiversity(candidates: Candidate[]): string {
+    if (candidates.length <= 1) return 'N/A';
+    const parties = new Set(candidates.map(c => c.party_id));
+    const ratio = parties.size / candidates.length;
+    if (ratio >= 0.8) return 'Alta';
+    if (ratio >= 0.5) return 'Media';
+    return 'Baja';
+}
+
 function analyzeCandidate(c: Candidate) {
     const score = Number(c.final_score || 0);
     const momentum = Number(c.momentum_score || 0);
     const intelligence = Number(c.intelligence_score || 0);
+    const integrity = Number(c.integrity_score || 0);
+    const risk = Number(c.risk_score || 0);
     const stars = Number(c.stars_rating || 0);
+    const hasEducation = c.education && c.education.length > 10;
+    const hasExperience = c.experience && c.experience.length > 10;
     const strengths: string[] = [];
     const risks: string[] = [];
 
+    if (hasEducation) strengths.push('Formación académica verificada');
+    else risks.push('Sin educación superior registrada');
+
+    if (hasExperience) strengths.push('Experiencia profesional documentada');
+    else risks.push('Experiencia laboral limitada');
+
     if (score >= 60) strengths.push('Puntuación general alta');
-    if (intelligence >= 60) strengths.push('Alta puntuación de inteligencia política');
-    if (momentum >= 50) strengths.push('Tendencia positiva en momentum');
+    if (intelligence >= 60) strengths.push('Alta inteligencia política');
+    if (momentum >= 50) strengths.push('Tendencia positiva');
+    if (integrity >= 80) strengths.push('Alta integridad verificada');
     if (stars >= 4) strengths.push('Alta valoración ciudadana');
 
     if (score < 40) risks.push('Puntuación general baja');
-    if (intelligence < 40) risks.push('Puntuación de inteligencia limitada');
-    if (momentum < 30) risks.push('Tendencia negativa en momentum');
+    if (risk >= 40) risks.push('Nivel de riesgo significativo');
+    if (momentum < 20) risks.push('Tendencia negativa en momentum');
     if (stars <= 2) risks.push('Baja valoración ciudadana');
 
     if (strengths.length === 0) strengths.push('Perfil en evaluación');
@@ -64,60 +84,79 @@ export default function AnalisisSeleccion() {
     const avgScore = allCandidates.reduce((s, c) => s + Number(c.final_score || 0), 0) / allCandidates.length;
     const risk = computeRiskLevel(avgScore);
     const consistency = computeConsistency(allCandidates);
+    const diversity = computeDiversity(allCandidates);
 
-    // Positive and negative factors
+    // ── Positive factors (education-aware) ──
     const positiveFactors: string[] = [];
     const negativeFactors: string[] = [];
 
+    const withEducation = allCandidates.filter(c => c.education && c.education.length > 10).length;
+    const eduPct = Math.round((withEducation / allCandidates.length) * 100);
+    if (eduPct >= 50) positiveFactors.push(`${eduPct}% de candidatos con educación superior verificada`);
+
+    const withExperience = allCandidates.filter(c => c.experience && c.experience.length > 10).length;
+    if (withExperience > allCandidates.length / 2) positiveFactors.push('Alta experiencia en gestión pública');
+
     const highScoreCount = allCandidates.filter(c => Number(c.final_score || 0) >= 50).length;
     const highScorePct = Math.round((highScoreCount / allCandidates.length) * 100);
-    if (highScorePct >= 60) positiveFactors.push(`${highScorePct}% de candidatos con puntuación superior a 50`);
+    if (highScorePct >= 60) positiveFactors.push(`${highScorePct}% con puntuación superior a 50 puntos`);
 
-    const highIntelCount = allCandidates.filter(c => Number(c.intelligence_score || 0) >= 50).length;
-    if (highIntelCount > allCandidates.length / 2) positiveFactors.push('Alta inteligencia política promedio');
+    const highIntegrity = allCandidates.filter(c => Number(c.integrity_score || 0) >= 70).length;
+    if (highIntegrity > allCandidates.length / 2) positiveFactors.push('Bajo número de antecedentes judiciales');
 
     const highMomentum = allCandidates.filter(c => Number(c.momentum_score || 0) >= 50).length;
     if (highMomentum > 0) positiveFactors.push(`${highMomentum} candidato(s) con tendencia positiva`);
 
-    const highStarsCount = allCandidates.filter(c => Number(c.stars_rating || 0) >= 4).length;
-    if (highStarsCount > 0) positiveFactors.push(`${highStarsCount} candidato(s) con alta valoración ciudadana`);
-
     if (consistency === 'Alta') positiveFactors.push('Alta consistencia profesional entre cargos');
+    if (diversity === 'Alta') positiveFactors.push('Alta diversidad de perfiles seleccionados');
 
+    // Negative factors
     const lowScoreCount = allCandidates.filter(c => Number(c.final_score || 0) < 35).length;
-    if (lowScoreCount > 0) negativeFactors.push(`${lowScoreCount} candidato(s) con puntuación baja`);
+    if (lowScoreCount > 0) negativeFactors.push(`${lowScoreCount} candidato(s) con experiencia pública limitada`);
 
-    const lowIntel = allCandidates.filter(c => Number(c.intelligence_score || 0) < 35).length;
-    if (lowIntel > 0) negativeFactors.push(`Inteligencia política limitada en ${lowIntel} perfil(es)`);
+    const noEducation = allCandidates.filter(c => !c.education || c.education.length < 10).length;
+    if (noEducation > 0) negativeFactors.push(`${noEducation} candidato(s) sin educación superior registrada`);
 
-    const lowMomentum = allCandidates.filter(c => Number(c.momentum_score || 0) < 30).length;
+    const highRisk = allCandidates.filter(c => Number(c.risk_score || 0) >= 40).length;
+    if (highRisk > 0) negativeFactors.push(`Presencia de antecedentes verificados en ${highRisk} perfil(es)`);
+
+    const lowMomentum = allCandidates.filter(c => Number(c.momentum_score || 0) < 20).length;
     if (lowMomentum > 0) negativeFactors.push(`${lowMomentum} candidato(s) con tendencia negativa`);
 
-    if (consistency === 'Baja') negativeFactors.push('Baja consistencia entre los perfiles seleccionados');
+    if (consistency === 'Baja') negativeFactors.push('Baja consistencia profesional entre cargos');
+    if (diversity === 'Baja') negativeFactors.push('Baja renovación generacional en la plancha');
 
     if (positiveFactors.length === 0) positiveFactors.push('Selección en evaluación — explora más candidatos');
     if (negativeFactors.length === 0) negativeFactors.push('Sin factores negativos significativos detectados');
 
-    // Impact text
+    // Impact text based on quality
     let impactText = '';
-    if (qualityStars >= 4) {
+    if (qualityStars >= 5) {
         impactText = 'Tu selección presenta alta coherencia profesional y bajo riesgo institucional según los datos disponibles.';
+    } else if (qualityStars >= 4) {
+        impactText = 'Tu selección prioriza experiencia profesional sobre renovación política, lo que genera alta estabilidad pero menor diversidad política.';
     } else if (qualityStars === 3) {
-        impactText = 'Tu selección muestra un equilibrio entre experiencia y renovación, con un nivel de riesgo moderado.';
+        impactText = 'Tu selección muestra un equilibrio entre experiencia y renovación, con un nivel de riesgo moderado. Evaluar perfiles con mayor trayectoria podría mejorar el balance general.';
     } else {
-        impactText = 'Tu puntuación es menor principalmente por perfiles con experiencia limitada o tendencias negativas. Explorar candidatos con mayor trayectoria podría mejorar la evaluación.';
+        impactText = 'Tu puntuación es menor principalmente por alto número de candidatos sin experiencia pública previa, presencia de antecedentes verificados y baja consistencia profesional entre cargos.';
+    }
+
+    // Suggestions for low scores
+    let suggestionText = '';
+    if (qualityStars <= 2) {
+        suggestionText = 'Explorar candidatos con mayor experiencia legislativa podría mejorar la evaluación.';
     }
 
     // Group by position
     const positionGroups = [
-        { key: 'president', label: 'Presidente', candidates: selection.president ? [selection.president] : [] },
-        { key: 'senator', label: 'Senado', candidates: selection.senators },
-        { key: 'deputy', label: 'Diputados', candidates: selection.deputies },
-        { key: 'andean', label: 'Parlamento Andino', candidates: selection.andean },
+        { key: 'president', label: '🏛️ Presidente', candidates: selection.president ? [selection.president] : [] },
+        { key: 'senator', label: '📋 Senado (promedio)', candidates: selection.senators },
+        { key: 'deputy', label: '📜 Diputados', candidates: selection.deputies },
+        { key: 'andean', label: '🌐 Parlamento Andino', candidates: selection.andean },
     ].filter(g => g.candidates.length > 0);
 
     return (
-        <div className="analysis-panel animate-fade-in">
+        <div className="analysis-panel animate-fade-in" style={{ border: 'none', padding: 0 }}>
             <h3 className="analysis-title">📊 Análisis completo de tu selección</h3>
 
             {/* A. Evaluación General */}
@@ -128,7 +167,7 @@ export default function AnalisisSeleccion() {
                         <span className="analysis-metric-label">Calidad de selección</span>
                         <span className="analysis-metric-value">
                             {'★'.repeat(qualityStars)}{'☆'.repeat(5 - qualityStars)}
-                            <span className="analysis-metric-num"> {qualityScore}</span>
+                            <span className="analysis-metric-num"> {(qualityScore / 20).toFixed(1)} / 5</span>
                         </span>
                     </div>
                     <div className="analysis-metric">
@@ -140,8 +179,8 @@ export default function AnalisisSeleccion() {
                         <span className="analysis-metric-value">{consistency}</span>
                     </div>
                     <div className="analysis-metric">
-                        <span className="analysis-metric-label">Candidatos seleccionados</span>
-                        <span className="analysis-metric-value">{allCandidates.length}</span>
+                        <span className="analysis-metric-label">Diversidad de experiencia</span>
+                        <span className="analysis-metric-value">{diversity}</span>
                     </div>
                 </div>
             </div>
@@ -183,12 +222,14 @@ export default function AnalisisSeleccion() {
                                     </div>
                                     {strengths.length > 0 && (
                                         <div className="analysis-cargo-strengths">
-                                            {strengths.map((s, i) => <span key={i} className="analysis-tag analysis-tag-pos">✔ {s}</span>)}
+                                            <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--vp-green)', marginRight: 6 }}>Fortalezas:</span>
+                                            {strengths.map((s, i) => <span key={i} className="analysis-tag analysis-tag-pos">• {s}</span>)}
                                         </div>
                                     )}
                                     {cRisks.length > 0 && (
                                         <div className="analysis-cargo-risks">
-                                            {cRisks.map((r, i) => <span key={i} className="analysis-tag analysis-tag-neg">⚠ {r}</span>)}
+                                            <span style={{ fontSize: 10, fontWeight: 700, color: '#d97706', marginRight: 6 }}>Riesgos:</span>
+                                            {cRisks.map((r, i) => <span key={i} className="analysis-tag analysis-tag-neg">• {r}</span>)}
                                         </div>
                                     )}
                                 </div>
@@ -202,6 +243,17 @@ export default function AnalisisSeleccion() {
             <div className="analysis-section analysis-impact">
                 <h4 className="analysis-section-title">D. Impacto global de tu elección</h4>
                 <p className="analysis-impact-text">{impactText}</p>
+
+                {/* Suggestion for low scores */}
+                {suggestionText && (
+                    <div style={{
+                        marginTop: 12, padding: '10px 14px', borderRadius: 10,
+                        background: 'rgba(100,181,246,0.06)', border: '1px solid rgba(100,181,246,0.15)',
+                        fontSize: 12, color: '#1976d2', lineHeight: 1.6
+                    }}>
+                        💡 <strong>Sugerencia neutral:</strong> {suggestionText}
+                    </div>
+                )}
             </div>
         </div>
     );

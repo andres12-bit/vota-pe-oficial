@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Party, Candidate, getParties, getRanking } from '@/lib/api';
+import { getCandidatePhoto, getAvatarUrl } from '@/lib/avatars';
 
 type TabType = 'votar' | 'encuesta' | 'planchas' | 'president' | 'senator' | 'deputy' | 'andean';
 
@@ -12,6 +13,10 @@ interface Props {
 interface PartyWithScore extends Party {
     avgScore: number;
     presidentName?: string;
+    presidentPhoto?: string;
+    presidentPartyColor?: string;
+    senatorCount?: number;
+    deputyCount?: number;
 }
 
 const SCORE_COLORS = {
@@ -46,23 +51,28 @@ export default function EvaluacionPlanchas({ onNavigate }: Props) {
                     getRanking('president'),
                 ]);
 
-                // Compute avg score per party from their presidential candidates
                 const partyMap = new Map<number, PartyWithScore>();
                 partiesData.forEach(p => {
                     partyMap.set(p.id, {
                         ...p,
                         avgScore: p.party_full_score > 0 ? p.party_full_score : 0,
                         presidentName: undefined,
+                        presidentPhoto: undefined,
+                        presidentPartyColor: undefined,
+                        senatorCount: 0,
+                        deputyCount: 0,
                     });
                 });
 
-                // Enrich with president final_score data
+                // Enrich with president data
                 presidentsData.forEach((c: Candidate) => {
                     const partyId = c.party_id;
                     if (partyId && partyMap.has(partyId)) {
                         const pm = partyMap.get(partyId)!;
                         pm.avgScore = Number(c.final_score) || 0;
                         pm.presidentName = c.name?.split(' ').slice(-2).join(' ');
+                        pm.presidentPhoto = c.photo || undefined;
+                        pm.presidentPartyColor = c.party_color || pm.color;
                     }
                 });
 
@@ -80,7 +90,7 @@ export default function EvaluacionPlanchas({ onNavigate }: Props) {
         fetchData();
     }, []);
 
-    const topParties = partyScores.slice(0, 8);
+    const topParties = partyScores.slice(0, 6);
     const maxScore = topParties.length > 0 ? topParties[0].avgScore : 100;
 
     const excellent = partyScores.filter(p => p.avgScore >= 80).length;
@@ -88,6 +98,10 @@ export default function EvaluacionPlanchas({ onNavigate }: Props) {
     const regular = partyScores.filter(p => p.avgScore >= 40 && p.avgScore < 60).length;
     const low = partyScores.filter(p => p.avgScore < 40).length;
     const avgScore = partyScores.length > 0 ? partyScores.reduce((s, p) => s + p.avgScore, 0) / partyScores.length : 0;
+
+    // Top 2 best
+    const first = partyScores[0];
+    const second = partyScores[1];
 
     return (
         <section className="evaluacion-section">
@@ -137,6 +151,37 @@ export default function EvaluacionPlanchas({ onNavigate }: Props) {
                         </div>
                     </div>
 
+                    {/* === TOP 2 comparison === */}
+                    {first && second && (
+                        <div className="planchas-comparison">
+                            <div className="planchas-compare-card planchas-compare-best">
+                                <div className="planchas-compare-badge" style={{ background: '#d4a017' }}>🥇 1ra Mejor Plancha</div>
+                                <img
+                                    src={getCandidatePhoto(first.presidentPhoto || null, first.presidentName || first.name, 48, first.presidentPartyColor || first.color)}
+                                    onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(first.presidentName || first.name, 48, first.presidentPartyColor || first.color); }}
+                                    alt={first.presidentName || first.name}
+                                    className="planchas-compare-photo"
+                                />
+                                <div className="planchas-compare-name">{first.presidentName || first.abbreviation}</div>
+                                <div className="planchas-compare-party">{first.abbreviation}</div>
+                                <div className="planchas-compare-score" style={{ color: getScoreColor(first.avgScore) }}>{first.avgScore.toFixed(1)}</div>
+                            </div>
+                            <div className="planchas-compare-vs">VS</div>
+                            <div className="planchas-compare-card planchas-compare-best">
+                                <div className="planchas-compare-badge" style={{ background: '#9e9e9e' }}>🥈 2da Mejor Plancha</div>
+                                <img
+                                    src={getCandidatePhoto(second.presidentPhoto || null, second.presidentName || second.name, 48, second.presidentPartyColor || second.color)}
+                                    onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(second.presidentName || second.name, 48, second.presidentPartyColor || second.color); }}
+                                    alt={second.presidentName || second.name}
+                                    className="planchas-compare-photo"
+                                />
+                                <div className="planchas-compare-name">{second.presidentName || second.abbreviation}</div>
+                                <div className="planchas-compare-party">{second.abbreviation}</div>
+                                <div className="planchas-compare-score" style={{ color: getScoreColor(second.avgScore) }}>{second.avgScore.toFixed(1)}</div>
+                            </div>
+                        </div>
+                    )}
+
                     {/* === DISTRIBUTION BAR === */}
                     <div className="planchas-section">
                         <div className="planchas-section-title">
@@ -159,7 +204,7 @@ export default function EvaluacionPlanchas({ onNavigate }: Props) {
                         </div>
                     </div>
 
-                    {/* === TOP RANKING === */}
+                    {/* === TOP RANKING WITH PHOTOS === */}
                     <div className="planchas-section">
                         <div className="planchas-section-title">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ color: 'var(--vp-text-dim)' }}>
@@ -178,6 +223,13 @@ export default function EvaluacionPlanchas({ onNavigate }: Props) {
                                         <span className="planchas-rank-pos">
                                             {i < 3 ? medals[i] : <span className="planchas-rank-num">{i + 1}</span>}
                                         </span>
+                                        {/* Candidate Photo */}
+                                        <img
+                                            src={getCandidatePhoto(party.presidentPhoto || null, party.presidentName || party.name, 36, party.presidentPartyColor || party.color)}
+                                            onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(party.presidentName || party.name, 36, party.presidentPartyColor || party.color); }}
+                                            alt={party.presidentName || party.name}
+                                            className="planchas-rank-photo"
+                                        />
                                         <div className="planchas-rank-color" style={{ background: party.color }} />
                                         <div className="planchas-rank-info">
                                             <div className="planchas-rank-name">{party.abbreviation}</div>

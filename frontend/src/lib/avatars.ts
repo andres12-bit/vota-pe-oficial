@@ -19,6 +19,19 @@ export function getAvatarUrl(name: string, size = 40, color?: string): string {
 }
 
 /**
+ * Get the best photo URL for a candidate.
+ * Prefers real JNE photo_url, falls back to DiceBear initials avatar.
+ * @param photo - The candidate's photo URL from JNE (may be null)
+ * @param name - Candidate full name (for fallback avatar)
+ * @param size - Avatar size in pixels
+ * @param color - Party color hex
+ */
+export function getCandidatePhoto(photo: string | null | undefined, name: string, size = 40, color?: string): string {
+    if (photo && photo.trim().length > 0) return photo;
+    return getAvatarUrl(name, size, color);
+}
+
+/**
  * Get initials from a candidate name (first + last initial).
  */
 export function getInitials(name: string): string {
