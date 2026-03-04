@@ -125,7 +125,7 @@ export default function CanchaDemocracia({ candidates, onVote }: Props) {
                 )}
 
                 <h2 className="text-base sm:text-lg font-extrabold tracking-wide" style={{ color: 'var(--vp-text)' }}>
-                    Construye tu selección electoral ideal
+                    Elige mejor. Decide informado
                 </h2>
                 <p className="text-[11px] sm:text-xs mt-1" style={{ color: 'var(--vp-text-dim)' }}>
                     Analiza candidatos y comprende la calidad de tu elección

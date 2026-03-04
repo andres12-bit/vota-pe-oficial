@@ -164,6 +164,16 @@ export default function HojaDeVidaPage({ params }: { params: Promise<{ id: strin
                     </div>
                 </div>
 
+                {/* JNE Data Source Notice */}
+                <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 8, padding: '12px 16px', marginBottom: 20, display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                    <span style={{ fontSize: 18, flexShrink: 0 }}>ℹ️</span>
+                    <div style={{ fontSize: 12, color: '#1e40af', lineHeight: 1.5 }}>
+                        <strong>Fuente de datos:</strong> Toda la información de esta hoja de vida proviene del portal{' '}
+                        <a href="https://votoinformado.jne.gob.pe" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', fontWeight: 600 }}>Voto Informado del Jurado Nacional de Elecciones (JNE)</a>.
+                        Es de acceso público y se presenta con fines informativos y educativos. VOTA.PE no modifica, valida ni garantiza la veracidad de esta información.
+                    </div>
+                </div>
+
                 {/* EDUCACIÓN BÁSICA */}
                 <Section title="Educación Básica">
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, fontSize: 13 }}>

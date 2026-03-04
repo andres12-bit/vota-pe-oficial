@@ -170,7 +170,7 @@ function HomeContent() {
                   </div>
                 )}
 
-                <h1 className="hero-title section-title">Construye tu selección electoral ideal</h1>
+                <h1 className="hero-title section-title">Elige mejor. Decide informado</h1>
                 <p className="hero-subtitle">Elige a tus candidatos y compón tu equipo perfecto para las elecciones.</p>
 
                 {selState === 'empty' && !showDraftBanner && (

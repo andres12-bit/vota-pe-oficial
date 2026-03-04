@@ -359,6 +359,9 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         <h3 className="text-xs font-bold tracking-[2px] uppercase mb-6" style={{ color: 'var(--vp-text-dim)' }}>
                             📋 Hoja de Vida
                         </h3>
+                        <div className="text-[10px] px-3 py-2 rounded-lg mb-5" style={{ background: 'rgba(41,121,255,0.06)', border: '1px solid rgba(41,121,255,0.15)', color: 'var(--vp-text-dim)' }}>
+                            ℹ️ Información proveniente del <a href="https://votoinformado.jne.gob.pe" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--vp-blue)', textDecoration: 'underline' }}>Jurado Nacional de Elecciones (JNE)</a>. Mostrada con fines informativos. VOTA.PE no valida ni garantiza la veracidad de estos datos.
+                        </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-[1.5rem] data-block-gap">
                             {candidate.education && (
                                 <div className="p-5 rounded-2xl" style={{ background: 'rgba(68,138,255,0.05)', border: '1px solid rgba(68,138,255,0.15)' }}>
@@ -441,6 +444,9 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                                 <h3 className="text-xs font-bold tracking-[2px] uppercase" style={{ color: 'var(--vp-text-dim)' }}>
                                     📜 Resumen de Plan de Gobierno
                                 </h3>
+                                <div className="text-[10px] px-3 py-2 rounded-lg" style={{ background: 'rgba(41,121,255,0.06)', border: '1px solid rgba(41,121,255,0.15)', color: 'var(--vp-text-dim)' }}>
+                                    ℹ️ Datos del <a href="https://votoinformado.jne.gob.pe" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--vp-blue)', textDecoration: 'underline' }}>JNE Voto Informado</a>. Presentados con fines informativos y educativos.
+                                </div>
                                 {candidate.plan_pdf_url && (
                                     <a
                                         href={candidate.plan_pdf_url}
