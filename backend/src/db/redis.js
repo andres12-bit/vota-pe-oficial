@@ -4,52 +4,60 @@
  * Provides Redis connection with automatic fallback to in-memory cache
  * when Redis is not available (development/single-instance mode).
  */
-const Redis = require('ioredis');
+let Redis;
+try {
+    Redis = require('ioredis');
+} catch (e) {
+    Redis = null;
+    console.warn('[REDIS] ioredis module not installed. Using in-memory fallback cache.');
+}
 
 const REDIS_URL = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
 const DEFAULT_TTL = parseInt(process.env.CACHE_TTL || '300'); // 300 seconds = 5 minutes
 
 let redis = null;
-let useMemoryFallback = false;
+let useMemoryFallback = !Redis; // If Redis module not available, use memory
 
 // In-memory fallback cache
 const memoryCache = new Map();
 const memoryCacheTTL = new Map();
 
-try {
-    redis = new Redis(REDIS_URL, {
-        maxRetriesPerRequest: 3,
-        retryStrategy(times) {
-            if (times > 3) {
-                console.warn('[REDIS] Max retries reached. Falling back to in-memory cache.');
+if (Redis) {
+    try {
+        redis = new Redis(REDIS_URL, {
+            maxRetriesPerRequest: 3,
+            retryStrategy(times) {
+                if (times > 3) {
+                    console.warn('[REDIS] Max retries reached. Falling back to in-memory cache.');
+                    useMemoryFallback = true;
+                    return null; // Stop retrying
+                }
+                return Math.min(times * 200, 2000);
+            },
+            lazyConnect: true,
+        });
+
+        redis.on('connect', () => {
+            console.log('[REDIS] Connected to Redis server');
+            useMemoryFallback = false;
+        });
+
+        redis.on('error', (err) => {
+            if (!useMemoryFallback) {
+                console.warn('[REDIS] Connection error, using in-memory fallback:', err.message);
                 useMemoryFallback = true;
-                return null; // Stop retrying
             }
-            return Math.min(times * 200, 2000);
-        },
-        lazyConnect: true,
-    });
+        });
 
-    redis.on('connect', () => {
-        console.log('[REDIS] Connected to Redis server');
-        useMemoryFallback = false;
-    });
-
-    redis.on('error', (err) => {
-        if (!useMemoryFallback) {
-            console.warn('[REDIS] Connection error, using in-memory fallback:', err.message);
+        // Attempt connection (non-blocking)
+        redis.connect().catch(() => {
             useMemoryFallback = true;
-        }
-    });
-
-    // Attempt connection (non-blocking)
-    redis.connect().catch(() => {
+            console.warn('[REDIS] Could not connect. Using in-memory fallback cache.');
+        });
+    } catch (err) {
         useMemoryFallback = true;
-        console.warn('[REDIS] Could not connect. Using in-memory fallback cache.');
-    });
-} catch (err) {
-    useMemoryFallback = true;
-    console.warn('[REDIS] Initialization failed. Using in-memory fallback cache.');
+        console.warn('[REDIS] Initialization failed. Using in-memory fallback cache.');
+    }
 }
 
 // Clean expired memory cache entries periodically
