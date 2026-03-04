@@ -55,31 +55,25 @@ router.get('/:id', async (req, res) => {
             return res.status(404).json({ error: 'Candidate not found' });
         }
 
-        const proposalsResult = await pool.query(
-            'SELECT * FROM candidate_proposals WHERE candidate_id = $1 ORDER BY created_at DESC',
-            [id]
-        );
-
-        const eventsResult = await pool.query(
-            'SELECT * FROM candidate_events WHERE candidate_id = $1 AND is_validated = true ORDER BY created_at DESC',
-            [id]
-        );
-
-        const vicePresidentsResult = await pool.query(
-            'SELECT * FROM candidate_vice_presidents WHERE candidate_id = $1 ORDER BY sort_order ASC',
-            [id]
-        );
-
-        const planGobiernoResult = await pool.query(
-            'SELECT * FROM candidate_plan_gobierno WHERE candidate_id = $1 ORDER BY sort_order ASC',
-            [id]
-        );
-
         const candidate = candidateResult.rows[0];
-        candidate.proposals = proposalsResult.rows;
-        candidate.events = eventsResult.rows;
-        candidate.vice_presidents = vicePresidentsResult.rows;
-        candidate.plan_gobierno = planGobiernoResult.rows;
+
+        // Each secondary query wrapped in try/catch so missing tables don't crash the endpoint
+        const safeQuery = async (sql, params) => {
+            try { return (await pool.query(sql, params)).rows; } catch { return []; }
+        };
+
+        candidate.proposals = await safeQuery(
+            'SELECT * FROM candidate_proposals WHERE candidate_id = $1 ORDER BY created_at DESC', [id]
+        );
+        candidate.events = await safeQuery(
+            'SELECT * FROM candidate_events WHERE candidate_id = $1 AND is_validated = true ORDER BY created_at DESC', [id]
+        );
+        candidate.vice_presidents = await safeQuery(
+            'SELECT * FROM candidate_vice_presidents WHERE candidate_id = $1 ORDER BY sort_order ASC', [id]
+        );
+        candidate.plan_gobierno = await safeQuery(
+            'SELECT * FROM candidate_plan_gobierno WHERE candidate_id = $1 ORDER BY sort_order ASC', [id]
+        );
 
         res.json(candidate);
     } catch (err) {
