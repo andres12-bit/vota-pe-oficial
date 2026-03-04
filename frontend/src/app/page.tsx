@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, Component, ReactNode } from 'react';
 import { Candidate, getGlobalRankingAndMomentum, getRanking, getStats, castVote } from '@/lib/api';
 import { getAvatarUrl, getCandidatePhoto } from '@/lib/avatars';
 import { useWebSocket } from '@/lib/websocket';
@@ -21,6 +21,36 @@ import PostSelectionBar from '@/components/PostSelectionBar';
 import ShareModal from '@/components/ShareModal';
 import AnalisisSeleccion from '@/components/AnalisisSeleccion';
 import { useRouter, useSearchParams } from 'next/navigation';
+
+// Error Boundary to prevent PlanchasPanel crashes from killing the whole page
+class PlanchasErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error: Error) {
+    console.error('PlanchasPanel crash caught:', error);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex items-center justify-center py-20">
+          <div className="text-center">
+            <p className="text-lg mb-2">⚠️</p>
+            <p className="text-sm mb-3" style={{ color: 'var(--vp-text-dim)' }}>Error cargando planchas.</p>
+            <button onClick={() => { this.setState({ hasError: false }); }} className="px-4 py-2 rounded-lg text-sm font-bold text-white" style={{ background: 'var(--vp-red)' }}>
+              Reintentar
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 type TabType = 'votar' | 'encuesta' | 'planchas' | 'president' | 'senator' | 'deputy' | 'andean';
 const VALID_TABS: TabType[] = ['votar', 'encuesta', 'planchas', 'president', 'senator', 'deputy', 'andean'];
@@ -155,7 +185,9 @@ function HomeContent() {
           </div>
         ) : activeTab === 'planchas' ? (
           /* PLANCHAS VIEW */
-          <PlanchasPanel />
+          <PlanchasErrorBoundary>
+            <PlanchasPanel />
+          </PlanchasErrorBoundary>
         ) : activeTab === 'votar' ? (
           /* HOME VIEW — Clean centered layout */
           <>

@@ -14,23 +14,35 @@ interface PlanchaData {
 export default function PlanchasPanel() {
     const [planchas, setPlanchas] = useState<PlanchaData[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [sortBy, setSortBy] = useState<'score' | 'name' | 'candidates' | 'totalScore'>('score');
 
     useEffect(() => {
         async function fetchPlanchas() {
             try {
+                // Fetch each endpoint independently so partial failures don't kill everything
+                const safeFetch = async <T,>(fn: () => Promise<T>, fallback: T): Promise<T> => {
+                    try { return await fn(); } catch { return fallback; }
+                };
+
                 const [parties, presidents, senators, deputies, andean] = await Promise.all([
-                    getParties(),
-                    getRanking('president'),
-                    getRanking('senator'),
-                    getRanking('deputy'),
-                    getRanking('andean'),
+                    safeFetch(getParties, []),
+                    safeFetch(() => getRanking('president'), []),
+                    safeFetch(() => getRanking('senator'), []),
+                    safeFetch(() => getRanking('deputy'), []),
+                    safeFetch(() => getRanking('andean'), []),
                 ]);
 
-                const allCandidates = [...presidents, ...senators, ...deputies, ...andean];
+                if (!parties.length) {
+                    setError('No se pudieron cargar los partidos. Intenta de nuevo.');
+                    setLoading(false);
+                    return;
+                }
+
+                const allCandidates = [...(presidents || []), ...(senators || []), ...(deputies || []), ...(andean || [])];
 
                 const data: PlanchaData[] = parties.map(party => {
-                    const pres = presidents.find(c =>
+                    const pres = (presidents || []).find(c =>
                         c.party_id === party.id ||
                         c.party_abbreviation === party.abbreviation ||
                         c.party_name === party.name
@@ -47,6 +59,7 @@ export default function PlanchasPanel() {
                 setPlanchas(data);
             } catch (err) {
                 console.error('Error fetching planchas:', err);
+                setError('Error cargando planchas. Intenta de nuevo.');
             } finally {
                 setLoading(false);
             }
@@ -78,6 +91,20 @@ export default function PlanchasPanel() {
                 <div className="text-center">
                     <div className="w-10 h-10 border-2 border-t-transparent rounded-full animate-spin mx-auto mb-3" style={{ borderColor: 'var(--vp-red)', borderTopColor: 'transparent' }} />
                     <p className="text-sm" style={{ color: 'var(--vp-text-dim)' }}>Cargando planchas...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="flex items-center justify-center py-20">
+                <div className="text-center">
+                    <p className="text-lg mb-2">⚠️</p>
+                    <p className="text-sm mb-3" style={{ color: 'var(--vp-text-dim)' }}>{error}</p>
+                    <button onClick={() => window.location.reload()} className="px-4 py-2 rounded-lg text-sm font-bold text-white" style={{ background: 'var(--vp-red)' }}>
+                        Reintentar
+                    </button>
                 </div>
             </div>
         );
