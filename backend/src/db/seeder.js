@@ -233,7 +233,7 @@ async function seed() {
 
     for (const cand of allCandidates.rows) {
         const jnePartyId = partyIdToJneId[cand.party_id];
-        const partyPlan = jnePartyId ? planData.plans.find(p => p.party_jne_id === jnePartyId) : null;
+        const partyPlan = jnePartyId ? planData.plans.find(p => String(p.party_jne_id) === String(jnePartyId)) : null;
 
         if (partyPlan && partyPlan.dimensions.length > 0) {
             let sortOrder = 1;
@@ -247,9 +247,12 @@ async function seed() {
                     planCount++;
                 }
             }
-            // Update PDF URL
-            if (partyPlan.plan_pdf_url) {
-                await pool.query(`UPDATE candidates SET plan_pdf_url = $1 WHERE id = $2`, [partyPlan.plan_pdf_url, cand.id]);
+            // Update PDF URLs (plan + resumen)
+            if (partyPlan.plan_pdf_url || partyPlan.resumen_pdf_url) {
+                await pool.query(`UPDATE candidates SET plan_pdf_url = COALESCE($1, plan_pdf_url) WHERE id = $2`, [partyPlan.plan_pdf_url || partyPlan.resumen_pdf_url, cand.id]);
+                if (partyPlan.resumen_pdf_url) {
+                    await pool.query(`UPDATE candidates SET plan_pdf_local = $1 WHERE id = $2`, [partyPlan.resumen_pdf_url, cand.id]);
+                }
             }
         } else {
             let sortOrder = 1;

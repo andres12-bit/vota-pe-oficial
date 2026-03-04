@@ -847,20 +847,39 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                                 <div className="text-[10px] px-3 py-2 rounded-lg" style={{ background: 'rgba(41,121,255,0.06)', border: '1px solid rgba(41,121,255,0.15)', color: 'var(--vp-text-dim)' }}>
                                     ℹ️ Datos del <a href="https://votoinformado.jne.gob.pe" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--vp-blue)', textDecoration: 'underline' }}>JNE Voto Informado</a>. Presentados con fines informativos y educativos.
                                 </div>
-                                {candidate.plan_pdf_url && (
-                                    <a
-                                        href={candidate.plan_pdf_url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all hover:scale-105"
-                                        style={{
-                                            background: 'linear-gradient(135deg, rgba(255,23,68,0.15), rgba(255,23,68,0.05))',
-                                            border: '1px solid rgba(255,23,68,0.3)',
-                                            color: 'var(--vp-red)',
-                                        }}
-                                    >
-                                        📄 Descargar Plan Completo (PDF)
-                                    </a>
+                                {(candidate.plan_pdf_url || candidate.plan_pdf_local) && (
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                        {candidate.plan_pdf_url && (
+                                            <a
+                                                href={candidate.plan_pdf_url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all hover:scale-105"
+                                                style={{
+                                                    background: 'linear-gradient(135deg, rgba(255,23,68,0.15), rgba(255,23,68,0.05))',
+                                                    border: '1px solid rgba(255,23,68,0.3)',
+                                                    color: 'var(--vp-red)',
+                                                }}
+                                            >
+                                                📄 Plan Completo (PDF)
+                                            </a>
+                                        )}
+                                        {candidate.plan_pdf_local && (
+                                            <a
+                                                href={candidate.plan_pdf_local}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all hover:scale-105"
+                                                style={{
+                                                    background: 'linear-gradient(135deg, rgba(41,121,255,0.15), rgba(41,121,255,0.05))',
+                                                    border: '1px solid rgba(41,121,255,0.3)',
+                                                    color: 'var(--vp-blue)',
+                                                }}
+                                            >
+                                                📋 Resumen (PDF)
+                                            </a>
+                                        )}
+                                    </div>
                                 )}
                             </div>
                             <div className="flex flex-col gap-6 data-block-gap">
