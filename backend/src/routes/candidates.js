@@ -59,7 +59,7 @@ router.get('/:id', async (req, res) => {
 
         // Each secondary query wrapped in try/catch so missing tables don't crash the endpoint
         const safeQuery = async (sql, params) => {
-            try { return (await pool.query(sql, params)).rows; } catch { return []; }
+            try { return (await pool.query(sql, params)).rows; } catch (e) { return []; }
         };
 
         candidate.proposals = await safeQuery(
