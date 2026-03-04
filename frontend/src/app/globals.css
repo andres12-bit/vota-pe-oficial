@@ -6696,20 +6696,36 @@ body {
 /* ── Encuesta Mobile Fixes ── */
 @media (max-width: 768px) {
   .enc-page {
-    max-width: 100%;
+    max-width: 100vw;
     overflow-x: hidden;
     padding: 0 4px;
+    box-sizing: border-box;
   }
 
   .enc-poll-card {
-    max-width: 100%;
-    padding: 14px 12px;
+    max-width: calc(100vw - 16px);
+    width: 100%;
+    padding: 12px 10px;
     box-sizing: border-box;
+    overflow: hidden;
   }
 
   .enc-poll-header {
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .enc-poll-meta {
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .enc-poll-question {
+    font-size: 13px;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 
   .enc-poll-votes-col {
@@ -6720,38 +6736,72 @@ body {
   }
 
   .enc-poll-votes-num {
-    font-size: 16px;
+    font-size: 15px;
   }
 
   .enc-poll-votes-lbl {
     display: inline;
-  }
-
-  .enc-poll-question {
-    font-size: 13px;
+    font-size: 8px;
   }
 
   .enc-option-btn {
-    padding: 8px 10px;
+    padding: 8px 8px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .enc-option-content {
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .enc-option-left {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
   }
 
   .enc-option-name {
     font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: calc(100vw - 120px);
   }
 
   .enc-option-pct {
     font-size: 12px;
   }
 
+  .enc-option-stats {
+    flex-shrink: 0;
+  }
+
+  .enc-option-vote-tag {
+    font-size: 9px;
+    padding: 2px 8px;
+  }
+
   .enc-leader-strip {
     padding: 5px 8px;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
   }
 
   .enc-leader-name {
     font-size: 10px;
   }
 
+  .enc-leader-pct {
+    font-size: 11px;
+  }
+
   .enc-poll-footer {
+    flex-wrap: wrap;
+  }
+
+  .enc-poll-tags {
     flex-wrap: wrap;
   }
 
@@ -6760,11 +6810,41 @@ body {
   .enc-dash-cols,
   .enc-polls-grid,
   .enc-content-layout {
-    max-width: 100%;
+    max-width: 100vw;
     overflow-x: hidden;
+    box-sizing: border-box;
+  }
+
+  .enc-kpi {
+    padding: 10px 6px;
+  }
+
+  .enc-kpi-val {
+    font-size: 18px;
   }
 
   .enc-sidebar {
     position: static;
+  }
+
+  .enc-side-card {
+    max-width: calc(100vw - 16px);
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .enc-dash-card {
+    max-width: calc(100vw - 16px);
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .enc-cat-name {
+    width: 65px;
+    font-size: 9px;
+  }
+
+  .enc-poll-emoji {
+    font-size: 20px;
   }
 }
