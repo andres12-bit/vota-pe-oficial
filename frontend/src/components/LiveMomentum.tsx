@@ -11,128 +11,202 @@ interface Props {
 
 type PositionFilter = 'all' | 'president' | 'senator' | 'deputy' | 'andean';
 
-const POSITION_FILTERS: { id: PositionFilter; label: string; svgPath: string }[] = [
-    { id: 'all', label: 'TODOS', svgPath: 'M12 17.5c-3.04 0-5.5-2.46-5.5-5.5S8.96 6.5 12 6.5s5.5 2.46 5.5 5.5-2.46 5.5-5.5 5.5zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z' },
-    { id: 'president', label: 'PRES.', svgPath: 'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z' },
-    { id: 'deputy', label: 'DIP.', svgPath: 'M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z' },
-    { id: 'senator', label: 'SEN.', svgPath: 'M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z' },
-    { id: 'andean', label: 'P.AND.', svgPath: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z' },
+const FILTERS: { id: PositionFilter; label: string; emoji: string }[] = [
+    { id: 'all', label: 'Todos', emoji: '🌐' },
+    { id: 'president', label: 'Pres.', emoji: '🏛️' },
+    { id: 'senator', label: 'Sen.', emoji: '🏢' },
+    { id: 'deputy', label: 'Dip.', emoji: '👥' },
+    { id: 'andean', label: 'P.And.', emoji: '🌎' },
 ];
 
-const POSITION_LABELS: Record<string, string> = {
+const POS_LABEL: Record<string, string> = {
     president: 'Presidente',
     senator: 'Senador',
     deputy: 'Diputado',
     andean: 'P. Andino',
 };
 
+const SCORE_COLORS = {
+    hv: '#6366f1',
+    plan: '#3b82f6',
+    intencion: '#f59e0b',
+    integridad: '#10b981',
+};
+
+function ScoreRing({ value, size = 38, color, label }: { value: number; size?: number; color: string; label: string }) {
+    const r = (size - 4) / 2;
+    const circ = 2 * Math.PI * r;
+    const offset = circ - (Math.min(100, value) / 100) * circ;
+    return (
+        <div className="flex flex-col items-center gap-0.5" title={`${label}: ${value.toFixed(1)}`}>
+            <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
+                <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(0,0,0,0.06)" strokeWidth={3} />
+                <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={3}
+                    strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round"
+                    style={{ transition: 'stroke-dashoffset 0.8s ease' }} />
+                <text x={size / 2} y={size / 2 + 1} textAnchor="middle" dominantBaseline="middle"
+                    style={{ transform: 'rotate(90deg)', transformOrigin: 'center', fontSize: size * 0.28, fontWeight: 900, fill: 'var(--vp-text)' }}>
+                    {Math.round(value)}
+                </text>
+            </svg>
+            <span className="text-[7px] font-bold uppercase tracking-wider" style={{ color: 'var(--vp-text-dim)' }}>{label}</span>
+        </div>
+    );
+}
+
 export default function LiveMomentum({ candidates }: Props) {
     const [filter, setFilter] = useState<PositionFilter>('all');
-    const [deltas, setDeltas] = useState<Record<number, number>>({});
-    const prevScoresRef = useRef<Record<number, number>>({});
+    const [pulseIdx, setPulseIdx] = useState(0);
+    const [showAll, setShowAll] = useState(false);
 
-    const filteredCandidates = filter === 'all'
-        ? candidates
-        : candidates.filter(c => c.position === filter);
-
-    const topCandidates = filteredCandidates.slice(0, 5);
-
-    // Calculate deltas on candidate change (simulates real-time movement)
+    // Pulse animation for "live" feel
     useEffect(() => {
-        const newDeltas: Record<number, number> = {};
-        topCandidates.forEach(c => {
-            const prevScore = prevScoresRef.current[c.id];
-            if (prevScore !== undefined) {
-                newDeltas[c.id] = Number(c.momentum_score) - prevScore;
-            } else {
-                // Generate a seeded pseudo-delta for visual interest
-                const seed = Math.sin(c.id * 127) * 10000;
-                newDeltas[c.id] = parseFloat(((seed - Math.floor(seed)) * 5 - 2).toFixed(1));
-            }
-        });
-        setDeltas(newDeltas);
-        const scores: Record<number, number> = {};
-        topCandidates.forEach(c => { scores[c.id] = Number(c.momentum_score); });
-        prevScoresRef.current = scores;
-    }, [candidates, filter]);
+        const timer = setInterval(() => setPulseIdx(p => (p + 1) % 5), 3000);
+        return () => clearInterval(timer);
+    }, []);
 
-    // Compute total momentum for % calculation
-    const totalMomentum = topCandidates.reduce((s, c) => s + Number(c.momentum_score), 0) || 1;
+    const filtered = filter === 'all' ? candidates : candidates.filter(c => c.position === filter);
+    const sorted = [...filtered].sort((a, b) => Number(b.final_score) - Number(a.final_score));
+    const displayed = showAll ? sorted.slice(0, 12) : sorted.slice(0, 5);
+    const totalVotes = sorted.reduce((s, c) => s + Number(c.vote_count || 0), 0) || 1;
 
     return (
-        <div className="panel-glow module-card">
-            <div className="module-header">
-                <div className="module-header-left">
-                    <div className="module-icon module-icon-red">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z" /></svg>
+        <div className="panel-glow module-card" style={{ overflow: 'hidden' }}>
+            {/* ===== HEADER ===== */}
+            <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center"
+                        style={{ background: 'linear-gradient(135deg, var(--vp-red), #ef5350)', boxShadow: '0 4px 12px rgba(220,38,38,0.3)' }}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M18 20V10M12 20V4M6 20v-6" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" /></svg>
                     </div>
-                    <h3 className="module-title"><span className="module-title-accent">ENCUESTA</span> EN VIVO</h3>
+                    <div>
+                        <h3 className="text-sm font-black tracking-wide" style={{ color: 'var(--vp-text)' }}>
+                            <span style={{ color: 'var(--vp-red)' }}>RANKING</span> EN VIVO
+                        </h3>
+                        <p className="text-[9px]" style={{ color: 'var(--vp-text-dim)' }}>Score integral · HV + Plan + Intención + Integridad</p>
+                    </div>
                 </div>
-                <span className="module-live-dot" />
+                <div className="flex items-center gap-1.5">
+                    <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#16a34a' }} />
+                    <span className="text-[8px] font-bold tracking-wider uppercase" style={{ color: '#16a34a' }}>LIVE</span>
+                </div>
             </div>
 
-            {/* Position filter tabs */}
-            <div className="flex gap-1 mb-4 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
-                {POSITION_FILTERS.map(f => (
+            {/* ===== FILTER TABS ===== */}
+            <div className="flex gap-1 mb-4" style={{ scrollbarWidth: 'none', overflowX: 'auto' }}>
+                {FILTERS.map(f => (
                     <button
                         key={f.id}
-                        onClick={() => setFilter(f.id)}
-                        className={`module-filter-tab ${filter === f.id ? 'active' : ''}`}
+                        onClick={() => { setFilter(f.id); setShowAll(false); }}
+                        className="text-[10px] font-bold px-2.5 py-1.5 rounded-lg transition-all whitespace-nowrap"
+                        style={{
+                            background: filter === f.id ? 'var(--vp-red)' : 'rgba(0,0,0,0.04)',
+                            color: filter === f.id ? '#fff' : 'var(--vp-text-dim)',
+                            border: 'none', cursor: 'pointer',
+                            transform: filter === f.id ? 'scale(1.05)' : 'scale(1)',
+                        }}
                     >
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d={f.svgPath} /></svg>
-                        {f.label}
+                        {f.emoji} {f.label}
                     </button>
                 ))}
             </div>
 
-            <div className="flex flex-col gap-3">
-                {topCandidates.length === 0 && (
-                    <div className="text-center py-4 text-xs" style={{ color: 'var(--vp-text-dim)' }}>
-                        Sin datos de encuesta
-                    </div>
+            {/* ===== CANDIDATE CARDS ===== */}
+            <div className="flex flex-col gap-2">
+                {displayed.length === 0 && (
+                    <div className="text-center py-6 text-xs" style={{ color: 'var(--vp-text-dim)' }}>Sin datos disponibles</div>
                 )}
-                {topCandidates.map((candidate, i) => {
-                    const pct = ((Number(candidate.momentum_score) / totalMomentum) * 100).toFixed(1);
-                    const delta = deltas[candidate.id] || 0;
-                    const isUp = delta >= 0;
+                {displayed.map((c, i) => {
+                    const votePct = ((Number(c.vote_count || 0) / totalVotes) * 100).toFixed(1);
+                    const isHighlighted = pulseIdx === i;
+                    const rank = i + 1;
+                    const medalColors = ['#fbbf24', '#94a3b8', '#cd7f32', '#6b7280', '#6b7280'];
+                    const hvScore = Number(c.hoja_score || 0);
+                    const planScore = Number(c.plan_score || 0);
+                    const intencionScore = Number(c.intelligence_score || 0);
+                    const integrityScore = Number(c.integrity_score || 0);
 
                     return (
-                        <Link href={`/candidate/${candidate.id}`} key={candidate.id} className="animate-fade-in" style={{ animationDelay: `${i * 100}ms` }}>
-                            <div className="flex items-center gap-3 p-2 rounded-lg transition-colors hover:bg-white/5">
-                                {/* Avatar */}
-                                <img
-                                    src={getCandidatePhoto(candidate.photo, candidate.name, 40, candidate.party_color)}
-                                    onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(candidate.name, 40, candidate.party_color); }}
-                                    alt={candidate.name}
-                                    width={40}
-                                    height={40}
-                                    className="candidate-avatar"
-                                    loading="lazy"
-                                />
+                        <Link href={`/candidate/${c.id}`} key={c.id}
+                            className="block rounded-xl transition-all"
+                            style={{
+                                background: isHighlighted ? 'rgba(239,68,68,0.03)' : 'rgba(0,0,0,0.015)',
+                                border: `1px solid ${isHighlighted ? 'rgba(239,68,68,0.15)' : 'rgba(0,0,0,0.04)'}`,
+                                padding: '10px 12px',
+                                transform: isHighlighted ? 'scale(1.01)' : 'scale(1)',
+                                transition: 'all 0.5s ease',
+                            }}
+                        >
+                            {/* Top row: rank + avatar + name + score */}
+                            <div className="flex items-center gap-2.5">
+                                {/* Rank badge */}
+                                <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 text-[9px] font-black"
+                                    style={{
+                                        background: rank <= 3 ? medalColors[i] : 'rgba(0,0,0,0.08)',
+                                        color: rank <= 3 ? '#fff' : 'var(--vp-text-dim)',
+                                    }}>
+                                    {rank}
+                                </div>
 
-                                {/* Info */}
+                                {/* Avatar */}
+                                <div className="relative shrink-0">
+                                    <img
+                                        src={getCandidatePhoto(c.photo, c.name, 44, c.party_color)}
+                                        onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(c.name, 44, c.party_color); }}
+                                        alt={c.name}
+                                        width={44} height={44}
+                                        className="w-11 h-11 rounded-full object-cover"
+                                        style={{ border: `2.5px solid ${c.party_color || 'var(--vp-border)'}` }}
+                                        loading="lazy"
+                                    />
+                                    {rank <= 3 && (
+                                        <div className="absolute -top-1 -right-1 text-[10px]">
+                                            {rank === 1 ? '👑' : rank === 2 ? '🥈' : '🥉'}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Name + party */}
                                 <div className="flex-1 min-w-0">
-                                    <div className="text-xs font-semibold truncate" style={{ color: 'var(--vp-text)' }}>
-                                        {candidate.name.split(' ').slice(-2).join(' ')}
+                                    <div className="text-xs font-bold truncate" style={{ color: 'var(--vp-text)' }}>
+                                        {c.name.split(' ').slice(-2).join(' ')}
                                     </div>
-                                    <div className="text-[10px] flex items-center gap-1" style={{ color: 'var(--vp-text-dim)' }}>
-                                        <span>{candidate.party_abbreviation}</span>
-                                        <span>·</span>
-                                        <span>{POSITION_LABELS[candidate.position] || candidate.position}</span>
-                                    </div>
-                                    {/* Barra de apoyo */}
-                                    <div className="mt-1 w-full h-1 rounded-full" style={{ background: 'rgba(255,255,255,0.05)' }}>
-                                        <div className="momentum-bar" style={{ width: `${Math.min(100, candidate.momentum_score)}%` }} />
+                                    <div className="flex items-center gap-1 mt-0.5">
+                                        <span className="text-[8px] font-bold px-1.5 py-0.5 rounded"
+                                            style={{ background: `${c.party_color}20`, color: c.party_color || 'var(--vp-text-dim)' }}>
+                                            {c.party_abbreviation}
+                                        </span>
+                                        <span className="text-[8px]" style={{ color: 'var(--vp-text-dim)' }}>
+                                            {POS_LABEL[c.position]}
+                                        </span>
                                     </div>
                                 </div>
 
-                                {/* Porcentaje + Delta */}
-                                <div className="text-right shrink-0">
-                                    <div className="text-sm font-bold" style={{ color: 'var(--vp-red)' }}>
-                                        {pct}%
+                                {/* Main score */}
+                                <div className="shrink-0 text-right">
+                                    <div className="text-lg font-black" style={{ color: 'var(--vp-red)', lineHeight: 1 }}>
+                                        {Number(c.final_score).toFixed(1)}
                                     </div>
-                                    <div className="text-[10px] font-semibold" style={{ color: isUp ? 'var(--vp-green)' : '#ff5252' }}>
-                                        {isUp ? '↑' : '↓'} {isUp ? '+' : ''}{delta.toFixed(1)}
+                                    <div className="text-[8px] font-bold" style={{ color: 'var(--vp-text-dim)' }}>
+                                        SCORE
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Score breakdown mini-rings */}
+                            <div className="flex items-center justify-between mt-2.5 pt-2" style={{ borderTop: '1px solid rgba(0,0,0,0.04)' }}>
+                                <div className="flex items-center gap-3">
+                                    <ScoreRing value={hvScore} size={32} color={SCORE_COLORS.hv} label="HV" />
+                                    <ScoreRing value={planScore} size={32} color={SCORE_COLORS.plan} label="Plan" />
+                                    <ScoreRing value={intencionScore} size={32} color={SCORE_COLORS.intencion} label="Int." />
+                                    <ScoreRing value={integrityScore} size={32} color={SCORE_COLORS.integridad} label="Intg." />
+                                </div>
+                                <div className="flex flex-col items-end gap-0.5">
+                                    <div className="text-[10px] font-bold" style={{ color: 'var(--vp-text)' }}>
+                                        {Number(c.vote_count || 0).toLocaleString()} votos
+                                    </div>
+                                    <div className="text-[8px] font-bold" style={{ color: 'var(--vp-text-dim)' }}>
+                                        {votePct}% del total
                                     </div>
                                 </div>
                             </div>
@@ -141,90 +215,30 @@ export default function LiveMomentum({ candidates }: Props) {
                 })}
             </div>
 
-            {/* ===== Intención ciudadana en tiempo real ===== */}
-            <div className="mt-6 pt-4" style={{ borderTop: '1px solid var(--vp-border)' }}>
-                <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                        <div className="module-icon" style={{ width: 24, height: 24, borderRadius: 8, background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}>
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z" /></svg>
-                        </div>
-                        <h4 className="text-[11px] font-extrabold tracking-[1.5px] uppercase" style={{ color: 'var(--vp-text)' }}>
-                            Intención ciudadana
-                        </h4>
-                    </div>
-                    <span className="text-[9px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'rgba(245, 158, 11, 0.1)', color: '#d97706' }}>
-                        EN VIVO
-                    </span>
-                </div>
+            {/* Show more / less */}
+            {sorted.length > 4 && (
+                <button
+                    onClick={() => setShowAll(!showAll)}
+                    className="w-full mt-3 py-2 text-[10px] font-bold rounded-lg transition-all hover:scale-[1.02]"
+                    style={{ background: 'rgba(0,0,0,0.04)', color: 'var(--vp-text-dim)', border: 'none', cursor: 'pointer' }}
+                >
+                    {showAll ? '▲ Ver menos' : `▼ Ver más (${sorted.length} total)`}
+                </button>
+            )}
 
-                {/* Top 3 ranking with progress bars */}
-                <div className="flex flex-col gap-3">
-                    {topCandidates.slice(0, 3).map((c, i) => {
-                        const pct = ((Number(c.momentum_score) / totalMomentum) * 100);
-                        const delta = deltas[c.id] || 0;
-                        const isUp = delta >= 0;
-                        const medals = ['🥇', '🥈', '🥉'];
-                        const barColors = [
-                            'linear-gradient(90deg, var(--vp-red), #ef5350)',
-                            'linear-gradient(90deg, #1565c0, #42a5f5)',
-                            'linear-gradient(90deg, #2e7d32, #66bb6a)',
-                        ];
 
-                        return (
-                            <div key={c.id} className="intencion-rank-item">
-                                <div className="flex items-center gap-2 mb-1.5">
-                                    <span className="text-sm">{medals[i]}</span>
-                                    <img
-                                        src={getCandidatePhoto(c.photo, c.name, 28, c.party_color)}
-                                        onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(c.name, 28, c.party_color); }}
-                                        alt={c.name}
-                                        width={28}
-                                        height={28}
-                                        className="w-7 h-7 rounded-full shrink-0"
-                                        style={{ border: '2px solid var(--vp-border)' }}
-                                        loading="lazy"
-                                    />
-                                    <div className="flex-1 min-w-0">
-                                        <div className="text-[11px] font-bold truncate" style={{ color: 'var(--vp-text)' }}>
-                                            {c.name.split(' ').slice(-2).join(' ')}
-                                        </div>
-                                        <div className="flex items-center gap-1.5">
-                                            <span className="text-[9px] px-1.5 py-0.5 rounded" style={{ background: 'rgba(0,0,0,0.04)', color: 'var(--vp-text-dim)', fontWeight: 600 }}>
-                                                {c.party_abbreviation}
-                                            </span>
-                                            <span className="text-[9px]" style={{ color: 'var(--vp-text-dim)' }}>
-                                                {POSITION_LABELS[c.position]}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div className="text-right shrink-0">
-                                        <div className="text-sm font-black" style={{ color: 'var(--vp-text)' }}>{pct.toFixed(1)}%</div>
-                                        <div className="text-[9px] font-bold" style={{ color: isUp ? '#16a34a' : '#ef4444' }}>
-                                            {isUp ? '▲' : '▼'} {Math.abs(delta).toFixed(1)}
-                                        </div>
-                                    </div>
-                                </div>
-                                {/* Progress bar */}
-                                <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: 'rgba(0,0,0,0.04)' }}>
-                                    <div className="h-full rounded-full transition-all duration-700" style={{ width: `${Math.min(100, pct)}%`, background: barColors[i] }} />
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
 
-                {/* Stats row */}
-                <div className="flex items-center justify-between mt-4 pt-3" style={{ borderTop: '1px dashed var(--vp-border)' }}>
-                    <div className="flex items-center gap-1.5">
-                        <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#16a34a' }} />
-                        <span className="text-[9px] font-bold" style={{ color: 'var(--vp-text-dim)' }}>
-                            {filteredCandidates.length} candidatos activos
-                        </span>
-                    </div>
+            {/* ===== FOOTER STATS ===== */}
+            <div className="flex items-center justify-between mt-4 pt-3" style={{ borderTop: '1px dashed var(--vp-border)' }}>
+                <div className="flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#16a34a' }} />
                     <span className="text-[9px] font-bold" style={{ color: 'var(--vp-text-dim)' }}>
-                        Actualización: cada 5s
+                        {filtered.length} candidatos · {totalVotes.toLocaleString()} votos
                     </span>
                 </div>
+                <span className="text-[9px] font-bold" style={{ color: 'var(--vp-text-dim)' }}>
+                    Datos JNE + VOTA.PE
+                </span>
             </div>
         </div>
     );

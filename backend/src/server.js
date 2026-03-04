@@ -168,7 +168,7 @@ app.set('wsClientCount', getClientCount);
 const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
 const dbMode = process.env.DATABASE_URL ? '🐘 PostgreSQL' : '🧠 In-Memory';
 
-server.listen(PORT, HOST, () => {
+server.listen(PORT, HOST, async () => {
     console.log(`
 ╔══════════════════════════════════════════╗
 ║          🗳️  VOTA.PE API SERVER          ║
@@ -180,6 +180,49 @@ server.listen(PORT, HOST, () => {
 ║  Mode:      ${(process.env.NODE_ENV || 'development').padEnd(29)}║
 ╚══════════════════════════════════════════╝
   `);
+
+    // Run scoring engines at startup (especially important for in-memory mode)
+    try {
+        const HojaDeVidaScorer = require('./engines/hojaDeVidaScorer');
+        const PlanGobiernoScorer = require('./engines/planGobiernoScorer');
+        const RankingEngine = require('./engines/rankingEngine');
+        const pool = require('./db/pool');
+
+        console.log('🔄 Running initial scoring engines...');
+
+        const hvCount = await HojaDeVidaScorer.calculateAll();
+        const planCount = await PlanGobiernoScorer.calculateAll();
+
+        // Get max votes per position for normalization
+        const maxVotesResult = await pool.query(
+            'SELECT position, MAX(vote_count) as max_votes FROM candidates WHERE is_active = true GROUP BY position'
+        );
+        const maxVotesByPosition = {};
+        maxVotesResult.rows.forEach(r => {
+            maxVotesByPosition[r.position] = parseInt(r.max_votes) || 1;
+        });
+
+        // Recalculate final scores for all candidates
+        const candidates = await pool.query('SELECT * FROM candidates WHERE is_active = true');
+        for (const candidate of candidates.rows) {
+            const maxVotes = maxVotesByPosition[candidate.position] || 1;
+            const finalScore = RankingEngine.calculateFinalScore(candidate, maxVotes);
+            await pool.query(
+                'UPDATE candidates SET final_score = $1, updated_at = NOW() WHERE id = $2',
+                [finalScore, candidate.id]
+            );
+        }
+
+        // Recalculate party scores
+        const parties = await pool.query('SELECT id FROM parties');
+        for (const party of parties.rows) {
+            await RankingEngine.recalculatePartyScore(party.id);
+        }
+
+        console.log(`✅ Scoring complete: ${candidates.rows.length} candidates, ${parties.rows.length} parties scored`);
+    } catch (err) {
+        console.error('⚠️ Scoring at startup failed (non-fatal):', err.message);
+    }
 });
 
 // Graceful shutdown

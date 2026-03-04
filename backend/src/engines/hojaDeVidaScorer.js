@@ -106,20 +106,12 @@ const HojaDeVidaScorer = {
 
         // ============ 4. TRANSPARENCIA FINANCIERA (10%) ============
         let financeScore = 0;
-        // Check if financial info was declared
-        const hasPublicIncome = (finances.public_income || 0) > 0;
-        const hasPrivateIncome = (finances.private_income || 0) > 0;
-        const hasTotalIncome = (finances.total_income || 0) > 0;
+        // If candidate declared ANY financial info, full score (we don't judge by amount)
+        const hasAnyIncome = (finances.total_income || 0) > 0 || (finances.public_income || 0) > 0 || (finances.private_income || 0) > 0 || (finances.other_private || 0) > 0 || (finances.other_public || 0) > 0 || (finances.individual_private || 0) > 0 || (finances.individual_public || 0) > 0;
         const hasProperties = (finances.properties || []).length > 0;
         const hasVehicles = (finances.vehicles || []).length > 0;
-
-        if (hasTotalIncome || hasPublicIncome || hasPrivateIncome) financeScore += 50;
-        if (hasProperties || hasVehicles) financeScore += 30;
-        if (hasTotalIncome && (hasProperties || hasVehicles)) financeScore += 20; // full disclosure bonus
-        if (financeScore === 0) {
-            // Check if at least the finances object exists (declared but 0)
-            if (finances && Object.keys(finances).length > 0) financeScore = 30;
-        }
+        const hasDeclared = hasAnyIncome || hasProperties || hasVehicles || (finances && Object.keys(finances).length > 0);
+        financeScore = hasDeclared ? 100 : 0;
 
 
         // ============ 5. LIMPIEZA JUDICIAL (25%) ============

@@ -18,6 +18,8 @@ export interface Candidate {
     risk_score: number;
     stars_rating: number;
     final_score: number;
+    hoja_score: number;
+    plan_score: number;
     vote_count: number;
     party_name: string;
     party_abbreviation: string;

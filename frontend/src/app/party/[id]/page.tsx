@@ -70,6 +70,7 @@ export default function PartyPage({ params }: { params: Promise<{ id: string }> 
     const [ticket, setTicket] = useState<Record<string, Candidate[]>>({});
     const [vicePresidents, setVicePresidents] = useState<Record<string, VicePresident[]>>({});
     const [loading, setLoading] = useState(true);
+    const [showJudicialModal, setShowJudicialModal] = useState(false);
 
     useEffect(() => {
         async function load() {
@@ -95,24 +96,19 @@ export default function PartyPage({ params }: { params: Promise<{ id: string }> 
 
         const avg = (arr: number[]) => arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
         const scores = allCandidates.map(c => Number(c.final_score));
-        const intelligence = allCandidates.map(c => Number(c.intelligence_score));
-        const momentum = allCandidates.map(c => Number(c.momentum_score));
+        const hojaScores = allCandidates.map(c => Number((c as any).hoja_score || 0));
+        const planScores = allCandidates.map(c => Number((c as any).plan_score || 0));
+        const maxVotes = Math.max(...allCandidates.map(c => c.vote_count || 0), 1);
+        const intencionScores = allCandidates.map(c => Math.min(100, ((c.vote_count || 0) / maxVotes) * 100));
         const integrity = allCandidates.map(c => Number(c.integrity_score));
 
         // Region analysis
         const regionCounts: Record<string, number> = {};
-        const regionScores: Record<string, number[]> = {};
         allCandidates.forEach(c => {
             const r = c.region || 'Sin región';
             regionCounts[r] = (regionCounts[r] || 0) + 1;
-            if (!regionScores[r]) regionScores[r] = [];
-            regionScores[r].push(Number(c.final_score));
         });
         const topRegion = Object.entries(regionCounts).sort((a, b) => b[1] - a[1])[0];
-        const strongestRegion = Object.entries(regionScores)
-            .map(([r, s]) => ({ region: r, avg: avg(s), count: s.length }))
-            .filter(r => r.count >= 2)
-            .sort((a, b) => b.avg - a.avg)[0];
 
         // Top candidates per position
         const topByPosition: Record<string, Candidate[]> = {};
@@ -124,19 +120,31 @@ export default function PartyPage({ params }: { params: Promise<{ id: string }> 
             }
         });
 
+        // Sentencias analysis
+        const sentencedCandidates = allCandidates.filter(c => {
+            const hv = (c as any).hoja_de_vida || {};
+            return (hv.sentences || []).length > 0;
+        });
+        const cleanCandidates = allCandidates.filter(c => {
+            const hv = (c as any).hoja_de_vida || {};
+            return (hv.sentences || []).length === 0;
+        });
+
         return {
             totalCandidates: allCandidates.length,
             avgScore: avg(scores),
-            avgIntelligence: avg(intelligence),
-            avgMomentum: avg(momentum),
+            avgHoja: avg(hojaScores),
+            avgPlan: avg(planScores),
+            avgIntencion: avg(intencionScores),
             avgIntegrity: avg(integrity),
             topScore: Math.max(...scores),
             topRegion: topRegion ? topRegion[0] : 'N/A',
-            topRegionCount: topRegion ? topRegion[1] : 0,
-            strongestRegion: strongestRegion?.region || 'N/A',
-            strongestRegionAvg: strongestRegion?.avg || 0,
             topByPosition,
             totalVotes: allCandidates.reduce((s, c) => s + Number(c.vote_count || 0), 0),
+            candidatesWithSentences: sentencedCandidates.length,
+            candidatesClean: cleanCandidates.length,
+            sentencedCandidates,
+            cleanCandidates,
         };
     }, [ticket]);
 
@@ -185,131 +193,164 @@ export default function PartyPage({ params }: { params: Promise<{ id: string }> 
                     </div>
                 </div>
 
-                {/* ===== ANALYTICS DASHBOARD ===== */}
+                {/* ===== UNIFIED ANALYSIS PANEL ===== */}
                 {analytics && (
                     <div className="panel-glow mb-6">
-                        <h3 className="text-sm font-bold tracking-wider uppercase mb-4 flex items-center gap-2" style={{ color: 'var(--vp-text)' }}>
+                        <h3 className="text-sm font-bold tracking-wider uppercase mb-3 flex items-center gap-2" style={{ color: 'var(--vp-text)' }}>
                             📊 Análisis de la Plancha
                         </h3>
 
-                        {/* Key Metrics Grid */}
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
-                            <MetricBox icon="🎯" label="Score Prom." value={analytics.avgScore.toFixed(1)} color="var(--vp-red)" />
-                            <MetricBox icon="🗳️" label="Votos Total" value={analytics.totalVotes.toLocaleString('es-PE')} color="var(--vp-green)" />
-                            <MetricBox icon="⭐" label="Top Score" value={analytics.topScore.toFixed(1)} color="var(--vp-gold)" />
-                            <MetricBox icon="📍" label="Más Candidatos" value={analytics.topRegion} color="var(--vp-blue)" />
-                        </div>
-
-                        {/* Score Breakdown Bars */}
-                        <div className="mb-4">
-                            <div className="text-[10px] font-bold tracking-wider uppercase mb-2" style={{ color: 'var(--vp-text-dim)' }}>
-                                Métricas Promedio
-                            </div>
-                            <ScoreBar label="Inteligencia" value={analytics.avgIntelligence} color="var(--vp-blue)" />
-                            <ScoreBar label="Momentum" value={analytics.avgMomentum} color="var(--vp-gold)" />
-                            <ScoreBar label="Integridad" value={analytics.avgIntegrity} color="var(--vp-green)" />
-                        </div>
-
-                        {/* Candidates by Position */}
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-3" style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-                            {Object.entries(ticket).map(([pos, cands]) => (
-                                <div key={pos} className="text-center p-2">
-                                    <div className="text-lg font-black" style={{ color: party.color }}>{cands.length}</div>
-                                    <div className="text-[9px] font-bold tracking-wider uppercase" style={{ color: 'var(--vp-text-dim)' }}>
-                                        {positionLabels[pos === 'president' ? 'president' : pos]?.replace(/^[^\s]+\s/, '') || pos}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                {/* ===== PRESIDENTIAL ANALYSIS CARD ===== */}
-                {president && (
-                    <div className="panel-glow mb-6" style={{ border: `2px solid ${party.color}33`, background: `linear-gradient(135deg, ${party.color}08, transparent)` }}>
-                        <h3 className="text-sm font-bold tracking-wider uppercase mb-4 flex items-center gap-2" style={{ color: 'var(--vp-text)' }}>
-                            🏛️ Análisis del Candidato Presidencial
-                        </h3>
-
-                        <div className="flex flex-col sm:flex-row gap-5">
-                            {/* Left: Photo + Basic Info */}
-                            <Link href={`/candidate/${president.id}`} className="shrink-0">
-                                <div className="flex sm:flex-col items-center gap-3 sm:text-center">
-                                    <img
-                                        src={getCandidatePhoto(president.photo, president.name, 80, party.color)}
-                                        onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(president.name, 80, party.color); }}
-                                        alt={president.name}
-                                        width={80}
-                                        height={80}
-                                        className="w-20 h-20 rounded-full object-cover"
-                                        style={{ border: `3px solid ${party.color}`, boxShadow: `0 0 20px ${party.color}33` }}
-                                    />
-                                    <div>
-                                        <div className="text-base font-black" style={{ color: 'var(--vp-text)' }}>{president.name}</div>
-                                        <div className="text-[11px] font-bold" style={{ color: party.color }}>Presidente(a)</div>
-                                        <StarRating rating={Number(president.stars_rating)} />
-                                    </div>
-                                </div>
-                            </Link>
-
-                            {/* Right: Scores + Metrics */}
+                        {/* Row 1: Key Stats + Presidential Candidate side by side */}
+                        <div className="flex flex-col lg:flex-row gap-4 mb-4">
+                            {/* Left: Stats + Bars */}
                             <div className="flex-1">
-                                <div className="grid grid-cols-3 gap-2 mb-4">
+                                {/* Compact Stats Row */}
+                                <div className="grid grid-cols-4 gap-2 mb-3">
                                     <div className="text-center p-2 rounded-lg" style={{ background: 'rgba(0,0,0,0.03)' }}>
-                                        <div className="text-xl font-black" style={{ color: 'var(--vp-red)' }}>{Number(president.final_score).toFixed(1)}</div>
-                                        <div className="text-[8px] font-bold tracking-wider uppercase" style={{ color: 'var(--vp-text-dim)' }}>Score Final</div>
+                                        <div className="text-lg font-black" style={{ color: 'var(--vp-red)' }}>{analytics.avgScore.toFixed(1)}</div>
+                                        <div className="text-[8px] font-bold tracking-wider uppercase" style={{ color: 'var(--vp-text-dim)' }}>Score Prom.</div>
                                     </div>
                                     <div className="text-center p-2 rounded-lg" style={{ background: 'rgba(0,0,0,0.03)' }}>
-                                        <div className="text-xl font-black" style={{ color: 'var(--vp-blue)' }}>{Number(president.intelligence_score).toFixed(0)}</div>
-                                        <div className="text-[8px] font-bold tracking-wider uppercase" style={{ color: 'var(--vp-text-dim)' }}>Inteligencia</div>
-                                    </div>
-                                    <div className="text-center p-2 rounded-lg" style={{ background: 'rgba(0,0,0,0.03)' }}>
-                                        <div className="text-xl font-black" style={{ color: 'var(--vp-green)' }}>{Number(president.vote_count || 0).toLocaleString('es-PE')}</div>
+                                        <div className="text-lg font-black" style={{ color: 'var(--vp-green)' }}>{analytics.totalVotes.toLocaleString('es-PE')}</div>
                                         <div className="text-[8px] font-bold tracking-wider uppercase" style={{ color: 'var(--vp-text-dim)' }}>Votos</div>
                                     </div>
+                                    <div className="text-center p-2 rounded-lg" style={{ background: 'rgba(0,0,0,0.03)' }}>
+                                        <div className="text-lg font-black" style={{ color: 'var(--vp-gold)' }}>{analytics.topScore.toFixed(1)}</div>
+                                        <div className="text-[8px] font-bold tracking-wider uppercase" style={{ color: 'var(--vp-text-dim)' }}>Top Score</div>
+                                    </div>
+                                    <div className="text-center p-2 rounded-lg" style={{ background: 'rgba(0,0,0,0.03)' }}>
+                                        <div className="text-lg font-black truncate" style={{ color: 'var(--vp-blue)', fontSize: analytics.topRegion.length > 8 ? '0.75rem' : undefined }}>{analytics.topRegion}</div>
+                                        <div className="text-[8px] font-bold tracking-wider uppercase" style={{ color: 'var(--vp-text-dim)' }}>Más Cand.</div>
+                                    </div>
                                 </div>
 
-                                <ScoreBar label="Inteligencia" value={Number(president.intelligence_score)} color="var(--vp-blue)" />
-                                <ScoreBar label="Momentum" value={Number(president.momentum_score)} color="var(--vp-gold)" />
-                                <ScoreBar label="Integridad" value={Number(president.integrity_score)} color="var(--vp-green)" />
-                                <ScoreBar label="Riesgo" value={Number(president.risk_score)} color="var(--vp-red)" />
-
-                                <Link href={`/candidate/${president.id}`} className="block mt-3">
-                                    <div className="text-center py-2 rounded-lg text-xs font-bold transition-all hover:scale-[1.02]"
-                                        style={{ background: party.color, color: '#fff', boxShadow: `0 0 12px ${party.color}44` }}>
-                                        Ver perfil completo →
-                                    </div>
-                                </Link>
+                                {/* Score Bars with new formula */}
+                                <div className="text-[9px] font-bold tracking-wider uppercase mb-1.5" style={{ color: 'var(--vp-text-dim)' }}>
+                                    Componentes del Score (promedio plancha)
+                                </div>
+                                <ScoreBar label="Hoja de Vida" value={analytics.avgHoja} color="#8b5cf6" />
+                                <ScoreBar label="Plan de Gob." value={analytics.avgPlan} color="#2563eb" />
+                                <ScoreBar label="Intención" value={analytics.avgIntencion} color="#f59e0b" />
+                                <ScoreBar label="Integridad" value={analytics.avgIntegrity} color="#16a34a" />
                             </div>
+
+                            {/* Right: Presidential Candidate compact */}
+                            {president && (
+                                <div className="lg:w-[280px] shrink-0 p-3 rounded-xl" style={{ background: `${party.color}08`, border: `1px solid ${party.color}22` }}>
+                                    <div className="text-[9px] font-bold tracking-wider uppercase mb-2" style={{ color: party.color }}>🏛️ Candidato Presidencial</div>
+                                    <Link href={`/candidate/${president.id}`} className="flex items-center gap-2.5 mb-2.5">
+                                        <img
+                                            src={getCandidatePhoto(president.photo, president.name, 56, party.color)}
+                                            onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(president.name, 56, party.color); }}
+                                            alt={president.name}
+                                            width={56}
+                                            height={56}
+                                            className="w-14 h-14 rounded-full object-cover shrink-0"
+                                            style={{ border: `2px solid ${party.color}` }}
+                                        />
+                                        <div className="flex-1 min-w-0">
+                                            <div className="text-sm font-black truncate" style={{ color: 'var(--vp-text)' }}>{president.name}</div>
+                                            <StarRating rating={Number(president.stars_rating)} />
+                                        </div>
+                                    </Link>
+                                    <div className="grid grid-cols-3 gap-1.5 mb-2.5">
+                                        <div className="text-center p-1.5 rounded-lg" style={{ background: 'rgba(255,255,255,0.7)' }}>
+                                            <div className="text-base font-black" style={{ color: 'var(--vp-red)' }}>{Number(president.final_score).toFixed(1)}</div>
+                                            <div className="text-[7px] font-bold uppercase" style={{ color: 'var(--vp-text-dim)' }}>Score</div>
+                                        </div>
+                                        <div className="text-center p-1.5 rounded-lg" style={{ background: 'rgba(255,255,255,0.7)' }}>
+                                            <div className="text-base font-black" style={{ color: 'var(--vp-green)' }}>{Number(president.integrity_score || 0).toFixed(0)}</div>
+                                            <div className="text-[7px] font-bold uppercase" style={{ color: 'var(--vp-text-dim)' }}>Integridad</div>
+                                        </div>
+                                        <div className="text-center p-1.5 rounded-lg" style={{ background: 'rgba(255,255,255,0.7)' }}>
+                                            <div className="text-base font-black" style={{ color: 'var(--vp-blue)' }}>{Number(president.vote_count || 0).toLocaleString('es-PE')}</div>
+                                            <div className="text-[7px] font-bold uppercase" style={{ color: 'var(--vp-text-dim)' }}>Votos</div>
+                                        </div>
+                                    </div>
+                                    {/* VP row */}
+                                    {(() => {
+                                        const candidateVPs = vicePresidents[String(president.id)] || [];
+                                        return candidateVPs.length > 0 && (
+                                            <div className="flex gap-2 mt-1">
+                                                {candidateVPs.map(vp => (
+                                                    <div key={vp.id} className="flex items-center gap-1.5 flex-1 min-w-0">
+                                                        <img
+                                                            src={getCandidatePhoto(vp.photo, vp.name, 28, party.color)}
+                                                            onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(vp.name, 28, party.color); }}
+                                                            alt={vp.name}
+                                                            width={28}
+                                                            height={28}
+                                                            className="w-7 h-7 rounded-full shrink-0 object-cover"
+                                                            style={{ border: '1.5px solid var(--vp-border)' }}
+                                                        />
+                                                        <div className="min-w-0">
+                                                            <div className="text-[9px] font-semibold truncate" style={{ color: 'var(--vp-text)' }}>{vp.name}</div>
+                                                            <div className="text-[7px]" style={{ color: 'var(--vp-text-dim)' }}>{vp.position_label}</div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        );
+                                    })()}
+                                    <Link href={`/candidate/${president.id}`} className="block mt-2.5">
+                                        <div className="text-center py-1.5 rounded-lg text-[10px] font-bold transition-all hover:scale-[1.02]"
+                                            style={{ background: party.color, color: '#fff' }}>
+                                            Ver perfil completo →
+                                        </div>
+                                    </Link>
+                                </div>
+                            )}
                         </div>
 
-                        {/* Vice Presidents */}
-                        {(() => {
-                            const candidateVPs = vicePresidents[String(president.id)] || [];
-                            return candidateVPs.length > 0 && (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-5 pt-4" style={{ borderTop: `1px solid ${party.color}22` }}>
-                                    {candidateVPs.map(vp => (
-                                        <div key={vp.id} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: 'rgba(0,0,0,0.03)' }}>
-                                            <img
-                                                src={getCandidatePhoto(vp.photo, vp.name, 44, party.color)}
-                                                onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(vp.name, 44, party.color); }}
-                                                alt={vp.name}
-                                                width={44}
-                                                height={44}
-                                                className="w-11 h-11 rounded-full shrink-0 object-cover"
-                                                style={{ border: '2px solid var(--vp-border)' }}
-                                            />
-                                            <div className="flex-1 min-w-0">
-                                                <div className="text-sm font-semibold truncate" style={{ color: 'var(--vp-text)' }}>{vp.name}</div>
-                                                <div className="text-[10px] font-medium" style={{ color: 'var(--vp-text-dim)' }}>
-                                                    {vp.position_label}
-                                                </div>
-                                            </div>
+                        {/* Row 2: Judicial summary + Position counts */}
+                        <div className="pt-3" style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+                            {/* Judicial summary - improved */}
+                            <div className="flex items-center gap-3 mb-3 p-2.5 rounded-xl" style={{ background: 'rgba(0,0,0,0.02)' }}>
+                                <div className="text-base">⚖️</div>
+                                <div className="flex-1">
+                                    <div className="text-[9px] font-bold tracking-wider uppercase mb-1.5" style={{ color: 'var(--vp-text-dim)' }}>Situación Judicial</div>
+                                    <div className="flex items-center gap-1.5">
+                                        {/* Proportional bar */}
+                                        <div className="flex-1 h-3 rounded-full overflow-hidden flex" style={{ background: '#e5e7eb' }}>
+                                            <div className="h-full transition-all" style={{ width: `${(analytics.candidatesClean / analytics.totalCandidates) * 100}%`, background: '#16a34a' }} />
+                                            {analytics.candidatesWithSentences > 0 && (
+                                                <div className="h-full transition-all" style={{ width: `${(analytics.candidatesWithSentences / analytics.totalCandidates) * 100}%`, background: '#dc2626' }} />
+                                            )}
                                         </div>
-                                    ))}
+                                    </div>
+                                    <div className="flex items-center gap-3 mt-1.5">
+                                        <div className="flex items-center gap-1">
+                                            <div className="w-2 h-2 rounded-full" style={{ background: '#16a34a' }} />
+                                            <span className="text-[10px] font-bold" style={{ color: '#16a34a' }}>{analytics.candidatesClean} limpios</span>
+                                        </div>
+                                        {analytics.candidatesWithSentences > 0 && (
+                                            <div className="flex items-center gap-1">
+                                                <div className="w-2 h-2 rounded-full" style={{ background: '#dc2626' }} />
+                                                <span className="text-[10px] font-bold" style={{ color: '#dc2626' }}>{analytics.candidatesWithSentences} con sentencia{analytics.candidatesWithSentences > 1 ? 's' : ''}</span>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-                            );
-                        })()}
+                                <button
+                                    onClick={() => setShowJudicialModal(true)}
+                                    className="text-[9px] font-bold px-3 py-1.5 rounded-lg transition-all hover:scale-105"
+                                    style={{ background: 'var(--vp-red)', color: '#fff', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                                >
+                                    Ver detalle →
+                                </button>
+                            </div>
+                            {/* Position counts */}
+                            <div className="grid grid-cols-4 gap-2">
+                                {Object.entries(ticket).map(([pos, cands]) => (
+                                    <div key={pos} className="text-center py-1">
+                                        <span className="text-base font-black" style={{ color: party.color }}>{cands.length}</span>
+                                        <span className="text-[9px] font-bold tracking-wider uppercase ml-1.5" style={{ color: 'var(--vp-text-dim)' }}>
+                                            {positionLabels[pos === 'president' ? 'president' : pos]?.replace(/^[^\s]+\s/, '') || pos}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                 )}
 
@@ -427,6 +468,141 @@ export default function PartyPage({ params }: { params: Promise<{ id: string }> 
                     )
                 ))}
             </main>
+
+            {/* ===== JUDICIAL DETAIL MODAL ===== */}
+            {showJudicialModal && analytics && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }}>
+                    <div className="relative w-full max-w-2xl mx-4 rounded-2xl overflow-hidden" style={{ background: 'var(--vp-surface, #fff)', maxHeight: '85vh', display: 'flex', flexDirection: 'column' }}>
+                        {/* Header */}
+                        <div className="p-4 flex items-center gap-3" style={{ background: 'linear-gradient(135deg, #1e293b, #334155)', color: '#fff' }}>
+                            <span className="text-2xl">⚖️</span>
+                            <div className="flex-1">
+                                <h3 className="text-base font-black">Situación Judicial</h3>
+                                <p className="text-[10px] opacity-70">{party?.name} · {analytics.totalCandidates} candidatos</p>
+                            </div>
+                            {/* Summary badges */}
+                            <div className="flex gap-2">
+                                <div className="px-3 py-1 rounded-full text-[10px] font-bold" style={{ background: '#dcfce7', color: '#16a34a' }}>
+                                    ✅ {analytics.candidatesClean} limpios
+                                </div>
+                                {analytics.candidatesWithSentences > 0 && (
+                                    <div className="px-3 py-1 rounded-full text-[10px] font-bold" style={{ background: '#fef2f2', color: '#dc2626' }}>
+                                        ⚠️ {analytics.candidatesWithSentences} con sentencias
+                                    </div>
+                                )}
+                            </div>
+                            <button
+                                onClick={() => setShowJudicialModal(false)}
+                                className="w-8 h-8 rounded-full flex items-center justify-center text-lg hover:bg-white/20 transition-colors"
+                                style={{ border: 'none', background: 'rgba(255,255,255,0.1)', color: '#fff', cursor: 'pointer' }}
+                            >×</button>
+                        </div>
+
+                        {/* Content - scrollable */}
+                        <div className="overflow-y-auto p-4" style={{ flex: 1 }}>
+                            {/* CANDIDATES WITH SENTENCES */}
+                            {analytics.candidatesWithSentences > 0 && (
+                                <div className="mb-5">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <div className="w-3 h-3 rounded-full" style={{ background: '#dc2626' }} />
+                                        <h4 className="text-xs font-black uppercase tracking-wider" style={{ color: '#dc2626' }}>
+                                            Candidatos con Sentencias ({analytics.candidatesWithSentences})
+                                        </h4>
+                                    </div>
+                                    <div className="flex flex-col gap-2">
+                                        {analytics.sentencedCandidates.map((c: any) => {
+                                            const hv = c.hoja_de_vida || {};
+                                            const sentences = hv.sentences || [];
+                                            return (
+                                                <Link href={`/candidate/${c.id}`} key={c.id}
+                                                    className="flex items-start gap-3 p-3 rounded-xl transition-all hover:scale-[1.01]"
+                                                    style={{ background: '#fef2f2', border: '1px solid #fecaca' }}
+                                                    onClick={() => setShowJudicialModal(false)}
+                                                >
+                                                    <img
+                                                        src={getCandidatePhoto(c.photo, c.name, 40, party?.color || '#666')}
+                                                        onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(c.name, 40, party?.color || '#666'); }}
+                                                        alt={c.name}
+                                                        width={40} height={40}
+                                                        className="w-10 h-10 rounded-full shrink-0 object-cover"
+                                                        style={{ border: '2px solid #fecaca' }}
+                                                    />
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="text-sm font-bold truncate" style={{ color: '#1f2937' }}>{c.name}</div>
+                                                        <div className="text-[9px] font-medium mb-1" style={{ color: '#6b7280' }}>
+                                                            {c.position === 'president' ? 'Presidente' : c.position === 'senator' ? 'Senador' : c.position === 'deputy' ? 'Diputado' : 'P. Andino'}
+                                                            {c.region ? ` · ${c.region}` : ''}
+                                                        </div>
+                                                        {sentences.map((s: any, i: number) => (
+                                                            <div key={i} className="text-[9px] p-1.5 rounded-lg mb-1" style={{ background: 'rgba(220,38,38,0.08)' }}>
+                                                                <span className="font-bold" style={{ color: '#dc2626' }}>
+                                                                    {s.type || 'Sentencia'}
+                                                                </span>
+                                                                {s.case_number && <span style={{ color: '#6b7280' }}> · Exp: {s.case_number}</span>}
+                                                                {s.court && <span style={{ color: '#6b7280' }}> · {s.court}</span>}
+                                                                {s.verdict && <span style={{ color: '#991b1b' }}> · {s.verdict}</span>}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                    <span className="score-badge shrink-0 text-[10px]">{Number(c.final_score).toFixed(1)}</span>
+                                                </Link>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* CLEAN CANDIDATES */}
+                            <div>
+                                <div className="flex items-center gap-2 mb-3">
+                                    <div className="w-3 h-3 rounded-full" style={{ background: '#16a34a' }} />
+                                    <h4 className="text-xs font-black uppercase tracking-wider" style={{ color: '#16a34a' }}>
+                                        Candidatos sin Sentencias ({analytics.candidatesClean})
+                                    </h4>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                                    {analytics.cleanCandidates.map((c: any) => (
+                                        <Link href={`/candidate/${c.id}`} key={c.id}
+                                            className="flex items-center gap-2 p-2 rounded-lg transition-all hover:bg-green-50"
+                                            style={{ background: '#f0fdf4', border: '1px solid #bbf7d0' }}
+                                            onClick={() => setShowJudicialModal(false)}
+                                        >
+                                            <img
+                                                src={getCandidatePhoto(c.photo, c.name, 28, party?.color || '#666')}
+                                                onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(c.name, 28, party?.color || '#666'); }}
+                                                alt={c.name}
+                                                width={28} height={28}
+                                                className="w-7 h-7 rounded-full shrink-0 object-cover"
+                                                style={{ border: '1.5px solid #bbf7d0' }}
+                                            />
+                                            <div className="flex-1 min-w-0">
+                                                <div className="text-[10px] font-bold truncate" style={{ color: '#1f2937' }}>{c.name}</div>
+                                                <div className="text-[8px]" style={{ color: '#6b7280' }}>
+                                                    {c.position === 'president' ? 'Pres.' : c.position === 'senator' ? 'Sen.' : c.position === 'deputy' ? 'Dip.' : 'P.And.'}
+                                                    {c.region ? ` · ${c.region}` : ''}
+                                                </div>
+                                            </div>
+                                            <span className="text-[9px] font-bold" style={{ color: '#16a34a' }}>✅</span>
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="p-3 text-center" style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+                            <button
+                                onClick={() => setShowJudicialModal(false)}
+                                className="text-xs font-bold px-6 py-2 rounded-lg transition-all hover:scale-105"
+                                style={{ background: 'var(--vp-red)', color: '#fff', border: 'none', cursor: 'pointer' }}
+                            >
+                                Cerrar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <SiteFooter />
         </div>
     );

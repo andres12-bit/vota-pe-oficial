@@ -368,25 +368,35 @@ export default function HojaDeVidaPage({ params }: { params: Promise<{ id: strin
 
                 {/* INGRESOS */}
                 <Section title="Ingresos de Bienes y Rentas">
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 16 }}>
-                        <div style={{ background: '#f9fafb', padding: 14, borderRadius: 6, textAlign: 'center' }}>
-                            <div style={{ fontSize: 11, color: '#9ca3af', fontWeight: 600, textTransform: 'uppercase', marginBottom: 4 }}>Remuneración Bruta (Público)</div>
-                            <div style={{ fontSize: 18, fontWeight: 700, color: '#1f2937' }}>S/ {(finances.public_income || 0).toLocaleString()}</div>
-                        </div>
-                        <div style={{ background: '#f9fafb', padding: 14, borderRadius: 6, textAlign: 'center' }}>
-                            <div style={{ fontSize: 11, color: '#9ca3af', fontWeight: 600, textTransform: 'uppercase', marginBottom: 4 }}>Remuneración Bruta (Privado)</div>
-                            <div style={{ fontSize: 18, fontWeight: 700, color: '#1f2937' }}>S/ {(finances.private_income || 0).toLocaleString()}</div>
-                        </div>
-                        <div style={{ background: '#f9fafb', padding: 14, borderRadius: 6, textAlign: 'center' }}>
-                            <div style={{ fontSize: 11, color: '#9ca3af', fontWeight: 600, textTransform: 'uppercase', marginBottom: 4 }}>Otros Ingresos</div>
-                            <div style={{ fontSize: 18, fontWeight: 700, color: '#1f2937' }}>S/ {(finances.other_income || 0).toLocaleString()}</div>
-                        </div>
-                    </div>
-                    <div style={{ textAlign: 'right', padding: '10px 16px', background: '#fef2f2', borderRadius: 6 }}>
-                        <span style={{ fontSize: 14, fontWeight: 700, color: '#bc1d19' }}>
-                            Total Ingresos: S/ {(finances.total_income || 0).toLocaleString()}
-                        </span>
-                    </div>
+                    {(() => {
+                        const pubIncome = (finances.public_income || 0) + (finances.individual_public || 0) + (finances.other_public || 0);
+                        const privIncome = (finances.private_income || 0) + (finances.individual_private || 0) + (finances.other_private || 0);
+                        const totalIncome = finances.total_income || (pubIncome + privIncome);
+                        const otherIncome = totalIncome - pubIncome - privIncome;
+                        return (
+                            <>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 16 }}>
+                                    <div style={{ background: '#f9fafb', padding: 14, borderRadius: 6, textAlign: 'center' }}>
+                                        <div style={{ fontSize: 11, color: '#9ca3af', fontWeight: 600, textTransform: 'uppercase', marginBottom: 4 }}>Remuneración Bruta (Público)</div>
+                                        <div style={{ fontSize: 18, fontWeight: 700, color: '#1f2937' }}>S/ {pubIncome.toLocaleString()}</div>
+                                    </div>
+                                    <div style={{ background: '#f9fafb', padding: 14, borderRadius: 6, textAlign: 'center' }}>
+                                        <div style={{ fontSize: 11, color: '#9ca3af', fontWeight: 600, textTransform: 'uppercase', marginBottom: 4 }}>Remuneración Bruta (Privado)</div>
+                                        <div style={{ fontSize: 18, fontWeight: 700, color: '#1f2937' }}>S/ {privIncome.toLocaleString()}</div>
+                                    </div>
+                                    <div style={{ background: '#f9fafb', padding: 14, borderRadius: 6, textAlign: 'center' }}>
+                                        <div style={{ fontSize: 11, color: '#9ca3af', fontWeight: 600, textTransform: 'uppercase', marginBottom: 4 }}>Otros Ingresos</div>
+                                        <div style={{ fontSize: 18, fontWeight: 700, color: '#1f2937' }}>S/ {(otherIncome > 0 ? otherIncome : 0).toLocaleString()}</div>
+                                    </div>
+                                </div>
+                                <div style={{ textAlign: 'right', padding: '10px 16px', background: '#fef2f2', borderRadius: 6 }}>
+                                    <span style={{ fontSize: 14, fontWeight: 700, color: '#bc1d19' }}>
+                                        Total Ingresos: S/ {totalIncome.toLocaleString()}
+                                    </span>
+                                </div>
+                            </>
+                        );
+                    })()}
                 </Section>
 
                 {/* BIENES */}

@@ -296,6 +296,12 @@ function PlanchaCard({ plancha, rank }: { plancha: PlanchaData; rank: number }) 
     const avgIntegrity = totalCandidates > 0 ? allCandidates.reduce((s, c) => s + Number(c.integrity_score || 0), 0) / totalCandidates : 0;
     const avgStars = totalCandidates > 0 ? allCandidates.reduce((s, c) => s + Number(c.stars_rating || 0), 0) / totalCandidates : 0;
 
+    // New scoring averages
+    const avgHojaScore = totalCandidates > 0 ? allCandidates.reduce((s, c) => s + Number((c as any).hoja_score || 0), 0) / totalCandidates : 0;
+    const avgPlanScore = totalCandidates > 0 ? allCandidates.reduce((s, c) => s + Number((c as any).plan_score || 0), 0) / totalCandidates : 0;
+    const maxVotes = Math.max(...allCandidates.map(c => c.vote_count || 0), 1);
+    const avgIntencion = totalCandidates > 0 ? allCandidates.reduce((s, c) => s + Math.min(100, ((c.vote_count || 0) / maxVotes) * 100), 0) / totalCandidates : 0;
+
     const presScore = presidential ? Number(presidential.final_score) : 0;
     const displayScore = presScore > 0 ? presScore : (party.party_full_score || 0);
 
@@ -305,8 +311,6 @@ function PlanchaCard({ plancha, rank }: { plancha: PlanchaData; rank: number }) 
         deputy: allCandidates.filter(c => c.position === 'deputy').length,
         andean: allCandidates.filter(c => c.position === 'andean').length,
     };
-
-    const voteWeight = totalCandidates > 0 ? (allCandidates.reduce((s, c) => s + Math.min(100, (c.vote_count / 1000) * 10), 0) / totalCandidates * 0.40) : 0;
 
     return (
         <div className="plancha-card" style={{ borderTop: `3px solid ${party.color}` }}>
@@ -371,35 +375,57 @@ function PlanchaCard({ plancha, rank }: { plancha: PlanchaData; rank: number }) 
                 </div>
             </div>
 
-            {/* ── Métricas de Inteligencia ── */}
+            {/* ── Componentes del Score ── */}
             <div className="plancha-section">
-                <h4 className="plancha-section-title">MÉTRICAS DE INTELIGENCIA</h4>
+                <h4 className="plancha-section-title">📊 COMPONENTES DEL SCORE</h4>
                 <div className="plancha-metrics">
-                    <MetricBar label="Inteligencia" value={avgIntelligence} color="#2563eb" />
-                    <MetricBar label="Momentum" value={avgMomentum} color="#16a34a" />
-                    <MetricBar label="Integridad" value={avgIntegrity} color="#ca8a04" />
+                    <MetricBar label="Hoja de Vida" value={avgHojaScore} color="#8b5cf6" />
+                    <MetricBar label="Plan de Gob." value={avgPlanScore} color="#2563eb" />
+                    <MetricBar label="Intención" value={avgIntencion} color="#f59e0b" />
+                    <MetricBar label="Integridad" value={avgIntegrity} color="#16a34a" />
                 </div>
             </div>
 
             {/* ── Desglose del Score Final ── */}
             <div className="plancha-section">
-                <h4 className="plancha-section-title">DESGLOSE DEL SCORE FINAL</h4>
+                <h4 className="plancha-section-title">📊 DESGLOSE DEL SCORE FINAL</h4>
+                <p style={{ fontSize: '0.7rem', color: '#6b7280', margin: '0 0 8px', fontStyle: 'italic' }}>
+                    score = (HV×0.30) + (Plan×0.30) + (Intención×0.25) + (Integridad×0.15)
+                </p>
                 <div className="plancha-breakdown">
                     <div className="plancha-brk-item">
-                        <span>Votos (40%)</span>
-                        <span className="plancha-brk-val">{voteWeight.toFixed(1)}</span>
+                        <span>📄 Hoja de Vida (30%)</span>
+                        <div style={{ flex: 1, margin: '0 8px', height: 6, background: '#f3f4f6', borderRadius: 3, overflow: 'hidden' }}>
+                            <div style={{ width: `${avgHojaScore}%`, height: '100%', background: '#8b5cf6', borderRadius: 3 }} />
+                        </div>
+                        <span className="plancha-brk-val" style={{ color: '#8b5cf6' }}>{(avgHojaScore * 0.30).toFixed(1)}</span>
                     </div>
                     <div className="plancha-brk-item">
-                        <span>Inteligencia (25%)</span>
-                        <span className="plancha-brk-val" style={{ color: '#2563eb' }}>{(avgIntelligence * 0.25).toFixed(1)}</span>
+                        <span>📋 Plan de Gobierno (30%)</span>
+                        <div style={{ flex: 1, margin: '0 8px', height: 6, background: '#f3f4f6', borderRadius: 3, overflow: 'hidden' }}>
+                            <div style={{ width: `${avgPlanScore}%`, height: '100%', background: '#2563eb', borderRadius: 3 }} />
+                        </div>
+                        <span className="plancha-brk-val" style={{ color: '#2563eb' }}>{(avgPlanScore * 0.30).toFixed(1)}</span>
                     </div>
                     <div className="plancha-brk-item">
-                        <span>Momentum (20%)</span>
-                        <span className="plancha-brk-val">{(avgMomentum * 0.20).toFixed(1)}</span>
+                        <span>🗳️ Intención Ciudadana (25%)</span>
+                        <div style={{ flex: 1, margin: '0 8px', height: 6, background: '#f3f4f6', borderRadius: 3, overflow: 'hidden' }}>
+                            <div style={{ width: `${avgIntencion}%`, height: '100%', background: '#f59e0b', borderRadius: 3 }} />
+                        </div>
+                        <span className="plancha-brk-val" style={{ color: '#f59e0b' }}>{(avgIntencion * 0.25).toFixed(1)}</span>
                     </div>
                     <div className="plancha-brk-item">
-                        <span>Integridad (15%)</span>
-                        <span className="plancha-brk-val">{(avgIntegrity * 0.15).toFixed(1)}</span>
+                        <span>🛡️ Integridad (15%)</span>
+                        <div style={{ flex: 1, margin: '0 8px', height: 6, background: '#f3f4f6', borderRadius: 3, overflow: 'hidden' }}>
+                            <div style={{ width: `${avgIntegrity}%`, height: '100%', background: '#16a34a', borderRadius: 3 }} />
+                        </div>
+                        <span className="plancha-brk-val" style={{ color: '#16a34a' }}>{(avgIntegrity * 0.15).toFixed(1)}</span>
+                    </div>
+                    <div className="plancha-brk-item" style={{ borderTop: '1px solid #e5e7eb', paddingTop: 6, marginTop: 4 }}>
+                        <span style={{ fontWeight: 700 }}>TOTAL</span>
+                        <span className="plancha-brk-val" style={{ color: displayScore >= 50 ? '#16a34a' : displayScore >= 35 ? '#ca8a04' : '#dc2626', fontWeight: 700, fontSize: '1rem' }}>
+                            {displayScore.toFixed(1)}
+                        </span>
                     </div>
                 </div>
             </div>

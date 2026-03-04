@@ -65,6 +65,7 @@ const PlanGobiernoScorer = {
         // ============ 1. COBERTURA DIMENSIONAL (25%) ============
         // How many of the 6 JNE dimensions are covered?
         const dimensions = new Set();
+        let hasProposals = false;
         items.forEach(item => {
             const dim = (item.dimension || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
             JNE_DIMENSIONS.forEach((jneDim, idx) => {
@@ -73,22 +74,37 @@ const PlanGobiernoScorer = {
                     dimensions.add(idx);
                 }
             });
+            // "PROPUESTAS ADICIONALES" = candidate has proposals even if not in standard dims
+            if (dim.includes('propuesta') || dim.includes('adicional')) {
+                hasProposals = true;
+            }
         });
-        const coverageScore = Math.min(100, (dimensions.size / JNE_DIMENSIONS.length) * 100);
+        // If candidate only has "PROPUESTAS ADICIONALES", give partial coverage
+        let coverageScore;
+        if (dimensions.size > 0) {
+            coverageScore = Math.min(100, (dimensions.size / JNE_DIMENSIONS.length) * 100);
+        } else if (hasProposals) {
+            // Has proposals but no standard dimensions — give 40% coverage credit
+            coverageScore = 40;
+        } else {
+            coverageScore = 0;
+        }
 
 
         // ============ 2. ESPECIFICIDAD (25%) ============
         // Are objectives concrete (long, detailed) or vague (short)?
+        // Fallback: if objective is empty, use problem text instead
         let specificityTotal = 0;
         items.forEach(item => {
             const obj = (item.objective || '').trim();
-            if (obj.length === 0) {
+            const fallbackText = obj.length > 0 ? obj : (item.problem || '').trim();
+            if (fallbackText.length === 0) {
                 specificityTotal += 0;
-            } else if (obj.length < 30) {
+            } else if (fallbackText.length < 30) {
                 specificityTotal += 20; // very vague
-            } else if (obj.length < 80) {
+            } else if (fallbackText.length < 80) {
                 specificityTotal += 50; // somewhat specific
-            } else if (obj.length < 150) {
+            } else if (fallbackText.length < 150) {
                 specificityTotal += 75; // reasonably specific
             } else {
                 specificityTotal += 100; // very detailed
@@ -102,9 +118,14 @@ const PlanGobiernoScorer = {
         let goalsCount = 0;
         items.forEach(item => {
             const goals = (item.goals || '').trim();
-            if (goals.length > 10) goalsCount++;
+            // Fallback: long problem descriptions may contain implicit goals
+            if (goals.length > 10) {
+                goalsCount++;
+            } else if ((item.problem || '').length > 100) {
+                goalsCount += 0.3; // partial credit for detailed problem with implicit action
+            }
         });
-        const measurabilityScore = items.length > 0 ? (goalsCount / items.length) * 100 : 0;
+        const measurabilityScore = items.length > 0 ? Math.min(100, (goalsCount / items.length) * 100) : 0;
 
 
         // ============ 4. INDICADORES (15%) ============
@@ -112,9 +133,13 @@ const PlanGobiernoScorer = {
         let indicatorsCount = 0;
         items.forEach(item => {
             const indicator = (item.indicator || '').trim();
-            if (indicator.length > 5) indicatorsCount++;
+            if (indicator.length > 5) {
+                indicatorsCount++;
+            } else if ((item.problem || '').length > 80) {
+                indicatorsCount += 0.2; // partial credit
+            }
         });
-        const indicatorScore = items.length > 0 ? (indicatorsCount / items.length) * 100 : 0;
+        const indicatorScore = items.length > 0 ? Math.min(100, (indicatorsCount / items.length) * 100) : 0;
 
 
         // ============ 5. COHERENCIA PROBLEMA → OBJETIVO (15%) ============
@@ -124,8 +149,14 @@ const PlanGobiernoScorer = {
             const problem = (item.problem || '').toLowerCase();
             const objective = (item.objective || '').toLowerCase();
 
-            if (problem.length < 5 || objective.length < 5) {
+            if (problem.length < 5) {
                 coherenceTotal += 0;
+                return;
+            }
+
+            // If only problem exists (no objective), give partial coherence
+            if (objective.length < 5) {
+                coherenceTotal += problem.length > 50 ? 50 : 25; // detailed problem = partial credit
                 return;
             }
 

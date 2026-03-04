@@ -1,5 +1,5 @@
 {
-  "scraped_at": "2026-03-03T08:30:23.482Z",
+  "scraped_at": "2026-03-04T09:00:37.908Z",
   "plans": [
     {
       "id_plan_gobierno": 29681,
@@ -1101,79 +1101,411 @@
       "resumen_pdf_local": "resumen_pg_2173_AVANZA_PAIS___PARTIDO_DE_INTEGRACION_SOCIAL.pdf"
     },
     {
-      "id_plan_gobierno": 29693,
+      "id_plan_gobierno": 29744,
       "party_jne_id": 2218,
       "party_name": "PARTIDO POLITICO NACIONAL PERU LIBRE",
-      "plan_pdf_url": null,
-      "resumen_pdf_url": "https://mpesije.jne.gob.pe/docs/b690cba8-c2b1-4a68-85ca-1596550a85b6.pdf",
+      "plan_pdf_url": "https://mpesije.jne.gob.pe/docs/b2d25860-484e-4226-bd13-a57fb83c59cb.pdf",
+      "resumen_pdf_url": "https://mpesije.jne.gob.pe/docs/f4681d3f-c1ea-486b-a795-547995c21d33.pdf",
       "dimensions": [
         {
-          "dimension": "PROPUESTAS ADICIONALES",
+          "dimension": "DIMENSIÓN SOCIAL",
           "items": [
             {
-              "problem": "Modernizar el régimen andino de libre competencia (Decisión 608) para enfrentar carteles transfronterizos, concentraciones económicas, mercados digitales y abusos de posición dominante, alineando el sistema andino con estándares internacionales.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
+              "problem": "Déficit de servicios sociales básicos (educación, salud, agua potable y saneamiento)",
+              "objective": "Garantizar los derechos sociales fundaméntales como responsabilidad indelegable del Estado, asegurando acceso universal, gratuito y dé calidad a educación, salud, agua potable y saneamiento.",
+              "goals": "•\t100 % de la población con acceso a agua potable al 2031\n•\t100 % de la población con saneamiento básico al 2031\n•\tCobertura efectiva de salud = 95 % al 2031\n•\tAnalfabetismo reducido a 0 % al 2031",
+              "indicator": "•\tCobertura de acceso a agua potable (%)\n•\tCobertura de saneamiento básico (%)\n•\tCobertura efectiva de servicios de salud (%)\n•\tTasa de analfabetismo (%)"
             },
             {
-              "problem": "Promover la propiedad intelectual como herramienta de desarrollo productivo, impulsando Indicaciones Geográficas, Denominaciones de Origen y la adhesión coordinada al Protocolo de Madrid para facilitar la internacionalización de marcas andinas.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
+              "problem": "Sistema educativo desigual, baja calidad y brechas territoriales",
+              "objective": "Construir una educación pública liberadora, inclusiva y de calidad, orientada a la formación integral, la identidad nacional y la igualdad de oportunidades en todos los niveles educativos.",
+              "goals": "•\tReducir la deserción escolar a = 5 % al 2031\n•\tCobertura educativa universal en educación básica al 2030\n•\t100 % de cobertura en educación inicial (3–5 años) al 2030\n•\tReducir la brecha urbano–rural de aprendizajes en = 50 % al 2030",
+              "indicator": "•\tTasa de deserción escolar (%)\n•\tCobertura educativa por nivel (inicial, primaria, secundaria)\n•\tBrecha de aprendizajes urbano–rural (%)\n•\tRatio alumno/docente"
             },
             {
-              "problem": "Fortalecer el turismo multidestino mediante la iniciativa Caminos Andinos, articulando conectividad, plataformas digitales, Marca Andina de Turismo, turismo comunitario, gastronomía y protección al consumidor, con énfasis en MIPYMES.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
+              "problem": "Infraestructura educativa precaria y brecha digital",
+              "objective": "Modernizar integralmente la infraestructura educativa pública, garantizando conectividad digital universal y condiciones dignas de aprendizaje en todo el territorio nacional.",
+              "goals": "•\t0 % de instituciones con infraestructura precaria al 2030\n•\t100 % de instituciones educativas públicas con Internet al 2030\n•\t100 % de escuelas con agua, saneamiento y energía al 2031",
+              "indicator": "•\tPorcentaje de instituciones educativas con infraestructura adecuada\n•\tPorcentaje de escuelas públicas con acceso a Internet\n•\tPorcentaje de escuelas con servicios básicos completos"
             },
             {
-              "problem": "Proponer la implementación de un Registro Andino de Empresas Inhabilitadas por prácticas de corrupción, colusión o fraude, para evitar que empresas sancionadas en un país contraten en otros países andinos.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
+              "problem": "Sistema de salud fragmentado, inequitativo y subfinanciado, agravado por la concentración privada y prácticas oligopólicas que encarecen los servicios, debilitan la rectoría del Estado y limitan el acceso oportuno y equitativo de la población a la atención en salud.",
+              "objective": "Implementar un Sistema Único de Salud universal, gratuito, preventivo e integrado, financiado y conducido por el Estado, que garantice atención oportuna y equitativa para toda la población, incorporando inversión privada de manera complementaria, estrictamente regulada y sin concentración oligopólica, subordinada al interés público y a la planificación sanitaria nacional.",
+              "goals": "•\tCobertura universal de salud para toda la población al 2031, mediante el Sistema Único de Salud.\n•\tComo mínimo 80 % de atenciones resueltas en el primer nivel de atención, priorizando prevención y atención primaria.\n•\tIncrementar el gasto público en salud hasta alcanzar al menos 10 % del PBI, asegurando financiamiento sostenible del sistema.\n•\tReducir el gasto de bolsillo de los hogares en salud a no más de 10 % al 2031.\n•\tIntegrar prestadores privados al Sistema Único de Salud bajo contratos regulados, tarifas controladas y sin concentración de mercado.\n•\tEliminar prácticas oligopólicas en el sector salud, mediante fiscalización efectiva y sanción a la concentración indebida de servicios y medicamentos.",
+              "indicator": "•\t•Cobertura efectiva de salud (%)\n•\tPorcentaje de atenciones resueltas en el primer nivel de atención\n•\tGasto público en salud como porcentaje del PBI\n•\tGasto de bolsillo de los hogares en salud (%)\n•\tParticipación de prestadores privados regulados dentro del Sistema Único de Salud (%)\n•\tNúmero de sanciones aplicadas por prácticas monopólicas u oligopólicas en el sector salud"
             },
             {
-              "problem": "Promover la creación de un Fondo Andino de Beneficios Compartidos, destinado a asegurar una distribución justa y equitativa de los beneficios económicos derivados del uso de los saberes ancestrales y la biodiversidad.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
+              "problem": "Insuficiente infraestructura y personal de salud, con profundas brechas regionales, producto del desmantelamiento del Estado y la mercantilización neoliberal del sistema sanitario, que ha concentrado recursos en zonas urbanas privilegiadas y excluido a amplios sectores del país, vulnerando el derecho a la salud del pueblo, especialmente en regiones rurales, amazónicas y de frontera.",
+              "objective": "Reconstruir y fortalecer integralmente la red pública nacional de salud y el recurso humano sanitario, cerrando las brechas territoriales heredadas del modelo neoliberal mediante inversión pública prioritaria y planificación estatal, garantizando el derecho universal a la salud, la formación y especialización permanente del personal sanitario, y consolidando a los hospitales públicos como hospitales docentes, pilares de un sistema de salud público, gratuito y de calidad.",
+              "goals": "•\tConstrucción y puesta en funcionamiento de 100 Hospitales Docentes Especializados y 1,000 centros de salud públicos a nivel nacional, priorizando regiones históricamente postergadas, al 2031.\n•\t Alcanzar como mínimo 3 camas hospitalarias por cada 1,000 habitantes en todas las regiones del país al 2031.\n•\tLograr como mínimo 34 médicos por cada 10,000 habitantes, con distribución equitativa entre regiones al 2031.\n•\tGarantizar que la mayoría de establecimientos de salud cuenten con equipamiento básico completo y personal suficiente, asegurando funcionamiento efectivo del primer y segundo nivel de atención.\n•\tReducir de manera sustantiva las brechas regionales en infraestructura y personal sanitario, priorizando zonas rurales, amazónicas y de frontera.",
+              "indicator": "•\tNúmero de hospitales y centros de salud públicos operativos y equipados\n•\tCamas hospitalarias por 1,000 habitantes, desagregadas por región\n•\tMédicos por 10,000 habitantes, desagregados por región\n•\tPorcentaje de establecimientos de salud con equipamiento básico completo y personal suficiente\n•\tBrecha regional de infraestructura y recursos humanos en salud (%)"
             },
             {
-              "problem": "Establecer un mecanismo andino de reconocimiento mutuo operativo de Indicaciones Geográficas y Denominaciones de Origen, que permita que las denominaciones registradas en un país miembro tengan efectos jurídicos automáticos en los demás.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
+              "problem": "Predominio de un modelo de salud curativo, hospitalario y reactivo, heredado del enfoque neoliberal, que descuida la prevención, la atención primaria y el trabajo comunitario, generando altos niveles de enfermedades evitables, saturación hospitalaria y mayores costos sociales y económicos para el Estado y las familias.",
+              "objective": "Implementar un modelo nacional de salud preventiva y comunitaria, basado en el programa “Médicos de la Familia”, que garantice atención primaria integral, seguimiento permanente de las familias y comunidades, y acción preventiva sobre los determinantes sociales de la salud, fortaleciendo el primer nivel de atención como eje del sistema público de salud.",
+              "goals": "•\tImplementar el programa Médicos de la Familia a nivel nacional, priorizando zonas rurales, periurbanas y amazónicas al 2031.\n•\tAsignar un equipo de Médicos de la Familia a cada territorio definido, garantizando cobertura progresiva de la población.\n•\tLograr que la mayoría de atenciones de salud se resuelvan en el primer nivel de atención, reduciendo la sobrecarga hospitalaria.\n•\tReducir de manera sostenida las hospitalizaciones por enfermedades prevenibles, mediante prevención y seguimiento comunitario.\n•\tDisminuir significativamente la anemia y la desnutrición infantil, como resultado del enfoque preventivo, familiar y territorial.\n•\tInstitucionalizar la visita domiciliaria preventiva como práctica regular del sistema público de salud.",
+              "indicator": "•\tNúmero de equipos de Médicos de la Familia implementados a nivel nacional\n•\tPorcentaje de familias adscritas a un equipo de salud familiar\n•\tPorcentaje de atenciones de salud resueltas en el primer nivel de atención\n•\tTasa de hospitalizaciones por enfermedades prevenibles\n•\tPrevalencia de anemia y desnutrición infantil\n•\tNúmero de visitas domiciliarias preventivas realizadas"
             },
             {
-              "problem": "Proponer la creación del Sello Andino de Turismo Responsable como un mecanismo voluntario de certificación regional, aplicable a operadores turísticos, hospedajes, restaurantes y agencias de viaje.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
+              "problem": "Altos niveles de anemia, desnutrición infantil y mortalidad evitable",
+              "objective": "Reducir drásticamente la anemia, la desnutrición y la mortalidad evitable, mediante políticas preventivas, atención primaria fortalecida y acción intersectorial del Estado.",
+              "goals": "•\tReducir la mortalidad materna a menos de 30 muertes por cada 100,000 nacidos vivos al 2031, priorizando regiones con mayor riesgo.\n•\tReducir la mortalidad infantil a menos de 10 muertes por cada 1,000 nacidos vivos al 2031.\n•\tReducir de manera sostenida la prevalencia de anemia infantil, priorizando niñas y niños menores de 5 años, con enfoque territorial.\n•\tReducir de forma significativa la desnutrición crónica infantil, con intervenciones integrales de salud, nutrición, agua y saneamiento.\n•\t Garantizar que la mayoría de gestantes cuenten con controles prenatales completos y oportunos, fortaleciendo la atención primaria.\n•\tInstitucionalizar el seguimiento nutricional infantil como práctica regular del sistema público de salud, con énfasis preventivo y comunitario.",
+              "indicator": "•\tTasa de mortalidad materna por cada 100,000 nacidos vivos\n•\tTasa de mortalidad infantil por cada 1,000 nacidos vivos\n•\tPrevalencia de anemia en niñas y niños menores de 5 años (%)\n•\tPrevalencia de desnutrición crónica infantil (%)\n•\tPorcentaje de gestantes con controles prenatales completos\n•\tPorcentaje de niñas y niños menores de 5 años con seguimiento nutricional regular\n•\tPorcentaje de atenciones preventivas resueltas en el primer nivel de atención"
             },
             {
-              "problem": "Impulsar la creación de un Sistema Andino de Homologación de Títulos Profesionales, orientado al reconocimiento mutuo progresivo de títulos universitarios y técnicos, priorizando sectores estratégicos como salud, educación e ingeniería.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
+              "problem": "Acceso limitado y desigual a la educación superior pública y técnico-productiva, producto del abandono del Estado y la mercantilización neoliberal de la educación, que obliga a la migración juvenil, incrementa la deserción por pobreza, concentra la oferta educativa en pocas ciudades y limita el desarrollo científico, tecnológico y productivo del país.",
+              "objective": "Democratizar el acceso a la educación superior pública y técnico-productiva como derecho fundamental, ampliando y fortaleciendo la oferta educativa estatal, descentralizando la educación superior hacia las regiones y articulándola con la industrialización, la soberanía productiva y el desarrollo nacional.",
+              "goals": "•\tIncrementar de manera significativa las vacantes en universidades públicas, priorizando a estudiantes de regiones históricamente excluidas.\n•\tCrear y poner en funcionamiento entre 40 y 50 universidades públicas regionales, fortaleciendo la descentralización educativa antes del 2030.\n•\tGarantizar que todas las universidades públicas cuenten con presupuesto suficiente y funcionamiento pleno, asegurando gratuidad real y calidad educativa.\n•\tFortalecer la educación técnico-productiva pública, garantizando al menos cinco(5) institutos público de excelencia por región, vinculado a las necesidades productivas locales y nacionales.\n•\tReducir la migración juvenil por motivos educativos, mediante la ampliación de la oferta pública regional de educación superior.",
+              "indicator": "•\tNúmero de vacantes en universidades públicas\n•\tNúmero de universidades públicas regionales en funcionamiento\n•\tNúmero de institutos públicos técnico-productivos fortalecidos o creados\n•\tDistribución regional de la oferta de educación superior pública\n•\tPresupuesto público asignado a universidades e institutos públicos"
             },
             {
-              "problem": "Impulsar el fortalecimiento de la protección supranacional de los conocimientos ancestrales y recursos biológicos mediante registros andinos, prevención de la biopiratería y el reparto justo de beneficios.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
+              "problem": "Altos niveles de pobreza y pobreza extrema, y persistente desigualdad social, como resultado del modelo neoliberal que ha concentrado la riqueza, debilitado el rol redistributivo del Estado y negado derechos sociales fundamentales a amplios sectores del pueblo.",
+              "objective": "Reducir estructuralmente la pobreza y la desigualdad social, mediante la construcción de un Estado de bienestar con derechos sociales garantizados, redistribución de la riqueza, fortalecimiento de la protección social y generación de condiciones materiales para una vida digna del pueblo.",
+              "goals": "•\tReducir la pobreza extrema a niveles residuales al 2030, priorizando hogares en situación de mayor vulnerabilidad.\n•\tReducir de manera sostenida la pobreza total, avanzando hacia niveles estructuralmente menores al 10 % al 2031.\n•\tDisminuir significativamente la desigualdad social, reflejada en la mejora del coeficiente de Gini.\n•\tAmpliar la cobertura efectiva de los programas de protección social, garantizando su articulación con empleo, vivienda y servicios básicos.",
+              "indicator": "•\tTasa de pobreza total de la población (%)\n•\tTasa de pobreza extrema de la población (%)\n•\tÍndice de desigualdad de ingresos (coeficiente de Gini)\n•\tCobertura de programas de protección social (%)"
             },
             {
-              "problem": "Proponer la creación de un mecanismo andino de control previo de fusiones y adquisiciones que tengan impacto en dos o más países miembros para evaluar el riesgo de reducción de la competencia a nivel regional.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
+              "problem": "Alta informalidad laboral y precarización del empleo, producto del modelo neoliberal que debilitó los derechos laborales, promovió la flexibilización extrema y redujo la capacidad del Estado para fiscalizar, generando inestabilidad, bajos ingresos y desprotección social para la clase trabajadora.",
+              "objective": "Garantizar trabajo digno, estable y con derechos laborales universales, fortaleciendo la protección del Estado, la inspección laboral y la formalización productiva, como pilares para la justicia social, la dignificación del trabajo y el fortalecimiento del mercado interno.",
+              "goals": "•\tReducir la tasa de informalidad laboral del 70 % al 50 % al 2031, priorizando sectores con mayor precarización.\n•\tIncrementar de manera sustantiva la capacidad inspectiva del Estado, triplicando el número de inspectores y fiscalizaciones laborales de SUNAFIL.\n•\tIncorporar progresivamente a millones de trabajadores a la formalidad laboral, garantizando derechos laborales y acceso a seguridad social.\n•\tFortalecer la fiscalización y sanción efectiva frente a la explotación laboral, especialmente en sectores de alta informalidad.",
+              "indicator": "•\tTasa de informalidad laboral de la población ocupada (%)\n•\tNúmero de inspecciones laborales realizadas anualmente\n•\tNúmero de trabajadores incorporados a la formalidad laboral\n•\tCobertura de derechos laborales y de seguridad social (%)"
+            },
+            {
+              "problem": "Debilitamiento de los derechos laborales y de la negociación colectiva, como consecuencia del marco laboral impuesto por el modelo neoliberal y la Constitución de 1993, que redujo el poder de negociación de la clase trabajadora, precarizó el empleo y limitó la acción sindical, afectando la justicia social y la democracia en el trabajo.",
+              "objective": "Restituir y fortalecer los derechos laborales y la negociación colectiva como pilares de la justicia social, la dignificación del trabajo y la democracia laboral, garantizando la organización sindical, la protección efectiva del trabajador y el rol activo del Estado en la regulación de las relaciones laborales.",
+              "goals": "•\tAprobar una Nueva Ley General del Trabajo al 2026, que restituya los derechos laborales recortados y fortalezca la negociación colectiva.\n•\tIncrementar de manera sostenida el número y la cobertura de convenios colectivos en todos los sectores económicos, públicos y privados.\n•\tFortalecer la protección efectiva de los derechos laborales, reduciendo las prácticas antisindicales y la vulneración de derechos fundamentales en el trabajo.\n•\tGarantizar condiciones legales y materiales para el ejercicio pleno de la libertad sindical, como base de la democracia en el ámbito laboral.",
+              "indicator": "•\tNúmero de convenios colectivos vigentes a nivel nacional\n•\tCobertura de la negociación colectiva sobre la población trabajadora (%)\n•\tÍndice de cumplimiento de derechos laborales\n•\tNúmero de organizaciones sindicales activas y registradas"
+            },
+            {
+              "problem": "Sistema previsional excluyente y pensiones insuficientes, heredado del modelo neoliberal, que mercantilizó la seguridad social, dejó a millones de trabajadores y adultos mayores sin protección, y garantizó rentabilidad privada antes que una vejez digna para el pueblo.",
+              "objective": "Implementar un sistema universal de pensiones digno, solidario y público, garantizado por el Estado, que asegure ingresos suficientes en la vejez, elimine la exclusión previsional y forme parte de un sistema integral de protección social basado en derechos.",
+              "goals": "•\tGarantizar que la totalidad de adultos mayores cuenten con una pensión o ingreso básico garantizado al 2030, como derecho social.\n•\tElevar progresivamente el monto de las pensiones, asegurando que se ubiquen por encima de la línea de pobreza.\n•\tReducir sustancialmente la exclusión previsional, incorporando a trabajadores independientes, rurales y del sector informal.\n•\tFortalecer el financiamiento público del sistema previsional, priorizando la solidaridad intergeneracional sobre el lucro privado.",
+              "indicator": "•\tCobertura previsional de la población adulta mayor (%)\n•\tMonto promedio de pensión en relación con la línea de pobreza\n•\tPorcentaje de adultos mayores sin acceso a ningún sistema previsional\n•\tParticipación del financiamiento público en el sistema de pensiones (%)"
+            },
+            {
+              "problem": "Asentamientos humanos sin titulación ni acceso a servicios básicos, resultado del abandono histórico del Estado y de un modelo urbano neoliberal que mercantilizó el suelo, excluyó a los sectores populares y negó el derecho a una vivienda digna y a la ciudad a millones de familias trabajadoras.",
+              "objective": "Regularizar la propiedad urbana y transformar integralmente los barrios populares, garantizando seguridad jurídica, acceso universal a servicios básicos, infraestructura adecuada y condiciones de vida dignas, como parte del derecho a la vivienda y a la ciudad, bajo conducción y planificación del Estado.",
+              "goals": "•\tOtorgar 500,000 títulos de propiedad urbana al 2030, priorizando asentamientos humanos y barrios populares históricamente excluidos.\n•\tConcluir el saneamiento físico-legal de los principales asentamientos humanos del país, avanzando hacia la eliminación progresiva de barriadas sin título.\n•\tIntervenir integralmente barrios populares, incorporando servicios básicos, infraestructura urbana y equipamiento comunitario.\n•\t Avanzar hacia la eliminación de asentamientos humanos sin seguridad jurídica, garantizando el derecho a la vivienda y a la ciudad.",
+              "indicator": "•\tNúmero de títulos de propiedad urbana otorgados a familias de sectores populares\n•\tPorcentaje de asentamientos humanos con saneamiento físico-legal concluido\n•\tNúmero de barrios populares intervenidos integralmente (servicios, vías, equipamiento)\n•\tCobertura de servicios básicos en barrios regularizados (%)"
+            },
+            {
+              "problem": "Insuficiente cobertura y fragmentación de los programas sociales, producto de un enfoque asistencialista y focalizado heredado del modelo neoliberal, que limita la protección efectiva de la población en pobreza y pobreza extrema y no garantiza el ejercicio pleno de los derechos sociales.",
+              "objective": "Fortalecer y universalizar la protección social como derecho, priorizando a la población en situación de pobreza y pobreza extrema, mediante un sistema articulado de programas sociales bajo rectoría del Estado, orientado a garantizar condiciones de vida dignas y reducir estructuralmente la desigualdad social.",
+              "goals": "•\tGarantizar la cobertura total de los hogares en pobreza extrema por el sistema de protección social, asegurando atención integral y sostenida.\n•\tAmpliar de manera progresiva la cobertura de los programas sociales, avanzando hacia la universalización de la protección social basada en derechos.\n•\tIntegrar y fortalecer los programas sociales bajo una estrategia nacional única, superando la dispersión y el asistencialismo.\n•\tVincular los programas de protección social con empleo, salud, educación y vivienda, para reducir de forma estructural la pobreza.",
+              "indicator": "•\tCobertura efectiva de programas de protección social (%)\n•\tNúmero de hogares beneficiarios de programas sociales\n•\tPorcentaje de hogares en pobreza extrema cubiertos por el sistema de protección social\n•\tNivel de articulación e integración entre programas sociales (índice de gestión social)"
+            },
+            {
+              "problem": "Persistentes brechas de género, etnia y discapacidad, producto de un modelo social y económico excluyente que reproduce discriminación estructural, desigualdad en el acceso a ingresos, poder político y oportunidades, y niega el ejercicio pleno de derechos a mujeres, pueblos indígenas y personas con discapacidad.",
+              "objective": "Garantizar la igualdad sustantiva y efectiva, mediante políticas públicas y acciones afirmativas del Estado que eliminen toda forma de discriminación estructural por género, origen étnico o condición de discapacidad, asegurando participación equitativa, autonomía económica y acceso real al poder y a los derechos.",
+              "goals": "•\tReducir de manera progresiva la brecha salarial de género hasta niveles residuales al 2030, garantizando igual remuneración por trabajo de igual valor.\n•\tAlcanzar la paridad de género en los altos cargos públicos, avanzando hacia una participación equilibrada de mujeres en la toma de decisiones del Estado.\n•\tIncrementar de forma sostenida la participación de pueblos indígenas en instancias de representación y gestión pública, con enfoque plurinacional e intercultural.\n•\tAmpliar la inclusión laboral y social de las personas con discapacidad, eliminando barreras estructurales y garantizando ajustes razonables.\n•\tInstitucionalizar políticas públicas con enfoque de género, interculturalidad y discapacidad en todos los niveles de gobierno.",
+              "indicator": "•\tBrecha salarial de género (%)\n•\tParticipación de mujeres en cargos directivos y de alta responsabilidad pública (%)\n•\tParticipación de pueblos indígenas en instancias de decisión pública (%)\n•\tParticipación laboral y social de personas con discapacidad (%)\n•\tExistencia y cobertura de políticas públicas con enfoque de género, intercultural y de discapacidad"
+            },
+            {
+              "problem": "Acceso desigual y limitado a la educación superior pública, producto del abandono del Estado y de la mercantilización neoliberal de la educación, que concentra la oferta universitaria en pocas ciudades, restringe el ingreso de jóvenes de sectores populares y regiones, y reproduce desigualdades sociales y territoriales.",
+              "objective": "Fortalecer la universidad pública como pilar de justicia social y desarrollo nacional, ampliando y democratizando el acceso a la educación superior, incrementando vacantes, descentralizando la oferta universitaria hacia las regiones y garantizando gratuidad, calidad y pertinencia social de la formación académica.",
+              "goals": "•\tIncrementar de manera sustantiva las vacantes en universidades públicas, avanzando hacia un aumento de al menos 50 % a nivel nacional.\n•\tCrear y poner en funcionamiento nuevas universidades públicas regionales, priorizando regiones históricamente excluidas, antes del 2030.\n•\tGarantizar el financiamiento suficiente y sostenido de las universidades públicas, asegurando gratuidad real y condiciones adecuadas de funcionamiento.\n•\tReducir las brechas territoriales y sociales en el acceso a la educación superior pública, priorizando a jóvenes de zonas rurales, amazónicas y de menores ingresos.\n•\tFortalecer el rol de la universidad pública en la investigación, la formación profesional y el desarrollo nacional, articulándola con las necesidades productivas y sociales del país.",
+              "indicator": "•\tNúmero de vacantes en universidades públicas a nivel nacional\n•\tDistribución regional de vacantes en educación superior pública\n•\tNúmero de universidades públicas regionales creadas o fortalecidas\n•\tPresupuesto público asignado a universidades públicas (%)\n•\tTasa de acceso a educación superior pública de jóvenes de sectores populares (%)"
+            }
+          ]
+        },
+        {
+          "dimension": "DIMENSIÓN ECONÓMICA",
+          "items": [
+            {
+              "problem": "Modelo económico primario-exportador, concentrado y vulnerable a choques externos",
+              "objective": "Transformar el modelo económico primario-exportador hacia una Economía Popular con Mercados, con un Estado planificador, industrializador y redistribuidor, que impulse la industrialización nacional, el valor agregado y la diversificación productiva.",
+              "goals": "•\tIncrementar la participación de la industria manufacturera al 20 % del PBI nacional al 2030.\n•\tIncrementar sostenidamente el valor agregado industrial nacional, priorizando sectores estratégicos y encadenamientos productivos internos.\n•\tDesarrollar al menos cinco cadenas productivas industriales estratégicas nacionales con liderazgo del Estado.\n•\tIncrementar de manera sostenida el empleo industrial formal a nivel nacional.\n•\tReducir la dependencia de insumos importados en sectores estratégicos, fortaleciendo la producción nacional.",
+              "indicator": "•\tParticipación de la industria manufacturera en el PBI nacional (%)\n•\tParticipación del valor agregado industrial nacional en el PBI (%)\n•\tNúmero de cadenas productivas industriales estratégicas impulsadas por el Estado\n•\tParticipación del empleo industrial en el empleo total (%)\n•\tParticipación de insumos y producción nacional en sectores estratégicos (%)"
+            },
+            {
+              "problem": "Infraestructura productiva y de comercialización agrícola insuficiente",
+              "objective": "Garantizar la soberanía y seguridad alimentaria nacional, fortaleciendo los mercados internos, la infraestructura de acopio, comercialización y logística agrícola, priorizando el consumo interno sobre la exportación.",
+              "goals": "•\tMercados mayoristas operativos en todas las regiones al 2028\n•\tIncremento del 50 % del volumen agrícola comercializado internamente al 2031\n•\tIntegración efectiva de pequeños productores al mercado nacional.",
+              "indicator": "•\tNúmero de mercados mayoristas públicos implementados\n•\tVolumen de productos agrícolas comercializados en mercados internos (TM); Participación de pequeños productores en mercados internos (%)\n•\tParticipación de pequeños productores en mercados internos (%)."
+            },
+            {
+              "problem": "Baja productividad y tecnificación del sector agropecuario",
+              "objective": "Modernizar y tecnificar la agricultura nacional mediante asistencia técnica estatal, investigación, acceso a tecnología y crédito público, para elevar la productividad agrícola y mejorar los ingresos rurales.",
+              "goals": "•\tIncrementar el rendimiento agrícola en 30 % al 2031\n•\tAlcanzar 80 % de productores con asistencia técnica estatal\n•\tTecnificación prioritaria en zonas de agricultura familiar.",
+              "indicator": "•\tRendimiento promedio agrícola (TM/ha)\n•\tPorcentaje de productores con asistencia técnica permanente\n•\tNúmero de proyectos de tecnificación agraria implementados"
+            },
+            {
+              "problem": "Potencial turístico regional desaprovechado y concentrado",
+              "objective": "Desarrollar el turismo nacional y regional como actividad estratégica de desarrollo, empleo e identidad cultural, promoviendo circuitos turísticos descentralizados y turismo sostenible con participación comunitaria.",
+              "goals": "•\tImplementar 9 corredores turísticos regionales activos\n•\tIncrementar en 50 % los ingresos turísticos al 2031\n•\tGeneración sostenida de empleo turístico descentralizado.",
+              "indicator": "•\tNúmero de corredores turísticos regionales implementados\n•\tIngresos por turismo regional (USD)\n•\tEmpleo directo generado por turismo regional."
+            },
+            {
+              "problem": "Producción ganadera limitada y dependencia de importaciones alimentarias",
+              "objective": "Fortalecer la producción ganadera nacional mediante crianza tecnificada, apoyo estatal y organización comunitaria, reduciendo la dependencia de importaciones y garantizando seguridad alimentaria.",
+              "goals": "•\tDuplicar la producción nacional de carne y pollo al 2031\n•\tCriaderos comunitarios operativos en todas las regiones\n•\tReducción sustantiva de importaciones alimentarias",
+              "indicator": "•\tProducción anual nacional de carne y pollo (TM)\n•\tNúmero de criaderos comunitarios operativos\n•\tParticipación de producción nacional en consumo interno (%)"
+            },
+            {
+              "problem": "Alta informalidad laboral y productiva (˜70% de la PEA)",
+              "objective": "Formalizar progresivamente el empleo y la producción, garantizando derechos laborales, fortaleciendo la industria nacional y ampliando la base tributaria sin precarizar el trabajo.",
+              "goals": "•\tReducir la informalidad laboral al 50 % al 2031\n•\tIncorporar millones de trabajadores a la formalidad\n•\tIncremento sostenido de la base tributaria laboral",
+              "indicator": "•\tTasa de informalidad laboral (%)\n•\tNúmero de trabajadores formalizados\n•\tRecaudación tributaria asociada a formalización (S/)"
+            },
+            {
+              "problem": "Baja presión tributaria y sistema fiscal regresivo",
+              "objective": "Transformar el sistema tributario en un instrumento de justicia fiscal y redistribución de la riqueza, haciendo que los sectores de mayores ingresos y rentas extraordinarias contribuyan de manera efectiva al financiamiento del desarrollo nacional, eliminando privilegios tributarios injustificados.",
+              "goals": "•\tElevar la presión tributaria al 20 % del PBI al 2031, mediante una reforma tributaria progresiva.\n•\tIncrementar sostenidamente la recaudación tributaria, priorizando impuestos directos a grandes rentas y patrimonios.\n•\tEliminar progresivamente las exoneraciones tributarias injustificadas, especialmente aquellas que benefician a grandes grupos económicos.\n•\t Aumentar la participación de los impuestos directos en la recaudación total, fortaleciendo la progresividad del sistema fiscal.",
+              "indicator": "•\tPresión tributaria como porcentaje del PBI\n•\tRecaudación tributaria total anual (S/)\n•\t Recaudación adicional proveniente de impuestos progresivos (S/)\n•\tNúmero de exoneraciones tributarias eliminadas o reformadas\n•\tParticipación de impuestos directos en la recaudación total (%)"
+            },
+            {
+              "problem": "Falta de infraestructura hídrica y de riego para la producción agraria y energética",
+              "objective": "Desarrollar infraestructura hídrica multipropósito bajo liderazgo del Estado, orientada al riego agrícola, generación energética y control de inundaciones, para garantizar seguridad alimentaria, soberanía energética y desarrollo productivo nacional.",
+              "goals": "•\tIncorporar 1 millón de hectáreas con riego tecnificado al 2030\n•\tIncrementar la generación hidroeléctrica renovable en +1,500 MW al 2031\n•\tEjecución de proyectos hídricos estratégicos en todas las macrorregiones",
+              "indicator": "•\tSuperficie agrícola incorporada con riego tecnificado (ha)\n•\tCapacidad instalada de generación hidroeléctrica renovable (MW)\n•\tNúmero de proyectos hídricos multipropósito ejecutados"
+            },
+            {
+              "problem": "Dependencia energética y limitada soberanía sobre recursos estratégicos",
+              "objective": "Recuperar la soberanía energética nacional, priorizando el abastecimiento interno, el control estatal de los recursos estratégicos y el acceso universal a energía asequible para la población.",
+              "goals": "•\tAlcanzar 1 millón de nuevas conexiones de gas natural al 2030\n•\tIncrementar la participación de la producción nacional en el consumo interno\n•\tPetroperú operando al menos 3 lotes estratégicos al 2031",
+              "indicator": "•\tNúmero de conexiones domiciliarias de gas natural\n•\tParticipación de la producción nacional de hidrocarburos en el consumo interno (%)\n•\tNúmero de lotes estratégicos bajo control estatal"
+            },
+            {
+              "problem": "Matriz energética concentrada en combustibles fósiles y baja participación de renovables",
+              "objective": "Impulsar la transición energética soberana, diversificando la matriz energética con fuentes renovables y fortaleciendo el rol planificador del Estado en el sector energético.",
+              "goals": "•\tAlcanzar 40 % de la matriz eléctrica con energías renovables al 2031\n•\tParques solares, eólicos y microhidroeléctricos operativos en todas las regiones\n•\tReducción progresiva de la dependencia de combustibles fósiles",
+              "indicator": "•\tParticipación de energías renovables en la matriz eléctrica nacional (%)\n•\tCapacidad instalada de energías renovables (MW)\n•\tNúmero de proyectos de energías renovables implementados"
+            },
+            {
+              "problem": "Tecnología industrial obsoleta y bajo valor agregado nacional",
+              "objective": "Impulsar la industrialización nacional descentralizada, con innovación tecnológica y liderazgo del Estado, para generar valor agregado, empleo digno y soberanía productiva.",
+              "goals": "•\tIncrementar la manufactura al 15 % del PBI al 2031\n•\tImplementar polos industriales descentralizados en al menos 10 regiones\n•\tGeneración sostenida de empleo industrial",
+              "indicator": "•\tParticipación de la manufactura en el PBI (%)\n•\tNúmero de polos industriales descentralizados implementados\n•\tEmpleo industrial generado"
+            },
+            {
+              "problem": "Dependencia de importación de insumos estratégicos (fertilizantes, combustibles, manufacturas)",
+              "objective": "Desarrollar industrias estratégicas nacionales, bajo conducción estatal, para sustituir importaciones, fortalecer la soberanía productiva y generar empleo nacional.",
+              "goals": "•\tPlanta nacional de fertilizantes operativa al 2028\n•\tReducir la importación de fertilizantes y diésel en al menos 30 %, Consolidando la soberanía productiva, energética y alimentaria del país.",
+              "indicator": "•\tProducción nacional de insumos estratégicos (TM)\n•\tReducción de importaciones estratégicas (%)\n•\tNúmero de industrias estratégicas estatales operativas"
+            },
+            {
+              "problem": "Altos costos logísticos y falta de integración productiva territorial",
+              "objective": "Integrar el territorio nacional mediante infraestructura productiva y energética estratégica, reduciendo costos logísticos y fortaleciendo la articulación económica interregional.",
+              "goals": "•\tGasoducto Sur Peruano concluido antes del 2030\n•\tReducción significativa de costos logísticos interregionales\n•\tIntegración productiva efectiva de todas las macrorregiones",
+              "indicator": "•\tNúmero de proyectos estratégicos de integración ejecutados\n•\tReducción de costos logísticos interregionales (%)\n•\tKilómetros de infraestructura estratégica construida"
+            },
+            {
+              "problem": "Bajo desarrollo científico y tecnológico aplicado a la producción",
+              "objective": "Impulsar la ciencia, la tecnología y la innovación como motores del desarrollo productivo, con inversión pública sostenida y descentralización del sistema nacional de innovación.",
+              "goals": "•\tElevar la inversión en I+D al 1 % del PBI al 2031\n•\tCentros de innovación productiva en todas las macrorregiones\n•\tArticulación efectiva entre Estado, academia y sector productivo",
+              "indicator": "•\tInversión en I+D(Investigación y Desarrollo) (% del PBI)\n•\tNúmero de centros de innovación productiva regionales\n•\tProyectos de innovación productiva financiados"
+            }
+          ]
+        },
+        {
+          "dimension": "DIMENSIÓN AMBIENTAL",
+          "items": [
+            {
+              "problem": "Alta vulnerabilidad climática y degradación ambiental, producto de un modelo extractivista y depredador que priorizó el lucro privado sobre la protección de la naturaleza, debilitó la capacidad del Estado para regular y expuso a las poblaciones más pobres y territorios vulnerables a los efectos del cambio climático.",
+              "objective": "Proteger el patrimonio natural y fortalecer la resiliencia climática del país, mediante el liderazgo activo del Estado, la regulación efectiva de las actividades económicas, la transición ecológica justa y solidaria, y la implementación de políticas de adaptación y mitigación con enfoque de justicia climática y territorial.",
+              "goals": "•\tReducir de manera significativa las emisiones nacionales de GEI, avanzando hacia una disminución de al menos 30 % al 2030, en coherencia con compromisos climáticos y soberanía ambiental.\n•\tDisminuir progresivamente la vulnerabilidad climática del país, priorizando territorios rurales, amazónicos y costeros altamente expuestos.\n•\tFortalecer la capacidad del Estado para la adaptación al cambio climático, implementando planes territoriales de resiliencia climática.\n•\tGarantizar una transición ecológica justa, protegiendo a las poblaciones más afectadas y evitando que los costos recaigan sobre el pueblo trabajador.",
+              "indicator": "•\tEmisiones nacionales de gases de efecto invernadero (GEI)\n•\tÍndice de vulnerabilidad climática a nivel nacional y regional\n•\tPorcentaje del presupuesto público destinado a adaptación y mitigación climática\n•\tNúmero de territorios vulnerables con planes de adaptación climática implementados"
+            },
+            {
+              "problem": "Deforestación acelerada en la Amazonía, provocada por actividades extractivas ilegales, expansión desordenada de la frontera económica y débil presencia del Estado, que amenaza la biodiversidad, los medios de vida de los pueblos amazónicos y la soberanía nacional sobre territorios estratégicos.",
+              "objective": "Detener la pérdida de bosques amazónicos y restaurar los ecosistemas forestales, garantizando la soberanía del Estado sobre el territorio, la protección efectiva de los pueblos indígenas y amazónicos, y una gestión sostenible de los bosques bajo liderazgo público y enfoque de justicia ambiental.",
+              "goals": "•\tAlcanzar la deforestación neta cero en la Amazonía al 2030, mediante control estatal efectivo y erradicación de actividades ilegales.\n•\tReforestar y restaurar de manera sostenida los ecosistemas amazónicos, avanzando hacia millones de hectáreas recuperadas al 2031.\n•\tFortalecer la presencia integral del Estado en territorios amazónicos, garantizando vigilancia ambiental, control territorial y protección de los pueblos indígenas.\n•\tConsolidar un modelo de gestión forestal soberano y sostenible, que priorice la conservación, el uso racional del bosque y el bienestar de las comunidades amazónicas.",
+              "indicator": "•\tTasa anual de deforestación en la Amazonía (hectáreas por año)\n•\tSuperficie de bosques amazónicos restaurados o reforestados (hectáreas)\n•\tNúmero de territorios indígenas con protección y vigilancia ambiental efectiva\n•\tNúmero de operativos estatales contra la tala y minería ilegal"
+            },
+            {
+              "problem": "Minería y tala ilegal con alto impacto ambiental, producto de la expansión de economías ilegales, la debilidad del control estatal y la captura de territorios por intereses privados ilícitos, que destruyen ecosistemas estratégicos, afectan a pueblos indígenas y socavan la soberanía del Estado.",
+              "objective": "Combatir frontalmente los delitos ambientales y erradicar las economías ilegales que depredan el territorio, recuperando áreas degradadas y fortaleciendo la fiscalización, el control y la presencia integral del Estado, en defensa del patrimonio natural, la soberanía nacional y los derechos de las comunidades afectadas.",
+              "goals": "•\tReducir de manera sostenida y progresiva las áreas afectadas por minería y tala ilegal, mediante operativos integrales y control territorial permanente.\n•\tErradicar la minería ilegal en Áreas Naturales Protegidas, garantizando su protección efectiva bajo conducción del Estado.\n•\tRecuperar y restaurar territorios degradados por actividades ilegales, priorizando ecosistemas estratégicos y zonas de alto valor ambiental.\n•\tFortalecer el sistema de fiscalización y sanción ambiental, reduciendo la impunidad y desarticulando redes criminales ambientales.",
+              "indicator": "•\tNúmero de operativos estatales contra minería y tala ilegal\n•\tSuperficie de áreas degradadas recuperadas (hectáreas)\n•\tNúmero de Áreas Naturales Protegidas con control y vigilancia efectiva\n•\tCasos de delitos ambientales con sanción administrativa o penal"
+            },
+            {
+              "problem": "Débil protección de la biodiversidad, causada por un modelo de desarrollo depredador, la expansión de actividades extractivas sin control, la insuficiente presencia del Estado y la mercantilización de la naturaleza, que ponen en riesgo ecosistemas estratégicos y el patrimonio biológico del país.",
+              "objective": "Conservar y recuperar las especies y ecosistemas estratégicos del país, fortaleciendo la protección efectiva del patrimonio biológico nacional, ampliando las Áreas Naturales Protegidas bajo liderazgo del Estado y garantizando una gestión soberana, sostenible y con participación de las comunidades.",
+              "goals": "•\t Ampliar progresivamente las Áreas Naturales Protegidas hasta cubrir aproximadamente el 30 % del territorio nacional, fortaleciendo su gestión y control efectivo.\n•\tImplementar planes de conservación en ecosistemas estratégicos y de alta biodiversidad, priorizando aquellos en mayor riesgo.\n•\tIncrementar la protección efectiva de especies amenazadas, articulando conservación científica, control estatal y participación comunitaria.\n•\tFortalecer la capacidad del Estado para la gestión y defensa de la biodiversidad, consolidando la soberanía ecológica del país.\n•\tlas ANP del 17 % al 30 % del territorio nacional",
+              "indicator": "•\tPorcentaje del territorio nacional bajo protección efectiva (Áreas Naturales Protegidas)\n•\tNúmero de ecosistemas estratégicos con planes de conservación implementados\n•\tNúmero de especies protegidas con acciones de conservación activa\n•\tPresupuesto público destinado a la conservación de la biodiversidad"
+            },
+            {
+              "problem": "Pérdida acelerada de glaciares y creciente riesgo hídrico, como consecuencia del cambio climático, la depredación ambiental y la falta de planificación estatal, que amenazan las fuentes de agua, la seguridad alimentaria, la vida de las comunidades y el derecho humano al agua.",
+              "objective": "Garantizar la seguridad hídrica del país como derecho humano fundamental, mediante un enfoque integral de cuenca, la protección efectiva de glaciares, lagunas y fuentes de agua, y la gestión soberana y pública del recurso hídrico, asegurando acceso sostenible y equitativo para toda la población.",
+              "goals": "•\tProteger de manera efectiva las principales lagunas y glaciares del país, priorizando aquellas que abastecen a poblaciones, agricultura y ecosistemas estratégicos.\n•\tImplementar planes integrales de gestión de cuencas en todo el territorio nacional, fortaleciendo la rectoría del Estado sobre el agua.\n•\tGarantizar el acceso sostenible y seguro al agua potable para la población, reduciendo brechas territoriales y sociales.\n•\tFortalecer la capacidad del Estado para la adaptación al cambio climático en materia hídrica, asegurando la disponibilidad del recurso para las futuras generaciones.",
+              "indicator": "•\tNúmero de glaciares y lagunas con protección legal y control efectivo\n•\tPorcentaje de cuencas hidrográficas con planes de gestión integral implementados\n•\tCobertura de acceso sostenible al agua potable (%)\n•\tPresupuesto público destinado a conservación de fuentes hídricas"
+            },
+            {
+              "problem": "Contaminación de ríos, lagos y mar por aguas residuales urbanas e industriales, causada por la falta de inversión pública, la débil fiscalización ambiental y la permisividad del Estado frente a actividades contaminantes, que vulnera el derecho a la salud, al agua limpia y a un ambiente sano.",
+              "objective": "Tratar integralmente las aguas residuales urbanas e industriales, bajo liderazgo del Estado, para proteger los ecosistemas acuáticos y la salud pública, garantizando el derecho a un ambiente sano y poniendo fin a la contaminación sistemática generada por el modelo de desarrollo irresponsable.",
+              "goals": "•\tGarantizar el tratamiento total de las aguas residuales urbanas en las principales ciudades del país, priorizando aquellas con mayor población y carga contaminante.\n•\tAmpliar y modernizar la infraestructura pública de tratamiento de aguas residuales, asegurando operación sostenible y control estatal.\n•\tReducir progresivamente la contaminación de ríos, lagos y mar, mejorando los indicadores de calidad del agua a nivel nacional.\n•\tFortalecer la fiscalización y sanción a actividades industriales contaminantes, protegiendo la salud de la población y los ecosistemas acuáticos.",
+              "indicator": "•\tPorcentaje de aguas residuales urbanas tratadas\n•\tPorcentaje de aguas residuales industriales tratadas\n•\tNúmero de plantas de tratamiento de aguas residuales operativas\n•\tÍndice de calidad del agua en ríos, lagos y zonas costeras"
+            },
+            {
+              "problem": "Contaminación del aire urbano, producto de un modelo de transporte desordenado, la débil regulación estatal de las emisiones industriales y vehiculares, y la priorización del transporte privado sobre el transporte público, que afecta gravemente la salud de la población, especialmente en las grandes ciudades.",
+              "objective": "Mejorar sustantivamente la calidad del aire y proteger la salud pública, mediante una regulación estricta de las emisiones contaminantes, el fortalecimiento del transporte público sostenible y la intervención activa del Estado para reducir las fuentes de contaminación urbana, garantizando el derecho a un ambiente sano",
+              "goals": "•\tReducir de manera significativa los niveles de PM2.5 en las principales ciudades del país, priorizando Lima y las grandes áreas urbanas.\n•\tImplementar sistemas de monitoreo de calidad del aire en todas las ciudades principales, con información pública y control estatal.\n•\tAvanzar en la reconversión progresiva del transporte urbano hacia tecnologías limpias y transporte público masivo, reduciendo emisiones contaminantes.\n•\tDisminuir la carga de enfermedades respiratorias asociadas a la contaminación del aire, como resultado de políticas ambientales y de transporte sostenibles.",
+              "indicator": "•\tConcentración promedio anual de material particulado fino (PM2.5) en zonas urbanas\n•\tNúmero de ciudades con monitoreo continuo y público de calidad del aire\n•\tPorcentaje de flota vehicular con estándares ambientales limpios\n•\tIncidencia de enfermedades respiratorias asociadas a contaminación del aire"
+            },
+            {
+              "problem": "Gestión inadecuada de los residuos sólidos, resultado del abandono estatal, la municipalización sin recursos, la informalidad y un modelo de consumo que traslada los costos ambientales a la población, generando botaderos, contaminación y riesgos para la salud pública.",
+              "objective": "Transitar hacia una economía circular y un sistema de residuos sólidos con enfoque de residuos cero, bajo rectoría del Estado, fortaleciendo la gestión pública, la responsabilidad extendida del productor y la valorización de residuos, para proteger la salud, el ambiente y el bienestar de la población.",
+              "goals": "•\tEliminar progresivamente los botaderos de residuos a nivel nacional, avanzando hacia su erradicación total antes del 2030.\n•\tIncrementar de manera sostenida la valorización de residuos sólidos, avanzando hacia que al menos la mitad de los residuos generados sean reciclados o reaprovechados.\n•\tFortalecer la gestión pública de residuos sólidos en los gobiernos locales, con financiamiento, asistencia técnica y control estatal.\n•\tConsolidar un modelo de economía circular, reduciendo la presión sobre ecosistemas y mejorando la calidad ambiental y sanitaria de las ciudades",
+              "indicator": "•\tPorcentaje de residuos sólidos valorizados (reciclaje, reutilización, compostaje)\n•\tNúmero de botaderos erradicados y clausurados\n•\tPorcentaje de municipios con sistemas públicos integrales de gestión de residuos\n•\tCantidad de residuos dispuestos en rellenos sanitarios formales"
+            },
+            {
+              "problem": "Alta dependencia de combustibles fósiles, resultado de un modelo energético concentrado y dependiente, que expone al país a choques externos, encarece la energía, profundiza la contaminación y limita la soberanía energética nacional.",
+              "objective": "Impulsar una transición energética justa y soberana, diversificando la matriz energética con energías renovables, fortaleciendo el control y la planificación estatal del sector energético, y garantizando acceso universal a energía limpia, segura y asequible para la población.",
+              "goals": "•\tAlcanzar una participación sustantiva de energías renovables en la matriz eléctrica nacional, avanzando hacia al menos 40 % de generación eléctrica renovable al 2031.\n•\tIncrementar la capacidad instalada de energías renovables, priorizando proyectos solares, eólicos, hidroeléctricos de pequeña escala y energías limpias descentralizadas.\n•\tFortalecer el rol del Estado en la planificación y conducción de la transición energética, reduciendo la dependencia de combustibles fósiles.\n•\tGarantizar acceso universal a energía limpia y asequible, especialmente en zonas rurales y amazónicas, como parte del derecho al desarrollo",
+              "indicator": "•\tParticipación de energías renovables en la matriz eléctrica nacional (%)\n•\tCapacidad instalada de generación eléctrica renovable (MW)\n•\tPorcentaje de inversión pública en proyectos de energía renovable\n•\tCobertura de acceso a energía eléctrica limpia y sostenible (%)"
+            },
+            {
+              "problem": "Falta de ordenamiento territorial vinculante, que permite el uso desordenado del territorio, la superposición de actividades extractivas, la expansión de conflictos socioambientales y la subordinación de la planificación pública a intereses privados, debilitando la soberanía del Estado y la protección de las comunidades",
+              "objective": "Implementar un ordenamiento territorial ecológico y económico de carácter vinculante, bajo conducción del Estado, que oriente el uso del territorio de manera preventiva, soberana y sostenible, priorizando la protección de la vida, los ecosistemas, los derechos de las comunidades y el desarrollo nacional planificado",
+              "goals": "•\tAprobar e implementar una Ley Marco de Ordenamiento Territorial de carácter vinculante, consolidando la rectoría del Estado sobre el uso del territorio.\n•\tImplementar Zonas Económicas Ecológicas vinculantes en todo el territorio nacional, articuladas a los planes de desarrollo regional y nacional.\n•\tReducir progresivamente los conflictos socioambientales, mediante planificación preventiva y decisión pública soberana sobre el territorio.\n•\tGarantizar que los proyectos de inversión se adecúen al ordenamiento territorial, priorizando la protección ambiental, social y cultural.",
+              "indicator": "•\tNúmero y porcentaje de Zonas Económicas Ecológicas (ZEE) aprobadas e implementadas con carácter vinculante\n•\tNúmero de instrumentos de ordenamiento territorial articulados a la planificación nacional\n•\tNúmero de conflictos socioambientales activos vinculados al uso del territorio\n•\tPorcentaje de proyectos de inversión evaluados conforme al ordenamiento territorial"
+            },
+            {
+              "problem": "Insuficiente educación y cultura ambiental, resultado de la ausencia de una política educativa integral, la débil incorporación del enfoque ambiental en el sistema educativo y la limitada participación social en la defensa del ambiente, lo que debilita la conciencia colectiva y la corresponsabilidad ciudadana.",
+              "objective": "Promover una ciudadanía ambiental crítica y organizada, fortaleciendo la educación ambiental en todos los niveles del sistema educativo y la participación social, bajo liderazgo del Estado, para la defensa del patrimonio natural, la sostenibilidad y el ejercicio consciente de los derechos ambientales.",
+              "goals": "•\tIncorporar de manera obligatoria la educación ambiental en todos los niveles del sistema educativo nacional, fortaleciendo el currículo y la formación docente.\n•\tCapacitar progresivamente al personal docente en enfoque ambiental, garantizando calidad y pertinencia pedagógica.\n•\tImplementar programas comunitarios de educación y participación ambiental en todo el territorio nacional, con énfasis en zonas de mayor vulnerabilidad ambiental.\n•\tFortalecer la conciencia ambiental y la participación organizada de la ciudadanía, como base de la protección del patrimonio natural y el desarrollo sostenible.",
+              "indicator": "•\tPorcentaje de instituciones educativas que incorporan educación ambiental en su currículo\n•\tNúmero de docentes capacitados en educación ambiental\n•\tNúmero de programas comunitarios de educación y vigilancia ambiental\n•\tNivel de participación ciudadana en iniciativas ambientales locales"
+            }
+          ]
+        },
+        {
+          "dimension": "DIMENSIÓN INSTITUCIONAL",
+          "items": [
+            {
+              "problem": "Centralismo histórico y concentración del poder político, económico y fiscal en Lima, La distribución actual refleja que el presupuesto público tiene la siguiente:\n•\tGobiernos Regionales: ˜ 18% – 22% \n•\tGobiernos Locales (municipalidades): ˜ 25% – 30%\n•\tGobierno Nacional: ˜ 50% – 55%",
+              "objective": "Descentralizar efectivamente el poder político, económico y fiscal, construyendo un Estado plurinacional que garantice la participación directa de las regiones y del pueblo en la toma de decisiones, incrementando significativamente el porcentaje de presupuesto anual otorgando a los gobiernos subnacionales y garantizando estrategias para un incremento en inversión pública y una disminución en gastos ordinarios.",
+              "goals": "•\tTransferencia efectiva de competencias estratégicas a las 25 regiones \nReducción significativa de brechas territoriales de inversión\n\n•\tAl menos 95 % del presupuesto de inversión pública asignado a las regiones y municipalidades, debidamente ejecutados anualmente.",
+              "indicator": "•\t% del presupuesto nacional transferido a regiones y municipios equitativo\n•\tNúmero de competencias efectivamente transferidas.\n•\t% de inversión pública ejecutada por gobiernos regionales y locales"
+            },
+            {
+              "problem": "Captura del Estado por intereses privados y andamiaje legal neoliberal de la Constitución de 1993",
+              "objective": "Desmontar el marco legal neoliberal de la Constitución de 1993, eliminando los candados constitucionales que protegen intereses privados y contratos lesivos al Estado, recuperando la capacidad soberana del Estado para planificar, intervenir, nacionalizar sectores estratégicos y redistribuir la riqueza en favor de las mayorías.",
+              "goals": "•\tEliminación del total de los candados constitucionales neoliberales lesivos al Estado antes de 2030. \n•\tRevisión integral de 100 % de contratos estratégicos lesivos al Estado \n•\tIncremento de la participación estatal en sectores estratégicos clave.",
+              "indicator": "•\tNúmero de artículos constitucionales modificados o derogados \n•\tNúmero de contratos-ley revisados, renegociados o anulados \n•\tParticipación del Estado en sectores estratégicos (%)"
+            },
+            {
+              "problem": "Corrupción sistémica y débil capacidad sancionadora del Estado",
+              "objective": "Erradicar la corrupción estructural del Estado, fortaleciendo la independencia del sistema de justicia, el control y la fiscalización ciudadana, y sancionando efectivamente a funcionarios y grupos de poder que se benefician del saqueo de los recursos públicos.",
+              "goals": "•\tIncremento sostenido de sentencias firmes en casos de corrupción grave.\n•\tRecuperación efectiva de activos públicos provenientes de corrupción.\n•\tReducción significativa del tiempo de investigación y sanción de delitos de corrupción.\n•\tMejora sostenida del desempeño del país en el Índice de Percepción de la Corrupción (CPI).",
+              "indicator": "•\tNúmero de casos de corrupción con sentencia firme\n•\tTasa de sanción efectiva en casos graves (%)\n•\tMonto de activos públicos recuperados por corrupción (S/)\n•\tTiempo promedio de resolución de casos de corrupción\n•\tPuntaje del Índice de Percepción de la Corrupción (CPI)"
+            },
+            {
+              "problem": "Exclusión histórica de pueblos originarios y falta de reconocimiento del carácter plurinacional del país",
+              "objective": "Reconocer constitucionalmente al Perú como un Estado plurinacional, garantizando los derechos políticos, territoriales, culturales y de justicia comunal de los pueblos originarios andinos y amazónicos, como base de una democracia intercultural e inclusiva.",
+              "goals": "•\tEstado plurinacional reconocido en la Nueva Constitución \n•\t100 % de pueblos originarios con mecanismos de representación \n•\tJusticia intercultural integrada al sistema nacional",
+              "indicator": "•\t% de funcionarios incorporados a regímenes meritocráticos \n•\t% de trámites digitalizados \n•\tNúmero de evaluaciones de desempeño realizadas"
+            },
+            {
+              "problem": "Persistencia de una administración pública burocrática, ineficiente y capturada por prácticas clientelares heredadas del modelo neoliberal, caracterizada por privilegios, designaciones discrecionales y ausencia de criterios objetivos de idoneidad y compromiso con el interés público, lo que limita la capacidad del Estado para garantizar derechos, ejecutar políticas redistributivas y servir efectivamente al pueblo.",
+              "objective": "Transformar integralmente la administración pública para ponerla al servicio del interés general y del pueblo, erradicando prácticas clientelares y privilegios, estableciendo criterios objetivos de idoneidad, ética y responsabilidad pública, y fortaleciendo la capacidad del Estado para garantizar derechos y ejecutar políticas de justicia social.",
+              "goals": "• 100 % de funcionarios públicos sujetos a evaluación de desempeño \n• Gobierno electrónico integral implementado al 2027 \n• Reducción sustantiva de la burocracia y tiempos de atención",
+              "indicator": "•\tPorcentaje de funcionarios públicos sujetos a procesos regulares de evaluación y control del desempeño\n•\tPorcentaje de trámites y servicios públicos digitalizados\n•\tNúmero de evaluaciones integrales de desempeño institucional realizadas\n•\tTiempo promedio de atención de trámites prioritarios al ciudadano"
+            },
+            {
+              "problem": "Incremento sostenido de la criminalidad y los homicidios, como resultado de la exclusión social, la precarización económica, la débil presencia del Estado en los territorios y un enfoque de seguridad centrado históricamente en la represión antes que en la prevención y la justicia social.",
+              "objective": "Reducir estructuralmente la violencia y la criminalidad, mediante una política integral de seguridad ciudadana con enfoque preventivo y de derechos, basada en la inclusión social, la recuperación del control territorial por parte del Estado, el fortalecimiento de la seguridad pública democrática y la articulación intersectorial para atacar las causas sociales del delito.",
+              "goals": "•\tReducir de manera sostenida la tasa de homicidios a nivel nacional, avanzando hacia una disminución significativa al 2031.\n•\tDisminuir progresivamente la tasa de victimización delictiva, priorizando los territorios con mayor incidencia de violencia.\n•\tImplementar programas integrales de prevención social del delito en todos los distritos de alta conflictividad, con participación comunitaria y enfoque territorial.\n•\tIncrementar la percepción de seguridad y confianza ciudadana en la seguridad pública, como resultado del fortalecimiento del Estado y la cohesión social.",
+              "indicator": "•\tTasa de homicidios por cada 100 mil habitantes\n•\tTasa de victimización delictiva a nivel nacional (%)\n•\tPorcentaje de distritos con presencia efectiva de programas de prevención social del delito\n•\t Nivel de percepción de seguridad ciudadana (%)"
+            },
+            {
+              "problem": "Expansión del crimen organizado (sicariato, narcotráfico, extorsión y trata), asociada al debilitamiento del Estado, la captura de territorios por economías ilegales y la falta de control efectivo sobre circuitos financieros y redes criminales transnacionales.",
+              "objective": "Desarticular integral y sostenidamente las organizaciones criminales y las economías ilegales, recuperando el control territorial y estratégico del Estado, fortaleciendo la acción coordinada del sistema de justicia y seguridad, y atacando las estructuras financieras, logísticas y políticas que sostienen al crimen organizado.",
+              "goals": "•\tDesarticular al menos 200 organizaciones criminales de alto impacto antes del 2028, priorizando aquellas vinculadas a economías ilegales estratégicas.\n•\tIncrementar de manera sostenida la incautación y recuperación de bienes ilícitos, destinándolos a programas de seguridad, prevención y desarrollo social.\n•\tRecuperar progresivamente el control estatal en territorios capturados por el crimen organizado, mediante presencia integral del Estado.\n•\tFortalecer la persecución penal del crimen organizado, incrementando los casos con sentencia firme y reduciendo la impunidad.",
+              "indicator": "•\tNúmero de organizaciones criminales desarticuladas\n•\tValor de bienes y activos ilícitos incautados (S/)\n•\tNúmero de operaciones conjuntas de inteligencia y control territorial ejecutadas\n•\tPorcentaje de territorios críticos con presencia efectiva del Estado\n•\tCasos de crimen organizado con sentencia firme"
+            },
+            {
+              "problem": "Débil capacidad operativa y presencia de prácticas de corrupción en la Policía Nacional, producto del abandono institucional, la falta de formación integral, el deterioro de las condiciones laborales y un modelo de seguridad desvinculado del control democrático y del interés público.",
+              "objective": "Fortalecer y reconstruir la Policía Nacional como una institución pública democrática, ética y al servicio del pueblo, elevando su capacidad operativa, profesionalización y presencia territorial, erradicando prácticas de corrupción y garantizando su subordinación al poder civil, el respeto a los derechos humanos y la seguridad ciudadana con enfoque preventivo.",
+              "goals": "•\tIncrementar progresivamente el número de efectivos policiales, fortaleciendo la presencia territorial del Estado, hasta alcanzar aproximadamente 200,000 efectivos al 2031.\n•\tElevar la cobertura policial a niveles adecuados por población, avanzando hacia estándares que permitan una atención oportuna y preventiva.\n•\tImplementar un sistema integral de formación, capacitación y evaluación permanente, garantizando profesionalismo, ética pública y respeto a los derechos humanos.\n•\tReducir sustancialmente las prácticas de corrupción dentro de la institución, fortaleciendo el control interno y la rendición de cuentas.\n•\tIncrementar la confianza ciudadana en la Policía Nacional, como resultado del fortalecimiento institucional y el servicio efectivo al pueblo.",
+              "indicator": "•\tNúmero total de efectivos policiales en servicio activo\n•\tNúmero de policías por cada 1,000 habitantes\n•\tPorcentaje de efectivos con formación y capacitación continua certificada\n•\tNúmero de procesos disciplinarios y de control interno concluidos\n•\tNivel de confianza ciudadana en la Policía Nacional (%)"
+            },
+            {
+              "problem": "Falta de coordinación efectiva entre la Policía Nacional, los gobiernos locales y el sistema de justicia, que fragmenta la acción del Estado, debilita el control territorial, reduce la eficacia en la lucha contra el delito y favorece la impunidad, especialmente en territorios de alta criminalidad.",
+              "objective": "Integrar y fortalecer el sistema de seguridad ciudadana a nivel nacional, regional y local, articulando de manera efectiva a la Policía Nacional, los gobiernos subnacionales y el sistema de justicia bajo conducción del Estado, con enfoque territorial, preventivo y de derechos, para recuperar el control estatal y garantizar seguridad al pueblo.",
+              "goals": "•\tImplementar comandos integrados de seguridad en la totalidad de distritos con alta criminalidad, garantizando patrullaje articulado y acción coordinada del Estado al 2031.\n•\tIncrementar sostenidamente los operativos conjuntos interinstitucionales, priorizando territorios críticos y economías ilegales.\n•\tReducir los tiempos de respuesta ante hechos delictivos, mediante coordinación efectiva entre policía, municipios y justicia.\n•\tConsolidar un sistema nacional de seguridad ciudadana articulado, superando la fragmentación institucional heredada del modelo neoliberal.",
+              "indicator": "•\tPorcentaje de distritos con comando unificado de seguridad ciudadana\n•\tNúmero de operativos conjuntos ejecutados entre PNP, gobiernos locales y justicia\n•\tPorcentaje de territorios críticos con presencia articulada del Estado\n•\tTiempo de respuesta interinstitucional ante hechos delictivos"
+            },
+            {
+              "problem": "Alta percepción de inseguridad y desconfianza ciudadana, consecuencia de la débil presencia del Estado en los territorios, la fragmentación de la acción pública, la corrupción institucional y un enfoque de seguridad desvinculado de la comunidad y de las necesidades reales del pueblo.",
+              "objective": "Recuperar la confianza ciudadana en la seguridad pública, fortaleciendo la presencia integral del Estado en los territorios, promoviendo la participación organizada de la comunidad y consolidando una seguridad ciudadana democrática, preventiva y al servicio del pueblo.",
+              "goals": "•\tIncrementar de manera sostenida la percepción de seguridad ciudadana, avanzando hacia que una amplia mayoría de la población se sienta segura en su barrio al 2031.\n•\tElevar progresivamente la confianza ciudadana en la Policía Nacional, como resultado del fortalecimiento institucional, la ética pública y el servicio efectivo a la comunidad.\n•\tImplementar mecanismos de participación comunitaria en seguridad ciudadana en los territorios de mayor vulnerabilidad, fortaleciendo la prevención social del delito.\n•\tConsolidar una relación de cooperación entre Estado y comunidad, superando la desconfianza heredada del modelo de seguridad represivo y excluyente.",
+              "indicator": "•\tPercepción de seguridad ciudadana en el barrio (%)\n•\tNivel de confianza ciudadana en la Policía Nacional (%)\n•\tPorcentaje de barrios con organizaciones comunitarias de prevención activas\n•\tFrecuencia de acciones de seguridad con participación vecinal"
+            },
+            {
+              "problem": "Persistente violencia contra la mujer y feminicidios, producto de relaciones sociales desiguales, debilidad de la respuesta estatal, impunidad estructural y un sistema de protección fragmentado que no garantiza prevención, atención oportuna ni justicia efectiva para las víctimas.",
+              "objective": "Prevenir, sancionar y erradicar integralmente la violencia de género y los feminicidios, garantizando protección efectiva, justicia oportuna y reparación a las víctimas, mediante una acción articulada del Estado con enfoque de derechos humanos, igualdad sustantiva y responsabilidad pública.",
+              "goals": "•\tReducir de manera sostenida y progresiva la incidencia de feminicidios a nivel nacional, priorizando territorios de mayor riesgo.\n•\tGarantizar que la gran mayoría de denuncias por violencia de género cuenten con medidas de protección oportunas, implementadas en plazos breves.\n•\tReducir los tiempos de respuesta del Estado en la atención y protección de víctimas, fortaleciendo servicios especializados y presencia territorial.\n•\tIncrementar la sanción efectiva de los delitos de violencia de género, reduciendo la impunidad y fortaleciendo la confianza en el sistema de justicia.",
+              "indicator": "•\tTasa de feminicidios a nivel nacional\n•\tPorcentaje de denuncias de violencia de género con medidas de protección dictadas\n•\tTiempo promedio de respuesta estatal para la protección de víctimas\n•\tNúmero de casos de violencia de género con sentencia firme"
+            },
+            {
+              "problem": "Insuficiente prevención social del delito juvenil, causada por la exclusión económica, la falta de oportunidades educativas, culturales y laborales, la precarización de la vida juvenil y la débil presencia del Estado en los territorios, lo que expone a miles de jóvenes a circuitos de violencia y criminalidad.",
+              "objective": "Prevenir la delincuencia juvenil desde un enfoque de inclusión social y derechos, garantizando a la juventud acceso efectivo a educación, cultura, deporte, empleo digno y oportunidades de desarrollo integral, mediante políticas públicas articuladas y presencia activa del Estado en los territorios.",
+              "goals": "•\tIncorporar progresivamente a un número significativo de jóvenes en situación de riesgo a programas integrales de prevención social, priorizando territorios con alta incidencia delictiva.\n•\tImplementar programas de prevención juvenil en todos los distritos de alta vulnerabilidad, articulando educación, cultura, deporte y empleo.\n•\tReducir la incidencia de delitos cometidos por jóvenes, como resultado de políticas sostenidas de inclusión social.\n•\tFortalecer la participación juvenil en espacios comunitarios y productivos, promoviendo el protagonismo de la juventud en la construcción de seguridad y convivencia.",
+              "indicator": "•\tNúmero de jóvenes incorporados a programas integrales de prevención social\n•\tPorcentaje de jóvenes en situación de riesgo atendidos por programas del Estado\n•\tNúmero de programas preventivos implementados a nivel nacional y territorial\n•\tTasa de participación juvenil en actividades educativas, culturales y deportivas públicas"
+            },
+            {
+              "problem": "Espacios públicos deteriorados e inseguros, consecuencia del abandono estatal, la falta de planificación urbana, la desigualdad territorial y la exclusión social, que debilitan la convivencia comunitaria y favorecen la violencia y el delito en barrios populares.",
+              "objective": "Recuperar y transformar los barrios y espacios públicos como territorios de convivencia, organización popular y prevención social del delito, mediante inversión pública, planificación urbana con enfoque social y participación activa de la comunidad, garantizando el derecho a la ciudad y a entornos seguros para el pueblo.",
+              "goals": "•\tRecuperar progresivamente barrios y espacios públicos en territorios de mayor vulnerabilidad, priorizando zonas con alta incidencia delictiva.\n•\tIncorporar de manera sostenida a jóvenes y comunidades organizadas en programas de prevención y convivencia, fortaleciendo el tejido social.\n•\tImplementar programas comunitarios de cultura, deporte y organización vecinal en los barrios intervenidos.\n•\tContribuir a la reducción de la violencia y la percepción de inseguridad, como resultado de la presencia estatal y la acción comunitaria.",
+              "indicator": "•\tNúmero de barrios y espacios públicos recuperados integralmente\n•\tNúmero de jóvenes y vecinos beneficiarios de programas comunitarios\n•\tNúmero de programas de prevención social y convivencia implementados\n•\tPorcentaje de barrios intervenidos con participación organizada de la comunidad"
+            },
+            {
+              "problem": "Débil infraestructura tecnológica de seguridad ciudadana, producto del abandono estatal, la fragmentación institucional y la falta de planificación pública, que limita la capacidad de prevención, respuesta oportuna ante emergencias y control territorial efectivo del Estado.",
+              "objective": "Modernizar la seguridad ciudadana bajo conducción estatal, fortaleciendo la infraestructura tecnológica pública, los sistemas de videovigilancia, la respuesta integrada ante emergencias y la inteligencia preventiva, garantizando control público, uso soberano de la tecnología y protección de los derechos ciudadanos.",
+              "goals": "•\tImplementar sistemas públicos integrados de videovigilancia en la totalidad de distritos críticos, bajo control estatal y articulación interinstitucional, al 2031.\n•\tConsolidar un sistema nacional único de atención de emergencias, garantizando cobertura progresiva en todo el territorio nacional.\n•\tReducir de manera sostenida los tiempos de respuesta ante emergencias, mediante modernización tecnológica y coordinación operativa.\n•\tFortalecer la inteligencia preventiva y el control territorial del Estado, utilizando tecnología pública al servicio de la seguridad ciudadana.",
+              "indicator": "•\tPorcentaje de distritos con sistemas públicos de videovigilancia integrados\n•\tTiempo promedio de respuesta ante emergencias\n•\tNúmero de centros de monitoreo y control integrados a nivel nacional y regional\n•\tPorcentaje de distritos conectados al sistema nacional de atención de emergencias"
+            },
+            {
+              "problem": "Alta reincidencia delictiva, resultado de un sistema penitenciario orientado al castigo y no a la resocialización, con escasa oferta educativa y productiva, abandono estatal post-penitenciario y exclusión social que reproduce el ciclo del delito.",
+              "objective": "Fortalecer la resocialización y reinserción social de la población penitenciaria, garantizando programas educativos, productivos y de formación laboral bajo responsabilidad del Estado, como parte de una política de seguridad ciudadana con enfoque de derechos humanos y justicia social.",
+              "goals": "•\tReducir de manera sostenida la tasa de reincidencia delictiva a nivel nacional, como resultado de políticas efectivas de resocialización.\n•\tAmpliar significativamente la cobertura de programas educativos y productivos en los centros penitenciarios, priorizando la formación laboral y técnica.\n•\tImplementar programas integrales de reinserción social, incluyendo acompañamiento post-penitenciario y articulación con empleo y educación.\n•\tReorientar el sistema penitenciario hacia la rehabilitación y la justicia social, superando el enfoque punitivo heredado del modelo neoliberal.",
+              "indicator": "•\tTasa de reincidencia delictiva (%)\n•\tPorcentaje de personas privadas de libertad incorporadas a programas educativos\n•\tPorcentaje de internos participantes en programas productivos y laborales\n•\tNúmero de centros penitenciarios con programas integrales de resocialización"
+            },
+            {
+              "problem": "Falta de autonomía y visión estratégica en la política exterior, expresada en una inserción internacional subordinada, dependiente de agendas externas y carente de una defensa firme de la soberanía nacional, los intereses estratégicos del Estado y la autodeterminación de los pueblos.",
+              "objective": "Reafirmar la soberanía, independencia y autodeterminación de la política exterior peruana, construyendo una diplomacia soberana, no alineada y activa, orientada a la defensa del interés nacional, la integración regional solidaria, el multilateralismo democrático y el protagonismo del Perú en el escenario internacional.",
+              "goals": "•\tConsolidar una política exterior soberana y no alineada al 2031, basada en la autodeterminación de los pueblos y la defensa del interés nacional.\n•\tPosicionar al Perú como actor propositivo en foros multilaterales regionales y globales, impulsando iniciativas propias en materia política, económica, social y ambiental.\n•\tIncrementar sostenidamente la participación activa del Perú en espacios multilaterales estratégicos, con liderazgo diplomático y agenda propia.\n•\tFortalecer el reconocimiento internacional del Perú como Estado soberano, independiente y comprometido con el multilateralismo democrático.",
+              "indicator": "•\tNúmero de posicionamientos internacionales soberanos adoptados por el Estado peruano\n•\tNivel de participación del Perú en foros multilaterales estratégicos\n•\tNúmero de iniciativas diplomáticas propias impulsadas por el Perú\n•\tReconocimientos y liderazgos asumidos por el Perú en espacios multilaterales"
+            },
+            {
+              "problem": "Pérdida del liderazgo regional del Perú y debilitamiento de la integración latinoamericana, como resultado del abandono de mecanismos de integración soberana, la subordinación a agendas externas y la ausencia de una política exterior regional activa y solidaria.",
+              "objective": "Recuperar el liderazgo regional del Perú e impulsar una integración latinoamericana soberana, solidaria y multipolar, fortaleciendo los mecanismos de concertación política, cooperación regional y articulación económica, en defensa de la autodeterminación de los pueblos y el desarrollo común de la región.",
+              "goals": "•\tReincorporación plena del Perú a UNASUR al 2026, como mecanismo de integración soberana sudamericana.\n•\tEjercer liderazgo activo y propositivo en CELAC y CAN al 2031, con agenda propia y posiciones soberanas.\n•\tImpulsar al menos 5 iniciativas regionales estratégicas lideradas por el Perú en materia de integración política, cooperación económica, salud, educación o infraestructura regional.\n•\tPosicionar al Perú como actor clave en la articulación latinoamericana, promoviendo la unidad regional frente a desafíos globales.",
+              "indicator": "•\tParticipación activa del Perú en mecanismos de integración regional (UNASUR, CELAC, CAN)\n•\tNúmero de iniciativas políticas, económicas y sociales regionales impulsadas por el Perú\n•\tNúmero de proyectos de cooperación regional liderados o co-liderados por el Perú\n•\tNúmero de cumbres y espacios de concertación regional organizados o presididos por el Perú."
+            },
+            {
+              "problem": "Dependencia de alianzas unilaterales y limitada diversificación internacional, que ha subordinado la política exterior peruana a intereses geopolíticos ajenos, restringiendo la autonomía del Estado y desaprovechando las oportunidades de cooperación con el mundo multipolar.",
+              "objective": "Diversificar soberanamente las relaciones exteriores del Perú en un mundo multipolar, fortaleciendo vínculos políticos, económicos, culturales y de cooperación bajo el principio de no alineamiento activo, autodeterminación de los pueblos y defensa del interés nacional.",
+              "goals": "•\tApertura de al menos 10 nuevas misiones diplomáticas al 2031, priorizando Asia, África, Eurasia y Medio Oriente.\n•\tAmpliar sustantivamente la cooperación activa del Perú con países del Sur Global, diversificando socios estratégicos más allá de los bloques tradicionales.\n•\tIncrementar la suscripción de acuerdos de cooperación Sur–Sur, en áreas clave como energía, ciencia, salud, educación e infraestructura.\n•\tConsolidar una política exterior multipolar y no alineada, con presencia efectiva del Perú en espacios internacionales alternativos y soberanos.",
+              "indicator": "•\tNúmero de nuevas misiones diplomáticas abiertas en regiones estratégicas\n•\tNúmero de acuerdos de cooperación política, económica, científica y cultural suscritos\n•\tNúmero de socios estratégicos no tradicionales incorporados a la política exterior peruana\n•\tParticipación del Perú en mecanismos de cooperación Sur–Sur y multipolar"
+            },
+            {
+              "problem": "Vulneración de la soberanía nacional en materia de defensa y economía, producto de la presencia e injerencia extranjera, la firma de tratados lesivos al interés nacional y la pérdida de control estatal sobre decisiones estratégicas y recursos fundamentales.",
+              "objective": "Defender y restituir la soberanía nacional en los ámbitos militar, económico y de los recursos estratégicos, garantizando el control estatal sobre decisiones fundamentales, eliminando mecanismos de subordinación externa y afirmando la autonomía del Perú en el marco del derecho internacional y la autodeterminación de los pueblos.",
+              "goals": "•\tAprobación de la Ley de Neutralidad Militar del Estado Peruano al 2026, prohibiendo bases militares extranjeras permanentes y garantizando independencia en defensa.\n•\tAuditoría integral y soberana de los Tratados de Libre Comercio y acuerdos estratégicos antes del 2028, con revisión de cláusulas lesivas al interés nacional.\n•\tEjecución plena y cumplimiento del fallo de la Corte Internacional de Justicia de La Haya, en defensa del territorio y la soberanía nacional.\n•\tFortalecimiento del control estatal sobre decisiones estratégicas en defensa y economía, asegurando autonomía decisoria del Estado.",
+              "indicator": "•\tExistencia de presencia militar extranjera en territorio nacional (sí/no)\n•\tNúmero de tratados internacionales y acuerdos estratégicos auditados\n•\tNúmero de controversias territoriales y jurídicas resueltas conforme al derecho internacional\n•\tGrado de control estatal sobre sectores y recursos estratégicos (normativo/institucional)"
+            },
+            {
+              "problem": "Escasa participación de los pueblos indígenas y ausencia del enfoque plurinacional e intercultural en la política exterior, lo que reproduce una diplomacia excluyente, monocultural y desvinculada de la diversidad histórica y cultural del país.",
+              "objective": "Escasa participación de los pueblos indígenas y ausencia del enfoque plurinacional e intercultural en la política exterior, lo que reproduce una diplomacia excluyente, monocultural y desvinculada de la diversidad histórica y cultural del país.",
+              "goals": "•\tCreación de la Dirección de Diplomacia Plurinacional en el Ministerio de Relaciones Exteriores al 2026.\n•\tImplementación de agregadurías culturales indígenas en embajadas estratégicas antes del 2030.\n•\tIncorporación progresiva de servicios consulares interculturales, incluyendo atención en lenguas originarias, en misiones diplomáticas priorizadas.\n•\tParticipación regular de representantes de pueblos indígenas en agendas y foros internacionales, en coordinación con el Estado.",
+              "indicator": "•\tExistencia de un órgano especializado en diplomacia plurinacional (sí/no)\n•\tNúmero de agendas diplomáticas con participación de pueblos indígenas\n•\tNúmero de agregadurías culturales indígenas creadas en el servicio exterior\n•\tNúmero de servicios consulares que incorporan atención intercultural y lenguas originarias"
+            },
+            {
+              "problem": "Débil diplomacia cultural, educativa y científica, subordinada a agendas externas y sin una estrategia soberana que proyecte la identidad nacional, la diversidad cultural y el desarrollo científico del país en el escenario internacional.",
+              "objective": "Fortalecer la diplomacia cultural, educativa y científica como instrumento de soberanía nacional, integración de los pueblos y proyección internacional de la identidad pluricultural del Perú, promoviendo el intercambio de saberes, la cooperación académica y la ciencia al servicio del desarrollo nacional.",
+              "goals": "•\tSuscripción de más de 200 convenios culturales, educativos y científicos internacionales al 2030, priorizando cooperación Sur–Sur y regional.\n•\tImplementación anual del Festival Internacional de Culturas Andino-Amazónicas, como espacio de proyección cultural soberana del Perú.\n•\tIncremento sostenido de intercambios académicos y científicos, con participación de universidades públicas e institutos nacionales de investigación.\n•\tPosicionamiento de la cultura y la ciencia como ejes permanentes de la política exterior peruana.",
+              "indicator": "•\tConvenios culturales y   Número de convenios culturales y educativos internacionales suscritos\n•\tNúmero de programas de intercambio académico y científico activos\n•\tNúmero de eventos culturales internacionales promovidos por el Estado peruano\n•\tParticipación de instituciones públicas de educación e investigación en redes internacionales\n•\tsuscritos \n• Intercambios académicos realizados \n• Eventos culturales internacionales"
+            },
+            {
+              "problem": "Insuficiente cooperación Sur–Sur para el desarrollo, producto de una política exterior subordinada y poco orientada a la solidaridad internacional, la complementariedad productiva y el intercambio soberano de conocimientos y tecnologías.",
+              "objective": "Impulsar una cooperación internacional solidaria para el desarrollo soberano, priorizando la cooperación Sur–Sur, la complementariedad entre pueblos y el intercambio técnico, científico y productivo, en beneficio del desarrollo nacional y la integración de los países del Sur Global.",
+              "goals": "•\tImplementación del Programa “Misiones Solidarias Perú” al 2027, como política permanente de cooperación internacional soberana.\n•\tEjecución sostenida de misiones solidarias y proyectos de cooperación técnica con países de América Latina, África y Asia.\n•\tFortalecimiento de la cooperación Sur–Sur en sectores estratégicos como salud, educación, energía, agricultura y gestión de recursos naturales.\n•\tPosicionamiento del Perú como actor solidario y soberano en el Sur Global, sin subordinación a agendas hegemónicas.",
+              "indicator": "•\tNúmero de programas de cooperación Sur–Sur implementados\n•\tNúmero de misiones solidarias internacionales ejecutadas por el Estado peruano\n•\tNúmero de proyectos de cooperación técnica activa con países del Sur Global\n•\tSectores estratégicos beneficiados por la cooperación internacional solidaria"
             }
           ]
         }
-      ],
-      "resumen_pdf_local": "resumen_pg_2218_PARTIDO_POLITICO_NACIONAL_PERU_LIBRE.pdf"
+      ]
     },
     {
       "id_plan_gobierno": 29694,
@@ -1798,31 +2130,111 @@
       "resumen_pdf_local": "resumen_pg_2867_PARTIDO_DEMOCRATA_UNIDO_PERU.pdf"
     },
     {
-      "id_plan_gobierno": 29701,
+      "id_plan_gobierno": 29749,
       "party_jne_id": 2869,
       "party_name": "PARTIDO PATRIOTICO DEL PERU",
-      "plan_pdf_url": null,
-      "resumen_pdf_url": "https://mpesije.jne.gob.pe/docs/79ace8ab-8d19-40bb-8d50-aa5047b05439.pdf",
+      "plan_pdf_url": "https://mpesije.jne.gob.pe/docs/6de519cb-bb4d-4319-a11b-be65d4438f4f.pdf",
+      "resumen_pdf_url": "https://mpesije.jne.gob.pe/docs/a45d799b-a8c3-4505-9d13-73a4289fd9ee.pdf",
       "dimensions": [
         {
-          "dimension": "PROPUESTAS ADICIONALES",
+          "dimension": "DIMENSIÓN SOCIAL",
           "items": [
             {
-              "problem": "Impulsar mecanismos de integración productiva entre agricultores, ganaderos y productores peruanos con mercados andinos.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
+              "problem": "Elevados niveles de inseguridad ciudadana y avance del crimen organizado a nivel nacional.",
+              "objective": "Desarticular las organizaciones criminales, dignificar y profesionalizar la función policial, y recuperar el control territorial y la confianza ciudadana mediante el binomio policía-comunidad.",
+              "goals": "Reducir la tasa de victimización a menos del 10%, disminuir el costo económico de la inseguridad a menos del 0.5% del PBI, lograr que el 100% de las comisarías cuenten con conectividad y alcanzar al menos un 60% de aprobación ciudadana hacia la PNP.",
+              "indicator": "Tasa de victimización a nivel nacional, costo económico de la inseguridad, porcentaje de comisarías con conectividad y porcentaje de aprobación ciudadana hacia la Policía Nacional del Perú."
             },
             {
-              "problem": "Resumen del Plan de Trabajo\nLos candidatos del Partido Patriótico del Perú (PPP) al Parlamento Andino\npresentan un plan enfocado en fortalecer la representación peruana en este\nórgano regional, promoviendo la integración andina que beneficie directamente\na los ciudadanos peruanos.\nDiagnóstico Principal\nIdentifica\nmos problemas como el bajo impacto y visibilidad del Parlamento\nAndino en la ciudada nía peruana, integración regional ineficaz para sectores\ncomo MYPES y migrantes, falta de articulación con políticas nacionales y débil\ndefensa de intereses peruanos en economía, ambiente y sociedad.\nObjetivo General y Específicos\nEl objetivo central es un\na participación activa y técnica del Perú para una\nintegración útil y transparente. Los específicos incluyen impulsar desarrollo\nproductivo, defender derechos de peruanos (especialmente migrantes),\nfortalecer institucionalidad, armonizar normas estratégica s y articular con el\nCongreso y gobiernos nacionales.\nEjes Estratégicos y Acciones Clave\nEl plan se organiza en cinco ejes con acciones concretas:\n¿ Desarrollo Económico e Integración Productiva Facilitar comercio de\nMYPES, integración de productores peruan os, defender soberanía\ncomercial y promover corredores logísticos.\n¿ Defensa de Derechos Ciudadanos Proteger migrantes, armonizar\nseguridad social, salud, educación y derechos laborales; supervisar\nderechos humanos.\n¿ Institucionalidad y Reforma : Hacer recome ndaciones más vinculantes,\naumentar transparencia.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
+              "problem": "Deficiente política penitenciaria que genera tugurización, convierte a los penales en centrales del delito y no posibilita la reinserción social.",
+              "objective": "Implementar y recuperar el principio de autoridad en los centros penitenciarios, y transformarlos en centros productivos como mecanismo resocializador, optimizando los recursos económicos destinados al INPE.",
+              "goals": "Lograr que el 100% de los establecimientos penitenciarios se conviertan en cárceles productivas durante el periodo de gobierno.",
+              "indicator": "Porcentaje de establecimientos penitenciarios convertidos en cárceles productivas."
+            },
+            {
+              "problem": "Bajo ejercicio de la ciudadanía digital por parte de la población, limitando la participación activa y segura en la sociedad digital.",
+              "objective": "Desarrollar las capacidades digitales de los escolares para el ejercicio pleno de derechos y deberes en entornos digitales, mediante experiencias educativas prácticas, transversales y contextualizadas.",
+              "goals": "Lograr que los estudiantes comprendan y usen las TIC con sentido crítico, protejan su integridad digital, fortalezcan el ejercicio de la ciudadanía digital, participen como agentes de cambio y se conviertan en creadores de contenido digital.",
+              "indicator": "Actuación segura y ética en entornos digitales, participación activa en la sociedad digital, ejercicio de derechos y deberes digitales, y aplicación de capacidades digitales en situaciones reales."
+            },
+            {
+              "problem": "Déficit de acceso a la vivienda con condiciones de habitabilidad, producto de una nula planificación urbana territorial y la ocupación irregular del territorio sin servicios básicos.",
+              "objective": "Promover la inversión privada para simplificar proyectos de habilitación urbana, dictar medidas de emergencia para solucionar la falta de servicios básicos en viviendas en formalización y simplificar la administración para licencias.",
+              "goals": "Reducir el déficit de viviendas al nivel del crecimiento poblacional del país, mediante la construcción de viviendas en áreas de expansión urbana previamente identificadas.",
+              "indicator": "Reducción del déficit de viviendas en relación con el crecimiento poblacional."
+            },
+            {
+              "problem": "Sistema educativo con avances insuficientes, baja calidad, y brechas de acceso y escolarización, especialmente en los sectores socioeconómicos más bajos.",
+              "objective": "Realizar una reforma estructural en el sistema educativo peruano en todos sus niveles, aplicando metodologías de súper aprendizaje e incluyendo la enseñanza del quechua, inglés y un tercer idioma.",
+              "goals": "Alcanzar el 100% de las instituciones educativas nacionales con el nuevo sistema operativo de aprendizaje y el 100% de las instituciones educativas con la implementación de los idiomas al final del periodo presidencial en 2031.",
+              "indicator": "Porcentaje de instituciones educativas nacionales que aplican las nuevas metodologías y porcentaje de instituciones de educación básica regular que implementan la enseñanza de los idiomas propuestos."
+            }
+          ]
+        },
+        {
+          "dimension": "DIMENSIÓN ECONÓMICA",
+          "items": [
+            {
+              "problem": "Proceso de industrialización nacional inconcluso, con una base industrial estrecha y una fuerte dependencia del sector servicios y primario.",
+              "objective": "Industrializar al Perú en todos los sectores productivos y en todas las regiones, fortaleciendo las cadenas productivas y promoviendo la inversión extranjera acorde a las normas nacionales.",
+              "goals": "Lograr que la participación del sector industrial sea superior al 20% del PBI en el quinquenio 2026-2031.",
+              "indicator": "Participación del sector industrial en el Producto Bruto Interno (PBI)."
+            },
+            {
+              "problem": "Baja productividad industrial y dependencia de una economía primaria exportadora sujeta a la fluctuación de precios internacionales.",
+              "objective": "Impulsar la productividad mediante la generación de valor agregado a los productos, el desarrollo de alternativas productivas y el fomento de la investigación, la ciencia y la innovación.",
+              "goals": "Aumentar la productividad hasta en un 20% a través de la implementación de programas de bienestar y el fomento de la innovación.",
+              "indicator": "Aumento de la productividad laboral."
+            },
+            {
+              "problem": "Grave crisis económica y social de la pesca artesanal, caracterizada por bajos ingresos, falta de beneficios sociales, condiciones de trabajo deficientes y riesgo de sostenibilidad de los recursos hidrobiológicos.",
+              "objective": "Diseñar e implementar planes y programas integrales y sostenibles para solucionar la problemática de la pesca artesanal, fomentando la incorporación de equipamiento para mejorar la calidad y la comercialización de los productos.",
+              "goals": "Alcanzar un avance del 75% en la elaboración de los planes y programas para solucionar la grave situación de la pesca artesanal en los primeros cien días de gobierno.",
+              "indicator": "Porcentaje de avance en la elaboración de planes y programas para la pesca artesanal."
+            },
+            {
+              "problem": "Amenaza a la soberanía alimentaria por la concentración de tierras agrícolas en manos de capital extranjero y el impacto ambiental negativo de la agroexportación.",
+              "objective": "Garantizar la soberanía alimentaria, entendida como el derecho de los pueblos a producir y consumir alimentos saludables y culturalmente apropiados, mediante métodos justos y sostenibles, y a definir sus propias políticas de producción.",
+              "goals": "Establecer un control real en la transferencia de la propiedad de las tierras agrícolas, orientando las políticas hacia la soberanía alimentaria de los pueblos.",
+              "indicator": "Nivel de control sobre la transferencia de la propiedad de las tierras al capital extranjero y la definición de políticas y estrategias para la producción, distribución y consumo de alimentos."
+            },
+            {
+              "problem": "Ineficiencia en el uso de los recursos del Estado, afectando la calidad y universalidad de los servicios públicos.",
+              "objective": "Racionalizar y optimizar el uso de los recursos del Estado para lograr mayor eficiencia y efectividad, realizando una reingeniería de su estructura, digitalizando sus operaciones y reduciendo contrataciones innecesarias.",
+              "goals": "Cumplir con la meta de la regla fiscal del 2.2% del PBI.",
+              "indicator": "Cumplimiento de la regla fiscal como parte de las metas macroeconómicas."
+            }
+          ]
+        },
+        {
+          "dimension": "DIMENSIÓN AMBIENTAL",
+          "items": [
+            {
+              "problem": "Impactos ambientales y sociales críticos y constantes de la minería ilegal, especialmente en la Amazonía, que causan degradación, contaminación por mercurio y arsénico, y afectación a comunidades nativas.",
+              "objective": "Desarrollar una política de prevención que destierre la presencia de la actividad minera ilegal en el territorio nacional.",
+              "goals": "Desterrar por completo la actividad de la minería ilegal mediante una política de prevención efectiva.",
+              "indicator": "Implementación de políticas de prevención y reducción de la superficie afectada por la minería ilegal."
+            }
+          ]
+        },
+        {
+          "dimension": "DIMENSIÓN INSTITUCIONAL",
+          "items": [
+            {
+              "problem": "Corrupción institucionalizada que genera una profunda crisis de confianza, pérdidas económicas millonarias para el Estado, y afecta el desarrollo y la inversión en sectores esenciales.",
+              "objective": "Desterrar la corrupción en la contratación pública, el gasto público y las relaciones con el sector privado, sancionando con el máximo rigor a funcionarios y empresarios corruptos.",
+              "goals": "Instaurar una república justa y democrática, garantizando la igualdad de oportunidades, estableciendo la imprescriptibilidad de delitos graves, eliminando peajes con sobrecostos e impulsando la integración del país a la Comisión Internacional Contra la Impunidad.",
+              "indicator": "Implementación de acciones estratégicas contra la corrupción, como la imprescriptibilidad de delitos graves, el uso de polígrafo para altos funcionarios y la evaluación toxicológica regular en el sector público."
+            },
+            {
+              "problem": "Pérdida de legitimidad social y falta de representatividad del Congreso de la República, manifestada en una aprobación extremadamente baja y una percepción de favorecimiento a intereses particulares.",
+              "objective": "Renovar la noción del poder ciudadano y fortalecer la institucionalidad del Congreso mediante la renovación por tercios de sus miembros y un cambio en la representación nacional para incluir a expertos de sectores productivos.",
+              "goals": "Proponer la reforma constitucional para la renovación por tercios del Congreso en la primera legislatura del período legislativo.",
+              "indicator": "Propuesta de modificación del artículo 90 de la Constitución Política del Perú."
             }
           ]
         }
-      ],
-      "resumen_pdf_local": "resumen_pg_2869_PARTIDO_PATRIOTICO_DEL_PERU.pdf"
+      ]
     },
     {
       "id_plan_gobierno": 29702,
@@ -2109,103 +2521,57 @@
       "resumen_pdf_local": "resumen_pg_2931_PRIMERO_LA_GENTE___COMUNIDAD__ECOLOGIA__LIBERTAD_Y.pdf"
     },
     {
-      "id_plan_gobierno": 29706,
+      "id_plan_gobierno": 29746,
       "party_jne_id": 2921,
       "party_name": "PARTIDO POLITICO PRIN",
-      "plan_pdf_url": null,
-      "resumen_pdf_url": "https://mpesije.jne.gob.pe/docs/fd55c87e-c9ac-4c26-ab3c-bae0c06c2a54.pdf",
+      "plan_pdf_url": "https://mpesije.jne.gob.pe/docs/3b89548c-81fa-479d-9ff9-2b7011fec7d2.pdf",
+      "resumen_pdf_url": "https://mpesije.jne.gob.pe/docs/4ab0caad-f051-42a3-b3f8-236ba7df2e3b.pdf",
       "dimensions": [
         {
-          "dimension": "PROPUESTAS ADICIONALES",
+          "dimension": "DIMENSIÓN SOCIAL",
           "items": [
             {
-              "problem": "Impulsar la armonización de legislaciones nacionales para combatir el crimen organizado transnacional, el narcotráfico, la trata de personas y el terrorismo en la región andina.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
-            },
+              "problem": "Inseguridad y criminalidad desbordadas que afectan gravemente la calidad de vida y frenan el crecimiento económico en todo el territorio nacional, con altos índices de violencia especialmente en regiones vulnerables.",
+              "objective": "Implementar una lucha frontal contra la criminalidad en todas sus formas mediante estrategias comprobadas de inteligencia, coordinación efectiva entre actores del sistema de justicia e incremento sustancial de la capacidad operativa de la Policía Nacional del Perú, fortaleciendo el rol del Estado especialmente en regiones con altos índices de violencia a través de políticas públicas efectivas, articuladas y sostenibles.",
+              "goals": "- Reducir la tasa de delitos denunciados en un 40% al 2031\n- Incrementar el porcentaje de casos resueltos del nivel actual al 65% al 2031\n- Aumentar la percepción ciudadana de seguridad de 25% a 60% al 2031\n- Incrementar la capacidad operativa de la PNP en 50% mediante equipamiento, formación y ampliación de cobertura\n- Reducir la tasa de homicidios en 35% al 2031\n- Reducir el tiempo promedio de respuesta policial a menos de 10 minutos en zonas urbanas",
+              "indicator": "- Tasa de delitos denunciados por cada 100,000 habitantes\n- Porcentaje de casos resueltos por el sistema de justicia\n- Percepción ciudadana de seguridad (medida mediante encuestas)\n- Índice de capacidad operativa de la PNP (recursos humanos, equipamiento y cobertura territorial)\n- Tasa de homicidios por cada 100,000 habitantes\n- Tiempo promedio de respuesta policial ante emergencias"
+            }
+          ]
+        },
+        {
+          "dimension": "DIMENSIÓN ECONÓMICA",
+          "items": [
             {
-              "problem": "Promover la investigación científica, la innovación tecnológica y la transferencia de conocimiento en la región andina.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
-            },
+              "problem": "Desaceleración de la economía con escaso crecimiento económico, déficit fiscal persistente e incremento de deuda pública, deficiente recaudación tributaria y gasto público centralizado. Alta informalidad laboral y baja productividad. Escasa tecnificación y apoyo a las actividades minera, agrícola, pecuaria e hidrobiológica. Informalidad acentuada y aumento de emprendedores sin seguridad jurídica previsible para personas naturales y empresas.",
+              "objective": "Garantizar la autonomía de la política monetaria y asegurar la sostenibilidad fiscal mediante la predictibilidad del gasto público. Incrementar la presión tributaria al promedio de América Latina y dictar políticas para evitar la evasión y elusión tributaria. Impulsar la generación de empleos formales mediante incentivos para la formalización. Elevar la inversión minera con marco normativo moderno, claro, eficiente, estable y predecible, aumentando los niveles de innovación agraria y tecnificación. Por seguridad jurídica previsible: Impulsar políticas que permitan la formalización de micro, pequeñas y medianas empresas para su crecimiento y sostenibilidad, atrayendo capitales nacionales y extranjeros que contribuyan al desarrollo económico equilibrado, priorizando agricultura, minería responsable y turismo sostenible.",
+              "goals": "- Incrementar la tasa de crecimiento del PBI a un promedio de 5% anual al 2031\n- Reducir el ratio deuda pública/PBI del nivel actual a menos del 30% al 2031\n- Aumentar la presión tributaria del nivel actual (16%) al promedio latinoamericano (21%) al 2031\n- Reducir la informalidad laboral del 70% al 50% al 2031\n- Incrementar la inversión privada en minería en 40% al 2031\n- Formalizar el 60% de las MIPYMES actualmente informales al 2031\n- Aumentar el índice de productividad laboral en 35% al 2031\n- Incrementar las exportaciones agrícolas en 50% al 2031\n- Mejorar el índice de seguridad jurídica empresarial ubicando al Perú entre los 60 primeros países al 2031\n- Reducir la evasión y elusión tributaria en 40% al 2031",
+              "indicator": "- Tasa de crecimiento del PBI anual\n- Ratio deuda pública / PBI\n- Presión tributaria (% del PBI)\n- Tasa de informalidad laboral\n- Inversión privada en minería (millones de dólares)\n- Porcentaje de MIPYMES formalizadas\n- Índice de productividad laboral\n- Exportaciones agrícolas (millones de dólares)\n- Índice de seguridad jurídica empresarial\n- Nivel de recaudación tributaria (% del PBI)"
+            }
+          ]
+        },
+        {
+          "dimension": "DIMENSIÓN AMBIENTAL",
+          "items": [
             {
-              "problem": "Proteger, preservar y promover el patrimonio cultural material e inmaterial, las lenguas originarias y la identidad cultural de los pueblos andinos.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
-            },
+              "problem": "Deforestación, contaminación del agua y el aire, pérdida acelerada de biodiversidad, estrés hídrico y falta de acceso a agua potable, impactos severos del cambio climático con pérdida de glaciales, gestión deficiente de pasivos ambientales (eléctricos, mineros y de hidrocarburos), y proliferación de actividades extractivas informales e ilegales que contaminan ecosistemas y afectan la salud de los habitantes, especialmente en la Amazonía.",
+              "objective": "Reducir sustancialmente la pérdida de biodiversidad y brechas en la gestión de áreas naturales protegidas. Asegurar la disponibilidad y sostenibilidad de las fuentes de recursos hídricos mediante una gestión integrada. Reducir significativamente los casos de pérdida de glaciales y disminuir sustancialmente la deforestación y degradación de bosques en la Amazonía. Mejorar la gestión de los pasivos ambientales eléctricos, mineros y de hidrocarburos que afectan la calidad ambiental, y reducir los casos de actividades extractivas informales e ilegales que contaminan ecosistemas y habitantes, promoviendo una minería responsable, agroexportación sostenible y turismo con identidad.",
+              "goals": "- Reducir la tasa de deforestación en 60% al 2031 (de niveles actuales de ~150,000 ha/año)\n- Lograr que el 85% de áreas naturales protegidas cuenten con gestión efectiva al 2031\n- Mejorar el índice de calidad del agua en un 40% en las principales cuencas al 2031\n- Reducir la pérdida de glaciales en 50% mediante acciones de mitigación al cambio climático al 2031\n- Remediar el 70% de los pasivos ambientales identificados al 2031\n- Reducir las actividades extractivas ilegales en 80% al 2031\n- Mejorar el índice de calidad del aire alcanzando estándares OMS en el 60% de ciudades principales al 2031\n- Incrementar el acceso a agua potable segura del nivel actual al 95% de la población al 2031\n- Reforestar y recuperar 500,000 hectáreas de bosques degradados al 2031\n- Estabilizar o recuperar poblaciones de al menos 50 especies en peligro de extinción al 2031",
+              "indicator": "- Tasa anual de deforestación (hectáreas por año)\n- Porcentaje de áreas naturales protegidas con gestión efectiva\n- Índice de calidad del agua en cuencas principales\n- Tasa de pérdida de glaciales (hectáreas por año)\n- Número de pasivos ambientales remediados\n- Porcentaje de reducción de actividades extractivas ilegales\n- Índice de calidad del aire en principales ciudades\n- Porcentaje de población con acceso a agua potable segura\n- Superficie de bosques recuperados/reforestados (hectáreas)\n- Número de especies en peligro de extinción estabilizadas o recuperadas"
+            }
+          ]
+        },
+        {
+          "dimension": "DIMENSIÓN INSTITUCIONAL",
+          "items": [
             {
-              "problem": "Fortalecer la calidad y pertinencia de la educación superior y técnica en la región andina mediante la cooperación académica, la movilidad estudiantil y la armonización de estándares de acreditación.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
-            },
-            {
-              "problem": "Establecer mecanismos regionales para combatir la minería ilegal y promover la formalización de actividades extractivas en la región andina.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
-            },
-            {
-              "problem": "Promover la protección y gestión sostenible de los recursos hídricos compartidos, la biodiversidad y los ecosistemas andinos y amazónicos.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
-            },
-            {
-              "problem": "Fortalecer la capacidad institucional del Parlamento Andino y profundizar los mecanismos de democracia participativa en la región.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
-            },
-            {
-              "problem": "Promover políticas regionales de inclusión social, equidad de género y protección de derechos de grupos vulnerables.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
-            },
-            {
-              "problem": "Fortalecer los sistemas de salud pública y desarrollar capacidades regionales de respuesta ante emergencias sanitarias y pandemias.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
-            },
-            {
-              "problem": "Promover políticas regionales de protección social, reducción de la pobreza y garantía de derechos sociales fundamentales.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
-            },
-            {
-              "problem": "Fortalecer las cadenas productivas agrícolas y agroindustriales de la región andina mediante la innovación, tecnificación y acceso a mercados.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
-            },
-            {
-              "problem": "Desarrollar un corredor turístico andino integrado que promueva el turismo sostenible, cultural y ecológico en la región.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
-            },
-            {
-              "problem": "Fortalecer la proyección internacional de la Comunidad Andina y sus relaciones con otros bloques regionales y organismos multilaterales.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
-            },
-            {
-              "problem": "Profundizar la integración económica y comercial entre los países andinos mediante la armonización normativa, la facilitación comercial y la promoción de inversiones regionales.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
+              "problem": "Débil institucionalidad democrática con falta de continuidad de políticas públicas, ausencia de transparencia y rendición de cuentas, gestión pública deficiente y permeable a situaciones de corrupción generalizada, lo que genera una percepción de ineficiencia y desconfianza ciudadana. Además, existe falta de regionalización y descentralización efectiva con gobiernos subnacionales sin capacidades suficientes ni transferencia real de funciones y recursos.",
+              "objective": "Asegurar el fortalecimiento de las capacidades de los gobiernos subnacionales, la transferencia efectiva de funciones y recursos, y la institucionalización de mecanismos que aseguren la competitividad. Por un Estado transparente y libre de corrupción: Garantizar un Estado abierto que genere confianza en las personas, mediante el fortalecimiento de la transparencia, participación y rendición de cuentas del Estado, consolidando el Sistema Nacional de Integridad con mecanismos eficaces de prevención y sanción efectiva de la corrupción. Promover una reingeniería del Poder Judicial y Ministerio Público, reducir el aparato del Estado previo proceso de reorganización y reestructuración, y fortalecer la meritocracia en todos los niveles de gobierno.",
+              "goals": "- Mejorar el Índice de Percepción de la Corrupción ubicando al Perú entre los 50 países menos corruptos al 2031\n- Alcanzar el 80% de funciones transferidas efectivamente a gobiernos subnacionales al 2031\n- Incrementar el Índice de Capacidad Institucional de Gobiernos Subnacionales en 60% al 2031\n- Lograr que el 90% de procesos de selección de personal se basen en meritocracia al 2031\n- Alcanzar un índice de transparencia superior a 85/100 al 2031\n- Reducir el aparato del Estado en 25% mediante reorganización y reestructuración al 2031\n- Incrementar la confianza ciudadana en instituciones públicas del nivel actual al 55% al 2031\n- Aumentar en 150% la cantidad de casos de corrupción sancionados efectivamente al 2031",
+              "indicator": "- Índice de Percepción de la Corrupción (Transparencia Internacional)\n- Porcentaje de funciones efectivamente transferidas a gobiernos regionales y locales\n- Índice de Capacidad Institucional de Gobiernos Subnacionales\n- Porcentaje de procesos de selección de personal basados en meritocracia\n- Índice de Transparencia y Acceso a la Información Pública\n- Porcentaje de reducción del aparato estatal\n- Nivel de confianza ciudadana en instituciones públicas (encuestas)\n- Número de casos de corrupción sancionados efectivamente"
             }
           ]
         }
-      ],
-      "resumen_pdf_local": "resumen_pg_2921_PARTIDO_POLITICO_PRIN.pdf"
+      ]
     },
     {
       "id_plan_gobierno": 29707,
@@ -5653,61 +6019,129 @@
       ]
     },
     {
-      "id_plan_gobierno": 29730,
+      "id_plan_gobierno": 29748,
       "party_jne_id": 2995,
       "party_name": "PARTIDO POLITICO COOPERACION POPULAR",
-      "plan_pdf_url": null,
-      "resumen_pdf_url": "https://mpesije.jne.gob.pe/docs/176d9c95-8eca-4722-a4e4-a2e8128e9de2.pdf",
+      "plan_pdf_url": "https://mpesije.jne.gob.pe/docs/582e0d55-19ee-4a7f-85ef-c254be5bada6.pdf",
+      "resumen_pdf_url": "https://mpesije.jne.gob.pe/docs/690d981f-30bb-4487-8d17-b995579c522b.pdf",
       "dimensions": [
         {
-          "dimension": "PROPUESTAS ADICIONALES",
+          "dimension": "DIMENSIÓN SOCIAL",
           "items": [
             {
-              "problem": "Fortalecer la prevención, detección y sanción de la corrupción en los países miembros de la Comunidad Andina, mediante la adopción de estándares comunes, el intercambio de información y la cooperación regional.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
+              "problem": "Sistema de educación pública deficiente y magisterio desatendido a nivel nacional.",
+              "objective": "Garantizar la educación pública mediante la reconstrucción de 27,000 instituciones, la provisión de becas internacionales, la capacitación de docentes del magisterio y universidades, y la adquisición de un satélite de telecomunicaciones.",
+              "goals": "Iniciar la capacitación del magisterio nacional en enero de 2027. Efectuar la compra del satélite en el primer trimestre de 2027. Reconstruir todos los centros educativos en estado ruinoso para mediados de 2028. Contar con servicios básicos en todos los centros educativos a los dos tercios del mandato.",
+              "indicator": "Porcentaje de centros educativos públicos en estado ruinoso y sin servicios básicos; porcentaje de centros educativos sin acceso a internet; porcentaje de profesores del magisterio que requieren capacitación; y número de universidades públicas que realizan investigación y cuentan con tecnología."
             },
             {
-              "problem": "Desarrollar una agenda de seguridad regional contra el tráfico de armas, drogas y crimen organizado transnacional.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
+              "problem": "Insuficiente infraestructura vial para el transporte y limitada atención a personas con discapacidad.",
+              "objective": "Construir autopistas nacionales (Lima-Tacna y Puno, Lima-Junín), implementar ferrocarriles de cercanía urbanos e interprovinciales, y mejorar la atención de servicios para personas con discapacidad.",
+              "goals": "Negociar o licitar la construcción de la autopista Tumbes-Tacna en diciembre de 2026. Licitar la instalación de trenes de cercanía y servicio interprovincial en diciembre de 2026. Asignar recursos en el presupuesto de 2027 para obras de atención a personas con discapacidad.",
+              "indicator": "Porcentaje de vías de comunicación asfaltadas; porcentaje de trenes de pasajeros urbanos, interprovinciales y de carga; y porcentaje de vías construidas para personas con discapacidad."
             },
             {
-              "problem": "Promover una ley de justicia social en los países miembros de la Comunidad Andina, mediante la reducción de desigualdades sociales y territoriales, el fortalecimiento de la inclusión social y la garantía del acceso equitativo a derechos, servicios básicos y oportunidades de desarrollo.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
+              "problem": "Carencia de servicios básicos como agua y saneamiento en numerosas regiones del Perú.",
+              "objective": "Garantizar el acceso al agua potable y saneamiento a través de proyectos de inversión de gobierno a gobierno, la construcción de reservorios, la cosecha de agua y la descontaminación de fuentes hídricas como lagos y ríos.",
+              "goals": "Realizar la licitación para la instalación de servicios de agua y saneamiento en septiembre de 2026. Licitar la construcción de represas, reservorios y cochas en noviembre de 2026. Convocar a licitación para la descontaminación de aguas servidas y con relaves mineros en noviembre de 2026.",
+              "indicator": "Porcentaje de la población que carece de servicios básicos de agua y saneamiento; cantidad de inversión y tiempo requerido para la instalación de dichos servicios; y porcentaje de reservorios y cochas necesarios para el abastecimiento de agua potable y agrícola."
             },
             {
-              "problem": "Promover el intercambio de información con la finalidad de mejorar la cooperación para rastrear armas, inteligencia y capturar redes criminales.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
+              "problem": "Inexistencia de un sistema de salud pública eficiente y accesible para la población.",
+              "objective": "Garantizar la salud pública en Minsa y Essalud, equipando y fortaleciendo la atención primaria y de especialidades, con atención en turnos de mañana, tarde y noche. Desplazar médicos especialistas a departamentos para realizar intervenciones quirúrgicas.",
+              "goals": "Asegurar el suministro suficiente de medicinas a partir de octubre de 2026. Implementar la atención en tres turnos a partir de noviembre de 2026. Equipar los centros de salud primario desde 2027. Realizar intervenciones quirúrgicas de especialistas a partir de 2027. Lograr que todas las regiones cuenten con hospitales para cirugías complejas al cierre del mandato.",
+              "indicator": "Porcentaje de centros de salud primarios en el Perú; porcentaje de centros de salud con equipamiento y medicinas suficientes; porcentaje de médicos especialistas en Lima y otros departamentos; y porcentaje de consultas médicas e intervenciones quirúrgicas en centros hospitalarios."
+            }
+          ]
+        },
+        {
+          "dimension": "DIMENSIÓN ECONÓMICA",
+          "items": [
+            {
+              "problem": "Distribución injusta y no equitativa de la riqueza derivada de la explotación de recursos naturales.",
+              "objective": "Disponer la renegociación de los contratos de concesión para hacerlos más equitativos, estableciendo un nuevo marco normativo.",
+              "goals": "En febrero de 2027, se deben efectuar las gestiones y procedimientos para llevar a cabo las renegociaciones de los contratos de concesión.",
+              "indicator": "Identificación de contratos de concesión lesivos a los intereses nacionales por desequilibrio en sus beneficios y precisión de los recursos económicos que el Estado deja de percibir."
             },
             {
-              "problem": "Fomentar el intercambio de buenas prácticas educativas entre los países miembros y el desarrollo de programas regionales de movilidad académica.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
+              "problem": "Ausencia de programas técnicos y financieros eficientes de apoyo para la pequeña y micro empresa, la artesanía y el turismo.",
+              "objective": "Dictar un marco jurídico para establecer programas de apoyo técnico y financiero destinados a las pequeñas y micro empresas, artesanos y emprendedores en turismo.",
+              "goals": "En agosto de 2026, solicitar facultades legislativas para dictar un marco regulatorio de apoyo técnico y financiero para micro y pequeñas empresas, artesanos y emprendedores turísticos.",
+              "indicator": "Porcentaje de micro y pequeñas empresas y sus rubros de producción. Porcentaje de artesanos y emprendedores en turismo en las regiones."
             },
             {
-              "problem": "Impulsar el desarrollo tecnológico y la innovación en los países miembros de la Comunidad Andina, promoviendo la transformación digital, la investigación aplicada y el acceso equitativo a las tecnologías.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
+              "problem": "El sistema de contratación para obras públicas no es eficiente, especialmente para obras de gran envergadura.",
+              "objective": "Crear un marco normativo para que las obras del Estado sean ejecutadas bajo la modalidad de gobierno a gobierno, garantizando su cumplimiento.",
+              "goals": "En agosto de 2026, se debe solicitar facultades legislativas para la contratación de obras de gran envergadura de gobierno a gobierno.",
+              "indicator": "Determinación de las obras públicas de gran envergadura que requiere el país, los gobiernos que pueden ejecutarlas, sus costos y los plazos de ejecución."
             },
             {
-              "problem": "Impulsar la protección del medio ambiente y el aprovechamiento sostenible de los recursos naturales en la Comunidad Andina, promoviendo un desarrollo equilibrado entre crecimiento económico, conservación ambiental y bienestar social.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
+              "problem": "Inexistencia de inversión para la industrialización en el área rural y falta de apoyo a la agricultura familiar.",
+              "objective": "Fomentar la inversión en la industrialización para que los productores obtengan mayor valor en sus productos, agregando valor con apoyo del Estado a través de actividades de emprendimiento privado y empresarial subsidiado.",
+              "goals": "Iniciar en marzo de 2027 la licitación para adquirir plantas de industrialización de recursos naturales. Iniciar en marzo de 2027 la convocatoria a privados para participar en un modelo mixto de industrialización del área rural.",
+              "indicator": "Establecimiento de recursos naturales para conseguir valor agregado; forma de inversión para instalar plantas de industrialización en el área rural; y tecnología necesaria para dicha instalación."
+            }
+          ]
+        },
+        {
+          "dimension": "DIMENSIÓN AMBIENTAL",
+          "items": [
+            {
+              "problem": "Sectores del territorio nacional sin presencia del Estado y controlados por actividades ilícitas.",
+              "objective": "Dictar un marco normativo para asegurar la presencia indefectible de las instituciones públicas, la Policía Nacional del Perú y las Fuerzas Armadas en todo el territorio nacional, incluyendo Amazonía, sierra, costa y fronteras.",
+              "goals": "A partir de enero de 2027, se debe fortalecer la presencia del Estado en zonas de sierra, Amazonía y fronteras para evitar actividades ilícitas y el abandono de la población.",
+              "indicator": "Determinación de áreas con tala y minería ilegal; establecimiento de los servicios del Estado a instalar o fortalecer; y definición de actividades productivas a implementar en dichas áreas."
+            },
+            {
+              "problem": "Falta de medidas concretas para enfrentar la contaminación de aguas en ríos, lagos y el mar.",
+              "objective": "Instalar plantas de tratamiento de aguas servidas y contaminadas por minería, y establecer un marco normativo para sancionar severamente a los responsables.",
+              "goals": "En noviembre de 2026, convocar a licitación para adquirir plantas de tratamiento en los lugares requeridos para tratar aguas servidas y con relaves mineros.",
+              "indicator": "Determinación de lugares para instalar plantas de tratamiento de aguas servidas y afectadas por relaves mineros, y establecimiento de sanciones administrativas y penales para los responsables de la contaminación."
+            },
+            {
+              "problem": "Inexistencia de fuentes de agua en algunas regiones del Perú que garanticen el abastecimiento doméstico y agropecuario.",
+              "objective": "Impulsar la siembra de agua, la construcción de cochas, reservorios y represas para el abastecimiento hídrico, y promover el uso de agua de mar.",
+              "goals": "Desde septiembre de 2026, llevar a cabo licitaciones para la construcción de reservorios, represas, cochas e iniciar acciones para la siembra de agua.",
+              "indicator": "Identificación de fuentes de agua utilizables para servicios básicos; precisión de zonas para la siembra de agua, reservorios y represas; y establecimiento de zonas para el uso de agua de mar o de ríos de la Amazonía."
+            },
+            {
+              "problem": "Contaminación de tierras y fuentes de agua en diversas regiones del Perú.",
+              "objective": "Establecer el marco legal y las obras de descontaminación necesarias para la protección del medio ambiente y la ecología.",
+              "goals": "En agosto de 2026, se debe solicitar la delegación de facultades para dictar medidas para la descontaminación de aguas y tierras. En enero de 2027, se deben licitar plantas y el uso de tecnología para la descontaminación.",
+              "indicator": "Porcentaje de aguas y tierras contaminadas; tecnología requerida para la remediación; y ubicación de las plantas de tratamiento a instalar en el país."
+            }
+          ]
+        },
+        {
+          "dimension": "DIMENSIÓN INSTITUCIONAL",
+          "items": [
+            {
+              "problem": "El Perú requiere un nuevo marco constitucional para lograr la justicia social.",
+              "objective": "Aprobar una nueva Constitución a través de una Asamblea Constituyente o mediante el Congreso.",
+              "goals": "Remitir en septiembre de 2026 el proyecto de ley al Congreso para aprobar la instalación de una asamblea constituyente o para que la reforma sea realizada por el Congreso elegido.",
+              "indicator": "Determinación de materias de reciente reforma constitucional a precisar o derogar, materias a reformar en derechos y economía, y reformas en la organización del Estado."
+            },
+            {
+              "problem": "Inexistencia de promoción y apoyo al uso y creación de tecnología para actividades productivas, educativas y de salud.",
+              "objective": "Crear el Ministerio de Ciencia y Tecnología, tomando como base el Instituto Nacional de Calidad (INACAL).",
+              "goals": "En febrero de 2027, remitir al Congreso el proyecto de ley para la creación del Ministerio de Ciencia y Tecnología.",
+              "indicator": "Precisión de las materias de investigación y su aplicación en el Perú; tecnología con la que cuenta el país para su uso en políticas de Estado; y diagnóstico sobre el uso de tecnología en centros educativos, de salud y universidades."
+            },
+            {
+              "problem": "Debilidad estructural y funcional del Instituto Nacional Penitenciario (INPE).",
+              "objective": "Aprobar un nuevo marco jurídico normativo para organizar internamente y evaluar el desempeño del personal del INPE, dado que la actividad criminal persiste en las cárceles.",
+              "goals": "En agosto de 2026, solicitar facultades legislativas al Congreso para dictar un marco normativo que permita reorganizar el Instituto Nacional Penitenciario (INPE).",
+              "indicator": "Censo del personal penitenciario nacional; porcentaje de personal sometido a procesos disciplinarios; efectividad de las normas de reclusión; censo de la población penitenciaria; y capacidad de los penales existentes y por construir."
+            },
+            {
+              "problem": "Penetración de la corrupción e impunidad en el Estado, ocasionando debilidad estatal y falta de meritocracia.",
+              "objective": "Luchar contra la corrupción y la impunidad para restaurar la meritocracia, aprobando la muerte civil para funcionarios corruptos, reorganizando el Sistema de Control y utilizando inteligencia artificial para la fiscalización.",
+              "goals": "Solicitar facultades legislativas en agosto de 2026 para regular la muerte civil y otras sanciones contra la corrupción, y para reformar el Sistema de Control. Iniciar en septiembre la capacitación de personal en inteligencia artificial.",
+              "indicator": "Porcentaje y tipo de delitos cometidos en la función pública; porcentaje de casos sancionados por el Sistema de Control; y porcentajes de delitos sancionados en la función pública."
             }
           ]
         }
-      ],
-      "resumen_pdf_local": "resumen_pg_2995_PARTIDO_POLITICO_COOPERACION_POPULAR.pdf"
+      ]
     },
     {
       "id_plan_gobierno": 29731,
@@ -6025,49 +6459,123 @@
       "resumen_pdf_local": "resumen_pg_3024_FUERZA_Y_LIBERTAD.pdf"
     },
     {
-      "id_plan_gobierno": 29739,
+      "id_plan_gobierno": 29745,
       "party_jne_id": 2930,
       "party_name": "PARTIDO APRISTA PERUANO",
-      "plan_pdf_url": null,
-      "resumen_pdf_url": "https://mpesije.jne.gob.pe/docs/0a24b1e7-1bde-4bce-851f-4c80dd337080.pdf",
+      "plan_pdf_url": "https://mpesije.jne.gob.pe/docs/4d581919-b090-43d4-89e4-e284fde587b7.pdf",
+      "resumen_pdf_url": "https://mpesije.jne.gob.pe/docs/ed45f5ef-bec7-427c-b998-f4d5abec0d48.pdf",
       "dimensions": [
         {
-          "dimension": "PROPUESTAS ADICIONALES",
+          "dimension": "DIMENSIÓN SOCIAL",
           "items": [
             {
-              "problem": "Impulsar, desde la Comunidad Andina, programas de asistencia técnica orientados a mejorar la productividad, calidad y competitividad de pequeños productores y MYPES.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
+              "problem": "Elevados índices de violencia familiar y sexual, con un incremento sostenido en el número de víctimas menores y mayores de 18 años en el periodo 2017-2023.",
+              "objective": "Reducir de manera sostenida la violencia familiar y sexual mediante políticas integrales de prevención, atención y sanción, fortaleciendo los mecanismos de denuncia y protección a las víctimas.",
+              "goals": "Reducir la cantidad de víctimas de violencia sexual en un 20% hacia el año 2031 y garantizar que el 100% de las mujeres afectadas accedan a ayuda psicológica y legal.",
+              "indicator": "Porcentaje de reducción en la cantidad de víctimas de violencia sexual."
             },
             {
-              "problem": "Promover la coordinación efectiva entre los países andinos para enfrentar el narcotráfico, la trata de personas y el contrabando.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
+              "problem": "El sistema educativo peruano evidencia una persistente baja calidad en los aprendizajes y una estructura institucional insuficiente para responder a los desafíos del sector.",
+              "objective": "Potenciar la Política Educativa Nacional, ampliando su horizonte hasta el año 2046, para mejorar la calidad y eficacia del sistema educativo.",
+              "goals": "Para 2031, mejorar en un 30% los resultados del sistema educativo en pruebas nacionales e internacionales y elevar en un 40% los niveles de comprensión lectora y desempeño académico.",
+              "indicator": "Porcentaje de mejora en los resultados de pruebas estandarizadas y niveles de comprensión lectora."
             },
             {
-              "problem": "Promover la construcción de posiciones comunes de la Comunidad Andina ante organismos y foros internacionales.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
+              "problem": "Brecha persistente en el acceso a servicios de salud y en la infraestructura sanitaria, con más del 93% de los hospitales presentando una capacidad instalada inadecuada.",
+              "objective": "Reducir la brecha de acceso a servicios y de infraestructura para consolidar un sistema de salud integrado y universal, basado en la atención al ciudadano.",
+              "goals": "Disminuir en un 90% las colas y los tiempos de espera para citas en el segundo y tercer nivel de atención, y mejorar los indicadores de atención primaria para el año 2031.",
+              "indicator": "Porcentaje de disminución de tiempos de espera para citas y atención."
             },
             {
-              "problem": "Promover acuerdos con impacto real, medible y alineado a las necesidades de los países miembros.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
+              "problem": "Limitado acceso de la población a la creación y producción cultural, junto con una alta informalidad del sector y un marcado centralismo en la oferta de bienes y servicios.",
+              "objective": "Fomentar la formalización y el desarrollo de emprendimientos culturales a nivel regional mediante programas de capital semilla, crédito y capacitación.",
+              "goals": "Lograr la formalización de 2,000 Mipymes culturales en el quinquenio y financiar 500 producciones artísticas anualmente.",
+              "indicator": "Número de micro, pequeñas y medianas empresas (Mipymes) culturales formalizadas."
+            }
+          ]
+        },
+        {
+          "dimension": "DIMENSIÓN ECONÓMICA",
+          "items": [
+            {
+              "problem": "Desaceleración del crecimiento económico post-pandemia y una alta dependencia de los precios internacionales, lo que limita la estabilidad y el desarrollo sostenido.",
+              "objective": "Reactivar la economía nacional mediante el impulso de la inversión privada, la generación de empleo formal y el fortalecimiento del consumo interno.",
+              "goals": "Alcanzar un crecimiento del PBI del 4.0% en 2027 y mantener un promedio de 5.5% entre 2028 y 2031.",
+              "indicator": "Tasa de crecimiento promedio del Producto Bruto Interno (PBI)."
             },
             {
-              "problem": "Impulsar la priorización de corredores logísticos andinos que faciliten el comercio regional y reduzcan costos de transporte.",
-              "objective": "",
-              "goals": "",
-              "indicator": ""
+              "problem": "Baja inversión en innovación tecnológica por parte de las micro y pequeñas empresas (MYPES), donde solo el 53% ha realizado alguna inversión en esta área.",
+              "objective": "Potenciar y consolidar la inversión en innovación tecnológica de las MYPES peruanas, promoviendo un ecosistema de apoyo técnico, financiero y regulatorio.",
+              "goals": "Incrementar en un 20% la inversión nominal de las MYPES en innovación tecnológica.",
+              "indicator": "Porcentaje de incremento en la inversión nominal en innovación tecnológica por parte de las MYPES."
+            },
+            {
+              "problem": "La informalidad laboral estricta afecta entre el 70% y 75% de la fuerza laboral, con un 70% de los hogares peruanos dependiendo de trabajos en condiciones informales.",
+              "objective": "Fortalecer la formalización laboral y la equidad salarial dentro de un marco de economía social de mercado, reduciendo la informalidad a través de incentivos.",
+              "goals": "Aumentar el trabajo formal al 50% de la fuerza laboral para el año 2031, consolidando un marco normativo laboral único y simplificado.",
+              "indicator": "Porcentaje de la fuerza laboral en situación de formalidad."
+            },
+            {
+              "problem": "La presión tributaria sobre el PBI es baja (16.8%) y la evasión fiscal es elevada, alcanzando un promedio del 36% en el IGV y 57% en el Impuesto a la Renta.",
+              "objective": "Aumentar la presión tributaria sobre el PBI, simplificando y consolidando el régimen tributario para lograr una mayor progresividad y eficiencia recaudatoria.",
+              "goals": "Para el año 2031, alcanzar una presión tributaria sobre el PBI superior al 20%, y reducir la evasión del IGV a un 30% y la del Impuesto a la Renta a un 50%.",
+              "indicator": "Nivel de presión tributaria sobre el PBI y tasa de evasión del IGV e IR."
+            }
+          ]
+        },
+        {
+          "dimension": "DIMENSIÓN AMBIENTAL",
+          "items": [
+            {
+              "problem": "El Perú mantiene un significativo déficit comercial en madera y productos derivados, reflejando una limitada capacidad productiva del sector forestal a pesar de su potencial.",
+              "objective": "Convertir las Plantaciones Forestales Comerciales (PFC) en una herramienta clave para la mitigación del cambio climático y el desarrollo productivo del país.",
+              "goals": "Establecer 1 millón de hectáreas de Plantaciones Forestales Comerciales, con una proyección de 2 millones al 2045 y 5 millones al 2050.",
+              "indicator": "Hectáreas de Plantaciones Forestales Comerciales establecidas."
+            },
+            {
+              "problem": "La inadecuada disposición final de los residuos sólidos en la mayoría de las regiones del país, donde menos del 5% se gestiona adecuadamente, representa un grave riesgo sanitario y ambiental.",
+              "objective": "Implementar un sistema de valorización energética de residuos sólidos para mejorar su gestión y reducir el impacto ambiental negativo.",
+              "goals": "Construir y poner en operación 5 plantas de valorización energética de residuos en regiones clave y reducir en un 50% la disposición inadecuada de residuos en dichas zonas.",
+              "indicator": "Número de plantas de valorización energética de residuos en operación."
+            },
+            {
+              "problem": "Alta dependencia del sector transporte en combustibles fósiles, los cuales representan el 44.1% del consumo energético nacional y generan significativas emisiones de gases de efecto invernadero.",
+              "objective": "Lograr un sistema de transporte sostenible mediante la disminución progresiva de la dependencia de combustibles fósiles y la transición hacia energías limpias.",
+              "goals": "Para 2031, el 30% de la flota de transporte público en las principales ciudades operará con energía eléctrica y se habrán instalado 500 estaciones de recarga rápida a nivel nacional.",
+              "indicator": "Porcentaje de la flota de transporte público operando con energía eléctrica."
+            }
+          ]
+        },
+        {
+          "dimension": "DIMENSIÓN INSTITUCIONAL",
+          "items": [
+            {
+              "problem": "El ordenamiento territorial del país responde a una lógica virreinal desactualizada y no a criterios de desarrollo contemporáneo, generando fragmentación administrativa.",
+              "objective": "Implementar un nuevo ordenamiento territorial para el país hacia el 2031, reduciendo el número de regiones y redefiniendo las provincias y distritos con criterios de sostenibilidad y funcionalidad.",
+              "goals": "Ejecutar la reorganización territorial entre 2028 y 2031, precedida por una reforma normativa y un referéndum ciudadano entre 2026 y 2027.",
+              "indicator": "Fases de implementación de la reforma territorial."
+            },
+            {
+              "problem": "Las Fuerzas Armadas enfrentan serias limitaciones en su capacidad operativa debido a la falta de modernización de su equipamiento, lo que reduce su capacidad de respuesta.",
+              "objective": "Fortalecer la capacidad operativa de las Fuerzas Armadas mediante la modernización progresiva de su equipamiento, la reducción de la inoperatividad y la implementación de normas técnicas unificadas.",
+              "goals": "Para el año 2031, haber renovado el 70% del material bélico obsoleto y equipo logístico de las tres armas mediante alianzas público-privadas.",
+              "indicator": "Porcentaje de renovación del material bélico obsoleto."
+            },
+            {
+              "problem": "Falta de especialidad y una brecha crítica en la formación policial en materia de inteligencia, existiendo únicamente dos especialidades en las escuelas de la Policía Nacional del Perú.",
+              "objective": "Fortalecer la investigación criminal a través de la especialización y el aumento de efectivos policiales dedicados a esta labor.",
+              "goals": "Reducir el tiempo de investigación preliminar en delitos complejos en un 40%.",
+              "indicator": "Porcentaje de reducción del tiempo de investigación preliminar en delitos complejos."
+            },
+            {
+              "problem": "Brecha digital persistente, caracterizada por un acceso desigual a internet en zonas rurales y urbanas, limitando oportunidades de desarrollo.",
+              "objective": "Cerrar la brecha digital y garantizar el acceso universal a internet en todo el territorio nacional.",
+              "goals": "Alcanzar una cobertura de internet superior al 95% del territorio nacional para el año 2031.",
+              "indicator": "Porcentaje de cobertura de internet a nivel nacional."
             }
           ]
         }
-      ],
-      "resumen_pdf_local": "resumen_pg_2930_PARTIDO_APRISTA_PERUANO.pdf"
+      ]
     },
     {
       "id_plan_gobierno": 29743,

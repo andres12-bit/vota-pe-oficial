@@ -291,7 +291,7 @@ function HomeContent() {
               <div className="homepage-modules">
                 <div className="modules-row modules-row-2col">
                   <LiveMomentum candidates={momentumList} />
-                  <CascadaConsenso />
+                  <CascadaConsenso onNavigateEncuesta={() => setActiveTab('encuesta')} />
                 </div>
               </div>
 
@@ -488,6 +488,8 @@ function getDemoByPosition(position: string): Candidate[] {
         risk_score: 10 + Math.floor(seededRandom(i * 7 + 4) * 50),
         stars_rating: parseFloat((1.5 + seededRandom(i * 7 + 5) * 3.5).toFixed(1)),
         final_score: parseFloat((30 + seededRandom(i * 7 + 6) * 45).toFixed(2)),
+        hoja_score: parseFloat((30 + seededRandom(i * 7 + 11) * 60).toFixed(2)),
+        plan_score: parseFloat((20 + seededRandom(i * 7 + 12) * 70).toFixed(2)),
         vote_count: 5000 + Math.floor(seededRandom(i * 7) * 45000),
         party_name: party.name,
         party_abbreviation: party.abbr,
@@ -528,6 +530,8 @@ function getDemoByPosition(position: string): Candidate[] {
         risk_score: 5 + Math.floor(seededRandom(seed + 7) * 50),
         stars_rating: parseFloat((1.5 + seededRandom(seed + 8) * 3.5).toFixed(1)),
         final_score: parseFloat((15 + seededRandom(seed + 9) * 55).toFixed(2)),
+        hoja_score: parseFloat((15 + seededRandom(seed + 11) * 65).toFixed(2)),
+        plan_score: parseFloat((10 + seededRandom(seed + 12) * 70).toFixed(2)),
         vote_count: 100 + Math.floor(seededRandom(seed + 10) * (position === 'senator' ? 5000 : 3000)),
         party_name: party.name,
         party_abbreviation: party.abbr,

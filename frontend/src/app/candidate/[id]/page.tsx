@@ -79,6 +79,31 @@ function MomentumIndicator({ score }: { score: number }) {
     );
 }
 
+function SubScoreRow({ icon, label, weight, score, explain, detail, color }: {
+    icon: string; label: string; weight: number; score: number; explain: string; detail?: string; color: string;
+}) {
+    const pct = Math.min(100, score);
+    return (
+        <div className="flex items-center gap-2 py-1.5 px-2 rounded-lg hover:bg-white/[0.02] transition-colors">
+            <span className="text-sm shrink-0">{icon}</span>
+            <div className="w-28 shrink-0">
+                <div className="text-[10px] font-semibold" style={{ color: 'var(--vp-text)' }}>{label}</div>
+                <div className="text-[8px]" style={{ color: 'var(--vp-text-dim)' }}>Peso: {weight}%</div>
+            </div>
+            <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                <div className="h-full rounded-full transition-all duration-700" style={{
+                    width: `${pct}%`, background: color, boxShadow: `0 0 6px ${color}44`
+                }} />
+            </div>
+            <div className="w-10 text-right text-xs font-black shrink-0" style={{ color }}>{score}</div>
+            <div className="w-36 shrink-0">
+                <div className="text-[9px] font-semibold truncate" style={{ color: 'var(--vp-text-dim)' }}>{explain}</div>
+                {detail && <div className="text-[8px] truncate" style={{ color: 'var(--vp-text-dim)', opacity: 0.6 }}>{detail}</div>}
+            </div>
+        </div>
+    );
+}
+
 const positionLabels: Record<string, string> = {
     president: 'Candidato(a) a la Presidencia',
     senator: 'Candidato(a) al Senado',
@@ -135,14 +160,113 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
     const finalScore = Number(candidate.final_score);
     const starsVal = Number(candidate.stars_rating);
 
-    // Score formula breakdown
-    const voteScoreRaw = Math.min(100, (candidate.vote_count / 1000) * 10);
+    // Score formula breakdown — NEW formula
+    const hojaScore = Number((candidate as any).hoja_score) || 0;
+    const planScore = Number((candidate as any).plan_score) || 0;
+    const intencionScore = Math.min(100, (candidate.vote_count / 5000) * 100); // normalized to position max
     const formulaBreakdown = {
-        votes: { value: voteScoreRaw * 0.40, weight: 40, raw: voteScoreRaw },
-        intelligence: { value: intScore * 0.25, weight: 25, raw: intScore },
-        momentum: { value: momScore * 0.20, weight: 20, raw: momScore },
+        hojaVida: { value: hojaScore * 0.30, weight: 30, raw: hojaScore },
+        planGobierno: { value: planScore * 0.30, weight: 30, raw: planScore },
+        intencion: { value: intencionScore * 0.25, weight: 25, raw: intencionScore },
         integrity: { value: integrScore * 0.15, weight: 15, raw: integrScore },
     };
+
+    // ======== DETAILED SUB-BREAKDOWNS ========
+    const hv = (candidate as any).hoja_de_vida || {};
+    const hvEdu = hv.education || {};
+    const hvFinances = hv.finances || {};
+
+    // Hoja de Vida sub-scores (same formulas as backend)
+    const hvDetail = (() => {
+        // Education (25%)
+        let educationScore = 10;
+        const technical = (hvEdu.technical || []).filter((t: any) => t && (t.institution || t.specialty));
+        const university = (hvEdu.university || []).filter((u: any) => u && (u.institution || u.degree));
+        const graduatedUni = (hvEdu.university || []).filter((u: any) => u && u.completed);
+        const postgraduate = (hvEdu.postgraduate || []).filter((p: any) => p && (p.institution || p.specialty));
+        const completedPostgrad = (hvEdu.postgraduate || []).filter((p: any) => p && p.completed);
+        if (technical.length > 0) educationScore = Math.max(educationScore, 30);
+        if (university.length > 0) educationScore = Math.max(educationScore, 55);
+        if (graduatedUni.length > 0) educationScore = Math.max(educationScore, 70);
+        if (postgraduate.length > 0) educationScore = Math.max(educationScore, 85);
+        if (completedPostgrad.length > 0) educationScore = 100;
+        const totalDegrees = technical.length + university.length + postgraduate.length;
+        if (totalDegrees >= 3) educationScore = Math.min(100, educationScore + 10);
+        const eduExplain = completedPostgrad.length > 0 ? 'Posgrado completado' : postgraduate.length > 0 ? 'Estudios de posgrado' : graduatedUni.length > 0 ? 'Universidad completada' : university.length > 0 ? 'Estudios universitarios' : technical.length > 0 ? 'Estudios técnicos' : 'Educación básica';
+
+
+        // Work + Political detection (JNE stores political roles like ALCALDE in work_experience)
+        const POLITICAL_KEYWORDS = ['alcalde', 'congresista', 'gobernador', 'regidor', 'ministro', 'viceministro', 'presidente regional', 'consejero regional', 'teniente alcalde', 'parlamentario', 'senador', 'diputado'];
+        const allWorkExp = (hv.work_experience || []).filter((w: any) => w && (w.position || w.employer));
+        const isPoliticalRole = (w: any) => {
+            const pos = ((w.position || '') + ' ' + (w.employer || '')).toLowerCase();
+            return POLITICAL_KEYWORDS.some(kw => pos.includes(kw)) || pos.includes('municipalidad') || pos.includes('gobierno regional') || pos.includes('congreso');
+        };
+        const politicalFromWork = allWorkExp.filter(isPoliticalRole);
+        const pureWorkExp = allWorkExp.filter((w: any) => !isPoliticalRole(w));
+
+        // Work (20%) — only non-political jobs
+        let workScore = Math.min(100, pureWorkExp.length * 15);
+        pureWorkExp.forEach((w: any) => { if (w.start_year && w.end_year && (parseInt(w.end_year) - parseInt(w.start_year)) >= 5) workScore = Math.min(100, workScore + 10); });
+
+        // Political (15%) — from political_history + political roles in work_experience
+        const polHistory = (hv.political_history || []).filter((p: any) => p && (p.organization || p.position));
+        const allPolitical = [...polHistory, ...politicalFromWork];
+        let politicalScore = Math.min(100, allPolitical.length * 20);
+        allPolitical.forEach((p: any) => { const pos = ((p.position || '') + ' ' + (p.employer || '')).toLowerCase(); if (pos.includes('alcalde') || pos.includes('presidente') || pos.includes('secretario general') || pos.includes('congresista') || pos.includes('gobernador') || pos.includes('ministro')) politicalScore = Math.min(100, politicalScore + 15); });
+
+
+        // Finance (10%)
+        let financeScore = 0;
+        const hasAnyIncome = (hvFinances.total_income || 0) > 0 || (hvFinances.public_income || 0) > 0 || (hvFinances.private_income || 0) > 0 || (hvFinances.other_private || 0) > 0 || (hvFinances.other_public || 0) > 0 || (hvFinances.individual_private || 0) > 0 || (hvFinances.individual_public || 0) > 0;
+        const hasAssets = (hvFinances.properties || []).length > 0 || (hvFinances.vehicles || []).length > 0;
+        const hasDeclared = hasAnyIncome || hasAssets || (hvFinances && Object.keys(hvFinances).length > 0);
+        financeScore = hasDeclared ? 100 : 0;
+
+        // Judicial (25%)
+        const sentences = hv.sentences || [];
+        let judicialScore = 100;
+        sentences.forEach((s: any) => { const type = (s.type || '').toLowerCase(); const verdict = (s.verdict || '').toLowerCase(); if (type.includes('penal')) { if (verdict.includes('condena') || verdict.includes('culpable')) judicialScore -= 50; else if (verdict.includes('suspendid')) judicialScore -= 30; else judicialScore -= 20; } else if (type.includes('civil')) judicialScore -= 10; else judicialScore -= 15; });
+        const resignations = hv.resignations || [];
+        if (resignations.length === 0) judicialScore = Math.min(100, judicialScore + 5);
+        else if (resignations.length > 3) judicialScore -= 10;
+        judicialScore = Math.max(0, Math.min(100, judicialScore));
+
+        return {
+            education: { score: educationScore, weight: 25, explain: eduExplain, details: `${technical.length} técnicos, ${university.length} universitarios, ${postgraduate.length} posgrados` },
+            work: { score: workScore, weight: 20, explain: `${pureWorkExp.length} experiencia(s) laboral(es)` },
+            political: { score: politicalScore, weight: 15, explain: allPolitical.length > 0 ? `${allPolitical.length} cargo(s) político(s)` : 'Sin cargos políticos' },
+            finance: { score: financeScore, weight: 10, explain: hasDeclared ? 'Declaración financiera presentada' : 'Sin declaración' },
+            judicial: { score: judicialScore, weight: 25, explain: sentences.length === 0 ? 'Sin sentencias' : `${sentences.length} sentencia(s) registrada(s)` },
+        };
+    })();
+
+    // Plan de Gobierno sub-scores
+    const planDetail = (() => {
+        const items = candidate.plan_gobierno || [];
+        if (items.length === 0) return null;
+        const JNE_DIMS = ['social', 'economic', 'ambiental', 'institucional', 'seguridad', 'relaciones'];
+        const dims = new Set<number>();
+        items.forEach(item => { const d = (item.dimension || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); JNE_DIMS.forEach((j, idx) => { if (d.includes(j)) dims.add(idx); }); });
+        const coverageScore = Math.min(100, (dims.size / JNE_DIMS.length) * 100);
+        let specTotal = 0; items.forEach(item => { const o = (item.objective || '').trim(); specTotal += o.length === 0 ? 0 : o.length < 30 ? 20 : o.length < 80 ? 50 : o.length < 150 ? 75 : 100; });
+        const specificityScore = items.length > 0 ? specTotal / items.length : 0;
+        const goalsCount = items.filter(item => (item.goals || '').trim().length > 10).length;
+        const measurabilityScore = items.length > 0 ? (goalsCount / items.length) * 100 : 0;
+        const indicatorsCount = items.filter(item => (item.indicator || '').trim().length > 5).length;
+        const indicatorScore = items.length > 0 ? (indicatorsCount / items.length) * 100 : 0;
+        let cohTotal = 0; items.forEach(item => { const prob = (item.problem || '').toLowerCase(); const obj = (item.objective || '').toLowerCase(); if (prob.length < 5 || obj.length < 5) return; const words = prob.split(/\s+/).filter(w => w.length > 4); if (words.length === 0) { cohTotal += 30; return; } const m = words.filter(w => obj.includes(w)).length / words.length; cohTotal += m >= 0.3 ? 100 : m >= 0.15 ? 70 : m > 0 ? 40 : 15; });
+        const coherenceScore = items.length > 0 ? cohTotal / items.length : 0;
+
+        return {
+            coverage: { score: Math.round(coverageScore), weight: 25, explain: `${dims.size} de ${JNE_DIMS.length} dimensiones cubiertas` },
+            specificity: { score: Math.round(specificityScore), weight: 25, explain: specificityScore >= 75 ? 'Objetivos detallados' : specificityScore >= 50 ? 'Objetivos moderados' : 'Objetivos vagos' },
+            measurability: { score: Math.round(measurabilityScore), weight: 20, explain: `${goalsCount} de ${items.length} ítems con metas concretas` },
+            indicators: { score: Math.round(indicatorScore), weight: 15, explain: `${indicatorsCount} de ${items.length} ítems con indicadores` },
+            coherence: { score: Math.round(coherenceScore), weight: 15, explain: coherenceScore >= 70 ? 'Buena coherencia problema-objetivo' : coherenceScore >= 40 ? 'Coherencia moderada' : 'Coherencia débil' },
+            totalItems: items.length,
+        };
+    })();
 
     return (
         <div className="min-h-screen" style={{ background: 'transparent' }}>
@@ -208,36 +332,113 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                     </div>
                 </div>
 
-                {/* Score Gauges + Formula */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 profile-section-gap">
-                    {/* Gauges */}
-                    <div className="panel-glow">
-                        <h3 className="text-[10px] font-bold tracking-[2px] uppercase mb-5" style={{ color: 'var(--vp-text-dim)' }}>
-                            📊 Métricas de Inteligencia
-                        </h3>
-                        <div className="grid grid-cols-4 gap-2">
-                            <ScoreGauge label="Inteligencia" value={intScore} color="var(--vp-blue)" subtitle="Intel" />
-                            <ScoreGauge label="Momentum" value={momScore} color="var(--vp-gold)" subtitle="Tendencia" />
-                            <ScoreGauge label="Integridad" value={integrScore} color="var(--vp-green)" subtitle="Transparencia" />
-                            <ScoreGauge label="Riesgo" value={riskScore} color="var(--vp-red)" subtitle="Alerta" />
+                {/* ════════ UNIFIED SCORE PANEL ════════ */}
+                <div className="panel-glow">
+                    {/* Gauges row */}
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-[10px] font-bold tracking-[2px] uppercase" style={{ color: 'var(--vp-text-dim)' }}>📊 Análisis del Score</h3>
+                        <div className="text-[9px] font-mono px-2 py-1 rounded" style={{ background: 'rgba(255,255,255,0.03)', color: 'var(--vp-text-dim)' }}>
+                            score = (HV×0.30) + (Plan×0.30) + (Intención×0.25) + (Integridad×0.15)
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-4 gap-2 mb-4">
+                        <ScoreGauge label="Hoja de Vida" value={hojaScore} color="#8b5cf6" subtitle="30%" />
+                        <ScoreGauge label="Plan Gob." value={planScore} color="var(--vp-blue)" subtitle="30%" />
+                        <ScoreGauge label="Intención" value={intencionScore} color="var(--vp-gold)" subtitle="25%" />
+                        <ScoreGauge label="Integridad" value={integrScore} color="var(--vp-green)" subtitle="15%" />
+                    </div>
+
+                    {/* Compact formula bars */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-1 mb-3">
+                        <BreakdownBar label="📄 HV (30%)" value={formulaBreakdown.hojaVida.value} maxValue={30} color="#8b5cf6" />
+                        <BreakdownBar label="📋 Plan (30%)" value={formulaBreakdown.planGobierno.value} maxValue={30} color="var(--vp-blue)" />
+                        <BreakdownBar label="🗳️ Intención (25%)" value={formulaBreakdown.intencion.value} maxValue={25} color="var(--vp-gold)" />
+                        <BreakdownBar label="🛡️ Integridad (15%)" value={formulaBreakdown.integrity.value} maxValue={15} color="var(--vp-green)" />
+                    </div>
+                    <div className="mb-5 pt-2 flex justify-between items-center" style={{ borderTop: '1px solid var(--vp-border)' }}>
+                        <span className="text-[10px] font-bold uppercase" style={{ color: 'var(--vp-text-dim)' }}>Total</span>
+                        <span className="text-sm font-black" style={{ color: 'var(--vp-red)' }}>{finalScore.toFixed(2)}</span>
+                    </div>
+
+                    {/* ── Detailed Sub-breakdowns ── */}
+                    <div className="text-[10px] font-bold tracking-[2px] uppercase mb-3" style={{ color: 'var(--vp-text-dim)' }}>🔍 ¿Por qué este Score?</div>
+
+                    {/* HV + Plan side by side on desktop */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        {/* Hoja de Vida */}
+                        <div className="rounded-xl overflow-hidden" style={{ border: '1px solid #8b5cf633' }}>
+                            <div className="px-3 py-2 flex items-center justify-between" style={{ background: '#8b5cf611' }}>
+                                <span className="text-xs font-bold" style={{ color: '#8b5cf6' }}>📄 Hoja de Vida</span>
+                                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: '#8b5cf622', color: '#8b5cf6' }}>{hojaScore.toFixed(0)}/100 → {(hojaScore * 0.30).toFixed(1)}pts</span>
+                            </div>
+                            <div className="p-3 space-y-1">
+                                <SubScoreRow icon="🎓" label="Educación" weight={25} score={hvDetail.education.score} explain={hvDetail.education.explain} detail={hvDetail.education.details} color="#8b5cf6" />
+                                <SubScoreRow icon="💼" label="Exp. Laboral" weight={20} score={hvDetail.work.score} explain={hvDetail.work.explain} color="#8b5cf6" />
+                                <SubScoreRow icon="🏛️" label="Exp. Política" weight={15} score={hvDetail.political.score} explain={hvDetail.political.explain} color="#8b5cf6" />
+                                <SubScoreRow icon="💰" label="Finanzas" weight={10} score={hvDetail.finance.score} explain={hvDetail.finance.explain} color="#8b5cf6" />
+                                <SubScoreRow icon="⚖️" label="Judicial" weight={25} score={hvDetail.judicial.score} explain={hvDetail.judicial.explain} color="#8b5cf6" />
+                            </div>
+                        </div>
+
+                        {/* Plan de Gobierno */}
+                        <div className="rounded-xl overflow-hidden" style={{ border: '1px solid rgba(41,121,255,0.2)' }}>
+                            <div className="px-3 py-2 flex items-center justify-between" style={{ background: 'rgba(41,121,255,0.06)' }}>
+                                <span className="text-xs font-bold" style={{ color: 'var(--vp-blue)' }}>📋 Plan de Gobierno</span>
+                                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: 'rgba(41,121,255,0.12)', color: 'var(--vp-blue)' }}>{planScore.toFixed(0)}/100 → {(planScore * 0.30).toFixed(1)}pts</span>
+                            </div>
+                            {planDetail ? (
+                                <div className="p-3 space-y-1">
+                                    <div className="text-[9px] mb-1 px-2 py-0.5 rounded" style={{ background: 'rgba(41,121,255,0.04)', color: 'var(--vp-text-dim)' }}>
+                                        {planDetail.totalItems} ítems evaluados
+                                    </div>
+                                    <SubScoreRow icon="🌐" label="Cobertura" weight={25} score={planDetail.coverage.score} explain={planDetail.coverage.explain} color="var(--vp-blue)" />
+                                    <SubScoreRow icon="🎯" label="Especificidad" weight={25} score={planDetail.specificity.score} explain={planDetail.specificity.explain} color="var(--vp-blue)" />
+                                    <SubScoreRow icon="📈" label="Metas" weight={20} score={planDetail.measurability.score} explain={planDetail.measurability.explain} color="var(--vp-blue)" />
+                                    <SubScoreRow icon="📏" label="Indicadores" weight={15} score={planDetail.indicators.score} explain={planDetail.indicators.explain} color="var(--vp-blue)" />
+                                    <SubScoreRow icon="🔗" label="Coherencia" weight={15} score={planDetail.coherence.score} explain={planDetail.coherence.explain} color="var(--vp-blue)" />
+                                </div>
+                            ) : (
+                                <div className="p-3 text-xs" style={{ color: 'var(--vp-text-dim)' }}>Sin plan registrado en JNE.</div>
+                            )}
                         </div>
                     </div>
 
-                    {/* Formula Breakdown */}
-                    <div className="panel-glow">
-                        <h3 className="text-xs font-bold tracking-[2px] uppercase mb-5" style={{ color: 'var(--vp-text-dim)' }}>
-                            🧮 Desglose del Score Final
-                        </h3>
-                        <div className="text-[9px] mb-3 font-mono px-2 py-1.5 rounded" style={{ background: 'rgba(255,255,255,0.03)', color: 'var(--vp-text-dim)' }}>
-                            score = (votos×0.40) + (intel×0.25) + (momentum×0.20) + (integridad×0.15)
+                    {/* Intención + Integridad side by side */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Intención */}
+                        <div className="rounded-xl overflow-hidden" style={{ border: '1px solid rgba(245,158,11,0.2)' }}>
+                            <div className="px-3 py-2 flex items-center justify-between" style={{ background: 'rgba(245,158,11,0.06)' }}>
+                                <span className="text-xs font-bold" style={{ color: 'var(--vp-gold)' }}>🗳️ Intención Ciudadana</span>
+                                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: 'rgba(245,158,11,0.12)', color: 'var(--vp-gold)' }}>{intencionScore.toFixed(0)}/100 → {(intencionScore * 0.25).toFixed(1)}pts</span>
+                            </div>
+                            <div className="p-3 flex items-center gap-3">
+                                <div className="flex-1">
+                                    <div className="text-sm font-semibold" style={{ color: 'var(--vp-text)' }}>{candidate.vote_count?.toLocaleString()} votos</div>
+                                    <div className="text-[9px] mt-0.5" style={{ color: 'var(--vp-text-dim)' }}>Normalizado al máximo de votos en su cargo</div>
+                                </div>
+                                <div className="shrink-0 w-12 h-12 rounded-full flex items-center justify-center" style={{ background: 'rgba(245,158,11,0.08)', border: '2px solid rgba(245,158,11,0.25)' }}>
+                                    <span className="text-base font-black" style={{ color: 'var(--vp-gold)' }}>{intencionScore.toFixed(0)}</span>
+                                </div>
+                            </div>
                         </div>
-                        <BreakdownBar label={`Votos (40%)`} value={formulaBreakdown.votes.value} maxValue={40} color="var(--vp-red)" />
-                        <BreakdownBar label={`Intel (25%)`} value={formulaBreakdown.intelligence.value} maxValue={25} color="var(--vp-blue)" />
-                        <BreakdownBar label={`Momentum (20%)`} value={formulaBreakdown.momentum.value} maxValue={20} color="var(--vp-gold)" />
-                        <BreakdownBar label={`Integridad (15%)`} value={formulaBreakdown.integrity.value} maxValue={15} color="var(--vp-green)" />
-                        <div className="mt-2 pt-2 flex justify-between items-center" style={{ borderTop: '1px solid var(--vp-border)' }}>
-                            <span className="text-[10px] font-bold uppercase" style={{ color: 'var(--vp-text-dim)' }}>Total</span>
-                            <span className="text-sm font-black" style={{ color: 'var(--vp-red)' }}>{finalScore.toFixed(2)}</span>
+
+                        {/* Integridad */}
+                        <div className="rounded-xl overflow-hidden" style={{ border: '1px solid rgba(0,230,118,0.2)' }}>
+                            <div className="px-3 py-2 flex items-center justify-between" style={{ background: 'rgba(0,230,118,0.06)' }}>
+                                <span className="text-xs font-bold" style={{ color: 'var(--vp-green)' }}>🛡️ Integridad</span>
+                                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: 'rgba(0,230,118,0.12)', color: 'var(--vp-green)' }}>{integrScore.toFixed(0)}/100 → {(integrScore * 0.15).toFixed(1)}pts</span>
+                            </div>
+                            <div className="p-3 flex items-center gap-3">
+                                <div className="flex-1">
+                                    <div className="text-sm font-semibold" style={{ color: 'var(--vp-text)' }}>
+                                        {integrScore >= 90 ? '✅ Historial limpio' : integrScore >= 70 ? '⚠️ Observaciones menores' : integrScore >= 50 ? '🟡 Alertas moderadas' : '🔴 Alertas significativas'}
+                                    </div>
+                                    <div className="text-[9px] mt-0.5" style={{ color: 'var(--vp-text-dim)' }}>Sentencias, transparencia, historial partidario</div>
+                                </div>
+                                <div className="shrink-0 w-12 h-12 rounded-full flex items-center justify-center" style={{ background: 'rgba(0,230,118,0.08)', border: `2px solid ${integrScore >= 70 ? 'rgba(0,230,118,0.25)' : 'rgba(255,23,68,0.25)'}` }}>
+                                    <span className="text-base font-black" style={{ color: integrScore >= 70 ? 'var(--vp-green)' : 'var(--vp-red)' }}>{integrScore.toFixed(0)}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

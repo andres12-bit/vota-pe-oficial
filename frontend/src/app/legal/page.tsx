@@ -82,13 +82,13 @@ export default function LegalPage() {
                         El &quot;Score Final&quot; de cada candidato se calcula con la siguiente fórmula:
                     </p>
                     <div className="p-3 rounded-lg text-xs font-mono mb-3" style={{ background: 'rgba(255,255,255,0.03)', color: 'var(--vp-text)', border: '1px solid var(--vp-border)' }}>
-                        score = (votos × 0.40) + (inteligencia × 0.25) + (momentum × 0.20) + (integridad × 0.15)
+                        score = (hoja_de_vida × 0.30) + (plan_de_gobierno × 0.30) + (intención_ciudadana × 0.25) + (integridad × 0.15)
                     </div>
                     <ul className="text-sm leading-relaxed space-y-1" style={{ color: 'var(--vp-text-dim)' }}>
-                        <li>• <strong>Votos (40%)</strong>: Participación de usuarios en la plataforma</li>
-                        <li>• <strong>Inteligencia (25%)</strong>: Análisis de perfil e historial del candidato</li>
-                        <li>• <strong>Momentum (20%)</strong>: Velocidad de actividad reciente</li>
-                        <li>• <strong>Integridad (15%)</strong>: Indicador de transparencia</li>
+                        <li>• <strong>Hoja de Vida (30%)</strong>: Evaluación de educación, experiencia laboral, experiencia política, transparencia financiera y limpieza judicial del candidato (datos del JNE)</li>
+                        <li>• <strong>Plan de Gobierno (30%)</strong>: Cobertura dimensional, especificidad, metas cuantificables, indicadores y coherencia del plan presentado al JNE</li>
+                        <li>• <strong>Intención Ciudadana (25%)</strong>: Participación de usuarios en la plataforma, normalizada por posición</li>
+                        <li>• <strong>Integridad (15%)</strong>: Indicador de transparencia y limpieza del candidato</li>
                     </ul>
                 </div>
 

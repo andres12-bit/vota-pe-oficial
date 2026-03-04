@@ -545,6 +545,8 @@ function initializeData() {
       risk_score: riskScore,
       stars_rating: parseFloat((seededRandom() * 2 + 2).toFixed(1)),
       final_score: Math.min(100, finalScore),
+      hoja_score: 0,
+      plan_score: 0,
       vote_count: voteCount,
       is_active: isActive,
       jne_status: raw.status || 'INSCRITO',
@@ -710,6 +712,11 @@ function parseQuery(sql, params = []) {
     resolved = resolved.replace(new RegExp(`\\$${i + 1}`, 'g'), typeof p === 'string' ? `'${p}'` : String(p));
   });
 
+  // ==================== ALTER TABLE (no-op in memory) ====================
+  if (q.startsWith('alter table')) {
+    return { rows: [], rowCount: 0 };
+  }
+
   // ==================== SELECT queries ====================
   if (q.startsWith('select')) {
     return handleSelect(resolved, q, params);
@@ -827,6 +834,33 @@ function handleSelect(resolved, q, params) {
     if (resolved.includes('from candidate_events')) return { rows: [{ cnt: store.candidate_events.length }] };
     if (resolved.includes('from users')) return { rows: [{ cnt: store.users.length }] };
     return { rows: [{ cnt: 0 }] };
+  }
+
+  // MAX(vote_count) GROUP BY position — for scoring normalization
+  if (resolved.includes('max(vote_count)') && resolved.includes('group by position')) {
+    let items = store.candidates.filter(c => c.is_active);
+    const byPos = {};
+    items.forEach(c => {
+      if (!byPos[c.position] || c.vote_count > byPos[c.position]) {
+        byPos[c.position] = c.vote_count || 0;
+      }
+    });
+    return { rows: Object.entries(byPos).map(([position, max_votes]) => ({ position, max_votes: String(max_votes) })) };
+  }
+
+  // FILTER/AVG scoring distribution query
+  if (resolved.includes('filter') && resolved.includes('avg(hoja_score)')) {
+    const items = store.candidates.filter(c => c.is_active);
+    const cnt = items.length;
+    const score0 = items.filter(c => (c.final_score || 0) === 0).length;
+    const score125 = items.filter(c => c.final_score > 0 && c.final_score <= 25).length;
+    const score2650 = items.filter(c => c.final_score > 25 && c.final_score <= 50).length;
+    const score5175 = items.filter(c => c.final_score > 50 && c.final_score <= 75).length;
+    const score76100 = items.filter(c => c.final_score > 75).length;
+    const avgHv = cnt > 0 ? (items.reduce((s, c) => s + (parseFloat(c.hoja_score) || 0), 0) / cnt).toFixed(2) : '0';
+    const avgPlan = cnt > 0 ? (items.reduce((s, c) => s + (parseFloat(c.plan_score) || 0), 0) / cnt).toFixed(2) : '0';
+    const avgFinal = cnt > 0 ? (items.reduce((s, c) => s + (c.final_score || 0), 0) / cnt).toFixed(2) : '0';
+    return { rows: [{ score_0: score0, score_1_25: score125, score_26_50: score2650, score_51_75: score5175, score_76_100: score76100, avg_hv: avgHv, avg_plan: avgPlan, avg_final: avgFinal }] };
   }
 
   // SUM(vote_count) / AVG queries
@@ -1185,6 +1219,14 @@ function handleUpdate(q, params) {
     // Parse SET clauses
     if (q.includes('vote_count = vote_count + 1')) {
       candidate.vote_count = (candidate.vote_count || 0) + 1;
+    }
+    if (q.includes('set hoja_score') && !q.includes('plan_score')) {
+      // UPDATE candidates SET hoja_score = $1, updated_at = NOW() WHERE id = $2
+      candidate.hoja_score = parseFloat(params[0]) || 0;
+    }
+    if (q.includes('set plan_score') && !q.includes('hoja_score')) {
+      // UPDATE candidates SET plan_score = $1, updated_at = NOW() WHERE id = $2
+      candidate.plan_score = parseFloat(params[0]) || 0;
     }
     if (q.includes('final_score')) {
       const fsIdx = q.indexOf('final_score = $');
