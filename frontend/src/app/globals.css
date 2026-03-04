@@ -2041,6 +2041,24 @@ body {
   border: 1px solid rgba(198, 40, 40, 0.12);
 }
 
+@media (max-width: 768px) {
+  .rcart {
+    width: 240px;
+    bottom: 72px;
+    right: 8px;
+    max-height: 50vh;
+    font-size: 12px;
+  }
+
+  .rcart-header {
+    padding: 8px 10px;
+  }
+
+  .rcart-body {
+    padding: 8px 10px;
+  }
+}
+
 @keyframes rcart-slide-in {
   from {
     opacity: 0;
@@ -4068,6 +4086,43 @@ body {
     max-width: 100%;
     overflow-x: hidden;
   }
+
+  /* Planchas page + dashboard mobile overflow */
+  .planchas-page {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .pd-dashboard,
+  .pd-two-cols,
+  .pd-histogram,
+  .pd-kpi-row {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .plancha-card {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .plancha-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .plancha-breakdown {
+    grid-template-columns: 1fr;
+  }
+
+  .pd-hist-col {
+    min-width: 0;
+  }
+
+  .pd-best-strip {
+    flex-wrap: wrap;
+    text-align: center;
+    justify-content: center;
+  }
 }
 
 /* ==================== HERO CENTERED BLOCK ==================== */
@@ -5054,6 +5109,8 @@ body {
   padding: 0 4px;
   flex-wrap: wrap;
   gap: 8px;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .planchas-sort-btn {
