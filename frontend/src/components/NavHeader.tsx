@@ -47,6 +47,9 @@ export default function NavHeader({ activeTab, onTabChange }: NavHeaderProps) {
         setShowMobileMenu(false);
         if (onTabChange) {
             onTabChange(tabId);
+            // Also update URL so refresh preserves the tab
+            const url = tabId === 'votar' ? '/' : `/?tab=${tabId}`;
+            window.history.replaceState(null, '', url);
         } else {
             router.push(`/?tab=${tabId}`);
         }
