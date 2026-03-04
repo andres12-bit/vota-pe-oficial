@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 type InfoSection = 'plataforma' | 'como-funciona' | 'transparencia' | 'proyecto' | 'sobre' | 'contacto' | 'terminos' | null;
 
@@ -140,9 +141,9 @@ export default function SiteFooter() {
                             <div className="premium-footer-col">
                                 <h4 className="premium-footer-col-title">Legal</h4>
                                 <ul>
-                                    <li><a href="#" onClick={openSection('terminos')}>Aviso legal</a></li>
-                                    <li><a href="#" onClick={openSection('transparencia')}>Política de privacidad</a></li>
-                                    <li><a href="#" onClick={openSection('terminos')}>Cookies</a></li>
+                                    <li><Link href="/legal">Aviso legal</Link></li>
+                                    <li><Link href="/legal">Política de privacidad</Link></li>
+                                    <li><Link href="/legal">Metodología</Link></li>
                                 </ul>
                             </div>
                         </div>
@@ -154,7 +155,10 @@ export default function SiteFooter() {
                     {/* Bottom bar */}
                     <div className="premium-footer-bottom">
                         <p>© 2026 VOTA.PE — Proyecto ciudadano independiente.</p>
-                        <p className="premium-footer-disclaimer">No afiliado a ningún partido político ni organismo electoral.</p>
+                        <p className="premium-footer-disclaimer">
+                            Datos de candidatos: <a href="https://votoinformado.jne.gob.pe" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline' }}>JNE Voto Informado</a> • No afiliado a partidos ni organismos electorales • <Link href="/legal" style={{ textDecoration: 'underline' }}>Aviso legal</Link>
+                        </p>
+                        <p style={{ fontSize: '10px', opacity: 0.4, marginTop: '4px' }}>Última actualización de datos: Marzo 2026</p>
                     </div>
                 </div>
             </footer>

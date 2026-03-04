@@ -7,7 +7,7 @@ const router = express.Router();
 // GET /api/candidates - list all candidates
 router.get('/', async (req, res) => {
     try {
-        const { position, party_id, limit = 50 } = req.query;
+        const { position, party_id, region, limit = 50 } = req.query;
         let query = `
       SELECT c.*, p.name as party_name, p.abbreviation as party_abbreviation, p.color as party_color
       FROM candidates c
@@ -23,6 +23,10 @@ router.get('/', async (req, res) => {
         if (party_id) {
             params.push(party_id);
             query += ` AND c.party_id = $${params.length}`;
+        }
+        if (region) {
+            params.push(region);
+            query += ` AND c.region = $${params.length}`;
         }
 
         params.push(parseInt(limit));
@@ -92,6 +96,18 @@ router.get('/:id/proposals', async (req, res) => {
             [req.params.id]
         );
         res.json({ proposals: result.rows });
+    } catch (err) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// GET /api/candidates/regions/list — list all unique regions
+router.get('/regions/list', async (req, res) => {
+    try {
+        const result = await pool.query(
+            'SELECT DISTINCT region FROM candidates WHERE is_active = true AND region IS NOT NULL ORDER BY region'
+        );
+        res.json({ regions: result.rows.map(r => r.region) });
     } catch (err) {
         res.status(500).json({ error: 'Internal server error' });
     }
