@@ -112,10 +112,10 @@ function ScoreDetailModal({ title, icon, score, color, children, onClose }: {
 }) {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-md" />
             <div className="relative w-full max-w-lg max-h-[80vh] overflow-y-auto rounded-2xl shadow-2xl" onClick={e => e.stopPropagation()}
-                style={{ background: 'var(--vp-panel)', border: `1px solid ${color}44` }}>
-                <div className="sticky top-0 z-10 px-5 py-4 flex items-center justify-between rounded-t-2xl" style={{ background: `${color}15`, borderBottom: `1px solid ${color}33` }}>
+                style={{ background: '#1a1a2e', border: `1px solid ${color}44`, boxShadow: `0 25px 60px rgba(0,0,0,0.5), 0 0 40px ${color}15` }}>
+                <div className="sticky top-0 z-10 px-5 py-4 flex items-center justify-between rounded-t-2xl" style={{ background: `${color}20`, borderBottom: `1px solid ${color}33` }}>
                     <div className="flex items-center gap-3">
                         <span className="text-2xl">{icon}</span>
                         <div>
@@ -136,7 +136,7 @@ function ScoreDetailModal({ title, icon, score, color, children, onClose }: {
 
 function DetailItem({ label, value, icon, color }: { label: string; value: string; icon?: string; color?: string }) {
     return (
-        <div className="flex items-start gap-2 py-2 px-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)' }}>
+        <div className="flex items-start gap-2 py-2 px-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.05)' }}>
             {icon && <span className="text-sm mt-0.5 shrink-0">{icon}</span>}
             <div className="flex-1 min-w-0">
                 <div className="text-[10px] font-bold uppercase tracking-wider mb-0.5" style={{ color: color || 'var(--vp-text-dim)' }}>{label}</div>
