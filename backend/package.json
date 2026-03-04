@@ -8,7 +8,9 @@
     "dev": "node --watch src/server.js",
     "migrate": "node src/db/migrations.js",
     "seed": "node src/db/seeder.js",
-    "setup-db": "node src/db/migrations.js && node src/db/seeder.js"
+    "setup-db": "npm run migrate && npm run seed",
+    "score": "node src/engines/initialScorer.js",
+    "setup-full": "npm run migrate && npm run seed && npm run score"
   },
   "dependencies": {
     "cors": "^2.8.5",

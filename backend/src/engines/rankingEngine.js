@@ -2,7 +2,7 @@
  * VOTA.PE — Candidate Scoring Engine (Ranking Engine)
  *
  * Formula:
- *   final_candidate_score = (vote_score × 0.40) + (intelligence_score × 0.25) + (momentum_score × 0.20) + (integrity_score × 0.15)
+ *   final_candidate_score = (hoja_score × 0.30) + (plan_score × 0.30) + (intencion × 0.25) + (integridad × 0.15)
  *
  * Caching:
  *   candidate_score:{candidate_id} → Redis/memory TTL 300s
@@ -19,20 +19,27 @@ class RankingEngine {
     // ==================== CANDIDATE SCORING ====================
 
     /**
-     * Calculate final score for a candidate (pure computation, no DB)
-     * Formula: (vote_score × 0.40) + (intelligence × 0.25) + (momentum × 0.20) + (integrity × 0.15)
-     */
-    static calculateFinalScore(candidate) {
-        // Normalize vote count to 0-100 scale
-        const voteScore = Math.min(100, (parseInt(candidate.vote_count) || 0) / 100);
-        const intelligenceScore = parseFloat(candidate.intelligence_score) || 50;
-        const momentumScore = parseFloat(candidate.momentum_score) || 0;
+ * Calculate final score for a candidate (pure computation, no DB)
+ * NEW Formula:
+ *   final_score = (hoja_score × 0.30) + (plan_score × 0.30) + (intencion × 0.25) + (integridad × 0.15)
+ *
+ * Where intencion = normalized vote count (0-100) relative to position max
+ */
+    static calculateFinalScore(candidate, maxVotesInPosition = 100) {
+        const hojaScore = parseFloat(candidate.hoja_score) || 0;
+        const planScore = parseFloat(candidate.plan_score) || 0;
+        const voteCount = parseInt(candidate.vote_count) || 0;
         const integrityScore = parseFloat(candidate.integrity_score) || 100;
 
+        // Normalize votes: relative to the most-voted candidate in same position
+        const intencionScore = maxVotesInPosition > 0
+            ? Math.min(100, (voteCount / maxVotesInPosition) * 100)
+            : 0;
+
         const finalScore =
-            (voteScore * 0.40) +
-            (intelligenceScore * 0.25) +
-            (momentumScore * 0.20) +
+            (hojaScore * 0.30) +
+            (planScore * 0.30) +
+            (intencionScore * 0.25) +
             (integrityScore * 0.15);
 
         return Math.min(100, Math.max(0, parseFloat(finalScore.toFixed(2))));
@@ -70,19 +77,21 @@ class RankingEngine {
         );
 
         // Build score envelope
-        const voteScore = Math.min(100, (parseInt(candidate.vote_count) || 0) / 100);
+        const hojaScore = parseFloat(candidate.hoja_score) || 0;
+        const planScore = parseFloat(candidate.plan_score) || 0;
+        const integrityScore = parseFloat(candidate.integrity_score) || 100;
         const scoreData = {
             candidate_id: candidateId,
             final_score: finalScore,
             breakdown: {
-                vote_score: parseFloat(voteScore.toFixed(2)),
-                vote_contribution: parseFloat((voteScore * 0.40).toFixed(2)),
-                intelligence_score: parseFloat(candidate.intelligence_score) || 50,
-                intelligence_contribution: parseFloat(((parseFloat(candidate.intelligence_score) || 50) * 0.25).toFixed(2)),
-                momentum_score: parseFloat(candidate.momentum_score) || 0,
-                momentum_contribution: parseFloat(((parseFloat(candidate.momentum_score) || 0) * 0.20).toFixed(2)),
-                integrity_score: parseFloat(candidate.integrity_score) || 100,
-                integrity_contribution: parseFloat(((parseFloat(candidate.integrity_score) || 100) * 0.15).toFixed(2)),
+                hoja_score: hojaScore,
+                hoja_contribution: parseFloat((hojaScore * 0.30).toFixed(2)),
+                plan_score: planScore,
+                plan_contribution: parseFloat((planScore * 0.30).toFixed(2)),
+                vote_count: parseInt(candidate.vote_count) || 0,
+                intencion_contribution: parseFloat((Math.min(100, (parseInt(candidate.vote_count) || 0)) * 0.25).toFixed(2)),
+                integrity_score: integrityScore,
+                integrity_contribution: parseFloat((integrityScore * 0.15).toFixed(2)),
             },
             vote_count: parseInt(candidate.vote_count) || 0,
             cached_at: Date.now(),

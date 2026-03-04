@@ -10,7 +10,7 @@ services:
     runtime: node
     plan: free
     rootDir: backend
-    buildCommand: npm install && node src/db/migrations.js && node src/db/seeder.js
+    buildCommand: npm install && node src/db/migrations.js && node src/db/seeder.js && node src/engines/initialScorer.js
     startCommand: node src/server.js
     envVars:
       - key: NODE_ENV

@@ -8,13 +8,13 @@ const { Pool } = require('pg');
 
 const DATABASE_URL = process.env.DATABASE_URL;
 if (!DATABASE_URL) {
-    console.error('❌ DATABASE_URL not set. Provide it as env var.');
-    process.exit(1);
+  console.error('❌ DATABASE_URL not set. Provide it as env var.');
+  process.exit(1);
 }
 
 const pool = new Pool({
-    connectionString: DATABASE_URL,
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  connectionString: DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });
 
 const TABLES_SQL = `
@@ -53,6 +53,8 @@ CREATE TABLE IF NOT EXISTS candidates (
   momentum_score NUMERIC(6,2) DEFAULT 0,
   integrity_score NUMERIC(6,2) DEFAULT 0,
   risk_score NUMERIC(6,2) DEFAULT 0,
+  hoja_score NUMERIC(6,2) DEFAULT 0,
+  plan_score NUMERIC(6,2) DEFAULT 0,
   stars_rating NUMERIC(3,1) DEFAULT 0,
   final_score NUMERIC(6,2) DEFAULT 0,
   vote_count INTEGER DEFAULT 0,
@@ -175,16 +177,16 @@ CREATE TABLE IF NOT EXISTS users (
 `;
 
 async function migrate() {
-    console.log('🔄 Running migrations...');
-    try {
-        await pool.query(TABLES_SQL);
-        console.log('✅ All tables created successfully.');
-    } catch (err) {
-        console.error('❌ Migration failed:', err.message);
-        process.exit(1);
-    } finally {
-        await pool.end();
-    }
+  console.log('🔄 Running migrations...');
+  try {
+    await pool.query(TABLES_SQL);
+    console.log('✅ All tables created successfully.');
+  } catch (err) {
+    console.error('❌ Migration failed:', err.message);
+    process.exit(1);
+  } finally {
+    await pool.end();
+  }
 }
 
 migrate();
