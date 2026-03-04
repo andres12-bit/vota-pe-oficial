@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { Candidate, getGlobalRankingAndMomentum, getRanking, getStats, castVote } from '@/lib/api';
 import { getAvatarUrl, getCandidatePhoto } from '@/lib/avatars';
 import { useWebSocket } from '@/lib/websocket';
@@ -27,7 +27,7 @@ const VALID_TABS: TabType[] = ['votar', 'encuesta', 'planchas', 'president', 'se
 
 // TABS array is now in NavHeader component
 
-export default function Home() {
+function HomeContent() {
   const searchParams = useSearchParams();
   const tabFromUrl = searchParams.get('tab') as TabType | null;
   const initialTab = (tabFromUrl && VALID_TABS.includes(tabFromUrl)) ? tabFromUrl : 'votar';
@@ -540,3 +540,14 @@ function getDemoByPosition(position: string): Candidate[] {
   return candidates.sort((a, b) => b.final_score - a.final_score).map((c, i) => ({ ...c, rank: i + 1 }));
 }
 
+export default function Home() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--vp-bg)' }}>
+        <div className="w-12 h-12 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: 'var(--vp-red)', borderTopColor: 'transparent' }} />
+      </div>
+    }>
+      <HomeContent />
+    </Suspense>
+  );
+}
