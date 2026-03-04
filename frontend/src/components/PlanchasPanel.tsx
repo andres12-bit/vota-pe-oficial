@@ -70,15 +70,15 @@ export default function PlanchasPanel() {
     const sorted = useMemo(() => {
         return [...planchas].sort((a, b) => {
             if (sortBy === 'score') {
-                const scoreA = a.presidential ? Number(a.presidential.final_score) : (a.party.party_full_score || 0);
-                const scoreB = b.presidential ? Number(b.presidential.final_score) : (b.party.party_full_score || 0);
+                const scoreA = a.presidential ? Number(a.presidential.final_score || 0) : Number(a.party.party_full_score || 0);
+                const scoreB = b.presidential ? Number(b.presidential.final_score || 0) : Number(b.party.party_full_score || 0);
                 return scoreB - scoreA;
             }
             if (sortBy === 'name') return a.party.name.localeCompare(b.party.name);
             if (sortBy === 'candidates') return b.allCandidates.length - a.allCandidates.length;
             if (sortBy === 'totalScore') {
-                const totalA = a.allCandidates.reduce((s, c) => s + (c.final_score || 0), 0);
-                const totalB = b.allCandidates.reduce((s, c) => s + (c.final_score || 0), 0);
+                const totalA = a.allCandidates.reduce((s, c) => s + Number(c.final_score || 0), 0);
+                const totalB = b.allCandidates.reduce((s, c) => s + Number(c.final_score || 0), 0);
                 return totalB - totalA;
             }
             return 0;
@@ -165,8 +165,8 @@ function PlanchasDashboard({ planchas, sorted }: { planchas: PlanchaData[]; sort
         const totalVotes = planchas.reduce((s, p) => s + p.allCandidates.reduce((v, c) => v + (c.vote_count || 0), 0), 0);
 
         const scores = planchas.map(p => {
-            const ps = p.presidential ? Number(p.presidential.final_score) : 0;
-            return ps > 0 ? ps : (p.party.party_full_score || 0);
+            const ps = p.presidential ? Number(p.presidential.final_score || 0) : 0;
+            return ps > 0 ? ps : Number(p.party.party_full_score || 0);
         });
         const avgScore = scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
         const maxScore = Math.max(...scores);
@@ -213,8 +213,8 @@ function PlanchasDashboard({ planchas, sorted }: { planchas: PlanchaData[]; sort
                 <div className="pd-kpi"><span className="pd-kpi-val" style={{ color: 'var(--vp-red)' }}>{planchas.length}</span><span className="pd-kpi-lbl">Planchas</span></div>
                 <div className="pd-kpi"><span className="pd-kpi-val" style={{ color: '#2563eb' }}>{stats.totalCandidates.toLocaleString()}</span><span className="pd-kpi-lbl">Candidatos</span></div>
                 <div className="pd-kpi"><span className="pd-kpi-val" style={{ color: '#16a34a' }}>{stats.totalVotes.toLocaleString()}</span><span className="pd-kpi-lbl">Votos Totales</span></div>
-                <div className="pd-kpi"><span className="pd-kpi-val" style={{ color: '#ca8a04' }}>{stats.avgScore.toFixed(1)}</span><span className="pd-kpi-lbl">Score Promedio</span></div>
-                <div className="pd-kpi"><span className="pd-kpi-val" style={{ color: '#16a34a' }}>{stats.maxScore.toFixed(1)}</span><span className="pd-kpi-lbl">Mejor Score</span></div>
+                <div className="pd-kpi"><span className="pd-kpi-val" style={{ color: '#ca8a04' }}>{Number(stats.avgScore || 0).toFixed(1)}</span><span className="pd-kpi-lbl">Score Promedio</span></div>
+                <div className="pd-kpi"><span className="pd-kpi-val" style={{ color: '#16a34a' }}>{Number(stats.maxScore || 0).toFixed(1)}</span><span className="pd-kpi-lbl">Mejor Score</span></div>
                 <div className="pd-kpi"><span className="pd-kpi-val" style={{ color: '#7c3aed' }}>{planchas.filter(p => p.presidential).length}</span><span className="pd-kpi-lbl">Con Presidencial</span></div>
             </div>
 
@@ -239,7 +239,7 @@ function PlanchasDashboard({ planchas, sorted }: { planchas: PlanchaData[]; sort
                     <h3 className="pd-card-title" style={{ marginTop: 20 }}>🏆 Top 5 Planchas</h3>
                     <div className="pd-top5">
                         {top5.map((p, i) => {
-                            const sc = p.presidential ? Number(p.presidential.final_score) : (p.party.party_full_score || 0);
+                            const sc = p.presidential ? Number(p.presidential.final_score || 0) : Number(p.party.party_full_score || 0);
                             const medals = ['🥇', '🥈', '🥉'];
                             return (
                                 <div key={p.party.id} className="pd-top5-row">
@@ -248,7 +248,7 @@ function PlanchasDashboard({ planchas, sorted }: { planchas: PlanchaData[]; sort
                                     <div className="pd-top5-bar-wrap">
                                         <div className="pd-top5-bar" style={{ width: `${(sc / (stats.maxScore || 1)) * 100}%`, background: p.party.color || 'var(--vp-red)' }} />
                                     </div>
-                                    <span className="pd-top5-score">{sc.toFixed(1)}</span>
+                                    <span className="pd-top5-score">{Number(sc || 0).toFixed(1)}</span>
                                 </div>
                             );
                         })}
@@ -303,7 +303,7 @@ function PlanchasDashboard({ planchas, sorted }: { planchas: PlanchaData[]; sort
                     <span className="pd-best-medal">🏆</span>
                     <span className="pd-best-text">
                         Mejor plancha: <strong style={{ color: stats.bestPlancha.party.color }}>{stats.bestPlancha.party.name}</strong>
-                        {' '}({stats.bestPlancha.party.abbreviation}) — Score: <strong>{stats.maxScore.toFixed(1)}</strong>
+                        {' '}({stats.bestPlancha.party.abbreviation}) — Score: <strong>{Number(stats.maxScore || 0).toFixed(1)}</strong>
                     </span>
                 </div>
             )}
@@ -316,7 +316,7 @@ function PlanchaCard({ plancha, rank }: { plancha: PlanchaData; rank: number }) 
     const { party, presidential, allCandidates } = plancha;
 
     const totalCandidates = allCandidates.length;
-    const totalScore = allCandidates.reduce((s, c) => s + (c.final_score || 0), 0);
+    const totalScore = allCandidates.reduce((s, c) => s + Number(c.final_score || 0), 0);
     const totalVotes = allCandidates.reduce((s, c) => s + (c.vote_count || 0), 0);
     const avgIntelligence = totalCandidates > 0 ? allCandidates.reduce((s, c) => s + Number(c.intelligence_score || 0), 0) / totalCandidates : 0;
     const avgMomentum = totalCandidates > 0 ? allCandidates.reduce((s, c) => s + Number(c.momentum_score || 0), 0) / totalCandidates : 0;
@@ -329,8 +329,8 @@ function PlanchaCard({ plancha, rank }: { plancha: PlanchaData; rank: number }) 
     const maxVotes = Math.max(...allCandidates.map(c => c.vote_count || 0), 1);
     const avgIntencion = totalCandidates > 0 ? allCandidates.reduce((s, c) => s + Math.min(100, ((c.vote_count || 0) / maxVotes) * 100), 0) / totalCandidates : 0;
 
-    const presScore = presidential ? Number(presidential.final_score) : 0;
-    const displayScore = presScore > 0 ? presScore : (party.party_full_score || 0);
+    const presScore = presidential ? Number(presidential.final_score || 0) : 0;
+    const displayScore = presScore > 0 ? presScore : Number(party.party_full_score || 0);
 
     const byPosition = {
         president: allCandidates.filter(c => c.position === 'president').length,
@@ -354,7 +354,7 @@ function PlanchaCard({ plancha, rank }: { plancha: PlanchaData; rank: number }) 
                 </div>
                 <div className="plancha-score-col">
                     <span className="plancha-score-badge" style={{ background: displayScore >= 50 ? '#16a34a' : displayScore >= 35 ? '#ca8a04' : '#dc2626' }}>
-                        {displayScore.toFixed(1)}
+                        {Number(displayScore || 0).toFixed(1)}
                     </span>
                     <span className="plancha-score-label">PUNTOS</span>
                 </div>
@@ -377,7 +377,7 @@ function PlanchaCard({ plancha, rank }: { plancha: PlanchaData; rank: number }) 
                         <div className="plancha-pres-role">Candidato(a) Presidencial</div>
                     </div>
                     <span className="plancha-pres-score" style={{ background: Number(presidential.final_score) >= 50 ? '#16a34a' : Number(presidential.final_score) >= 35 ? '#ca8a04' : '#dc2626' }}>
-                        {Number(presidential.final_score).toFixed(1)}
+                        {Number(presidential.final_score || 0).toFixed(1)}
                     </span>
                 </Link>
             )}
@@ -385,7 +385,7 @@ function PlanchaCard({ plancha, rank }: { plancha: PlanchaData; rank: number }) 
             {/* ── Stats Row ── */}
             <div className="plancha-stats-grid">
                 <div className="plancha-mini-stat">
-                    <span className="plancha-mini-val" style={{ color: 'var(--vp-red)' }}>{totalScore.toFixed(0)}</span>
+                    <span className="plancha-mini-val" style={{ color: 'var(--vp-red)' }}>{Number(totalScore || 0).toFixed(0)}</span>
                     <span className="plancha-mini-lbl">SCORE TOTAL</span>
                 </div>
                 <div className="plancha-mini-stat">
@@ -397,7 +397,7 @@ function PlanchaCard({ plancha, rank }: { plancha: PlanchaData; rank: number }) 
                     <span className="plancha-mini-lbl">CANDIDATOS</span>
                 </div>
                 <div className="plancha-mini-stat">
-                    <span className="plancha-mini-val" style={{ color: '#ca8a04' }}>{avgStars.toFixed(1)}</span>
+                    <span className="plancha-mini-val" style={{ color: '#ca8a04' }}>{Number(avgStars || 0).toFixed(1)}</span>
                     <span className="plancha-mini-lbl">ESTRELLAS PROM.</span>
                 </div>
             </div>
@@ -425,33 +425,33 @@ function PlanchaCard({ plancha, rank }: { plancha: PlanchaData; rank: number }) 
                         <div style={{ flex: 1, margin: '0 8px', height: 6, background: '#f3f4f6', borderRadius: 3, overflow: 'hidden' }}>
                             <div style={{ width: `${avgHojaScore}%`, height: '100%', background: '#8b5cf6', borderRadius: 3 }} />
                         </div>
-                        <span className="plancha-brk-val" style={{ color: '#8b5cf6' }}>{(avgHojaScore * 0.30).toFixed(1)}</span>
+                        <span className="plancha-brk-val" style={{ color: '#8b5cf6' }}>{Number(avgHojaScore * 0.30 || 0).toFixed(1)}</span>
                     </div>
                     <div className="plancha-brk-item">
                         <span>📋 Plan de Gobierno (30%)</span>
                         <div style={{ flex: 1, margin: '0 8px', height: 6, background: '#f3f4f6', borderRadius: 3, overflow: 'hidden' }}>
                             <div style={{ width: `${avgPlanScore}%`, height: '100%', background: '#2563eb', borderRadius: 3 }} />
                         </div>
-                        <span className="plancha-brk-val" style={{ color: '#2563eb' }}>{(avgPlanScore * 0.30).toFixed(1)}</span>
+                        <span className="plancha-brk-val" style={{ color: '#2563eb' }}>{Number(avgPlanScore * 0.30 || 0).toFixed(1)}</span>
                     </div>
                     <div className="plancha-brk-item">
                         <span>🗳️ Intención Ciudadana (25%)</span>
                         <div style={{ flex: 1, margin: '0 8px', height: 6, background: '#f3f4f6', borderRadius: 3, overflow: 'hidden' }}>
                             <div style={{ width: `${avgIntencion}%`, height: '100%', background: '#f59e0b', borderRadius: 3 }} />
                         </div>
-                        <span className="plancha-brk-val" style={{ color: '#f59e0b' }}>{(avgIntencion * 0.25).toFixed(1)}</span>
+                        <span className="plancha-brk-val" style={{ color: '#f59e0b' }}>{Number(avgIntencion * 0.25 || 0).toFixed(1)}</span>
                     </div>
                     <div className="plancha-brk-item">
                         <span>🛡️ Integridad (15%)</span>
                         <div style={{ flex: 1, margin: '0 8px', height: 6, background: '#f3f4f6', borderRadius: 3, overflow: 'hidden' }}>
                             <div style={{ width: `${avgIntegrity}%`, height: '100%', background: '#16a34a', borderRadius: 3 }} />
                         </div>
-                        <span className="plancha-brk-val" style={{ color: '#16a34a' }}>{(avgIntegrity * 0.15).toFixed(1)}</span>
+                        <span className="plancha-brk-val" style={{ color: '#16a34a' }}>{Number(avgIntegrity * 0.15 || 0).toFixed(1)}</span>
                     </div>
                     <div className="plancha-brk-item" style={{ borderTop: '1px solid #e5e7eb', paddingTop: 6, marginTop: 4 }}>
                         <span style={{ fontWeight: 700 }}>TOTAL</span>
                         <span className="plancha-brk-val" style={{ color: displayScore >= 50 ? '#16a34a' : displayScore >= 35 ? '#ca8a04' : '#dc2626', fontWeight: 700, fontSize: '1rem' }}>
-                            {displayScore.toFixed(1)}
+                            {Number(displayScore || 0).toFixed(1)}
                         </span>
                     </div>
                 </div>
@@ -487,7 +487,7 @@ function MetricBar({ label, value, color }: { label: string; value: number; colo
             <div className="plancha-metric-track">
                 <div className="plancha-metric-fill" style={{ width: `${pct}%`, background: color }} />
             </div>
-            <span className="plancha-metric-val" style={{ color }}>{value.toFixed(1)}</span>
+            <span className="plancha-metric-val" style={{ color }}>{Number(value || 0).toFixed(1)}</span>
         </div>
     );
 }
