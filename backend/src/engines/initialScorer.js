@@ -8,6 +8,7 @@ require('dotenv').config();
 const pool = require('../db/pool');
 const HojaDeVidaScorer = require('./hojaDeVidaScorer');
 const PlanGobiernoScorer = require('./planGobiernoScorer');
+const IntegrityScorer = require('./integrityScorer');
 const RankingEngine = require('./rankingEngine');
 
 async function runInitialScoring() {
@@ -29,6 +30,10 @@ async function runInitialScoring() {
     // 3. Score Planes de Gobierno
     console.log('\n📜 Scoring Planes de Gobierno...');
     const planCount = await PlanGobiernoScorer.calculateAll();
+
+    // 3b. Score Integrity
+    console.log('\n🔵 Scoring Integrity...');
+    const integrityCount = await IntegrityScorer.calculateAll();
 
     // 4. Recalculate final scores for all candidates using new formula
     console.log('\n🏆 Recalculating final scores with new formula...');
