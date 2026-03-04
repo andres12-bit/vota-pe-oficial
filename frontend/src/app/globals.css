@@ -6692,3 +6692,79 @@ body {
   font-size: 10px;
   color: var(--vp-text-dim, #6b7280);
 }
+
+/* ── Encuesta Mobile Fixes ── */
+@media (max-width: 768px) {
+  .enc-page {
+    max-width: 100%;
+    overflow-x: hidden;
+    padding: 0 4px;
+  }
+
+  .enc-poll-card {
+    max-width: 100%;
+    padding: 14px 12px;
+    box-sizing: border-box;
+  }
+
+  .enc-poll-header {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .enc-poll-votes-col {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-align: left;
+  }
+
+  .enc-poll-votes-num {
+    font-size: 16px;
+  }
+
+  .enc-poll-votes-lbl {
+    display: inline;
+  }
+
+  .enc-poll-question {
+    font-size: 13px;
+  }
+
+  .enc-option-btn {
+    padding: 8px 10px;
+  }
+
+  .enc-option-name {
+    font-size: 12px;
+  }
+
+  .enc-option-pct {
+    font-size: 12px;
+  }
+
+  .enc-leader-strip {
+    padding: 5px 8px;
+  }
+
+  .enc-leader-name {
+    font-size: 10px;
+  }
+
+  .enc-poll-footer {
+    flex-wrap: wrap;
+  }
+
+  .enc-dashboard,
+  .enc-kpi-row,
+  .enc-dash-cols,
+  .enc-polls-grid,
+  .enc-content-layout {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .enc-sidebar {
+    position: static;
+  }
+}

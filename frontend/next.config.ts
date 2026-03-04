@@ -1,8 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Standalone output for optimal production deployment (Render, Docker, etc.)
-  output: "standalone",
+  /* Production deployment on Render uses npm start (next start) */
 };
 
 export default nextConfig;
