@@ -34,7 +34,7 @@ function HomeContent() {
   const [activeTab, setActiveTab] = useState<TabType>(initialTab);
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [momentumList, setMomentumList] = useState<Candidate[]>([]);
-  const [totalVotes, setTotalVotes] = useState(1245882);
+  const [totalVotes, setTotalVotes] = useState(0);
   const { state: selState, selection, showDraftBanner, dismissDraftBanner, activateBuilding, editSelection, confirmSelection, hasPresident } = useSelection();
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
@@ -70,7 +70,7 @@ function HomeContent() {
         }
 
         const stats = await getStats();
-        setTotalVotes(stats.total_votes + 1245882);
+        setTotalVotes(stats.total_votes);
       } catch (err) {
         console.error('Error fetching data:', err);
         const position = activeTab === 'votar' ? 'president' : activeTab;
@@ -98,7 +98,7 @@ function HomeContent() {
     if (lastMessage.type === 'ranking_snapshot') {
       const data = lastMessage.data as { top_momentum: Candidate[]; total_votes: number };
       if (data.top_momentum) setMomentumList(data.top_momentum as Candidate[]);
-      if (data.total_votes) setTotalVotes(data.total_votes + 1245882);
+      if (data.total_votes) setTotalVotes(data.total_votes);
     }
   }, [lastMessage, activeTab]);
 
