@@ -120,12 +120,12 @@ function ScoreDetailModal({ title, icon, score, color, children, onClose }: {
                         <span className="text-2xl">{icon}</span>
                         <div>
                             <div className="text-sm font-bold" style={{ color }}>{title}</div>
-                            <div className="text-[10px]" style={{ color: 'var(--vp-text-dim)' }}>Informe detallado del análisis</div>
+                            <div className="text-[10px]" style={{ color: 'rgba(255,255,255,0.5)' }}>Informe detallado del análisis</div>
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
                         <div className="text-2xl font-black" style={{ color }}>{score}<span className="text-xs font-semibold">/100</span></div>
-                        <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors" style={{ color: 'var(--vp-text-dim)' }}>✕</button>
+                        <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors" style={{ color: 'rgba(255,255,255,0.6)' }}>✕</button>
                     </div>
                 </div>
                 <div className="p-5 space-y-4">{children}</div>
@@ -139,8 +139,8 @@ function DetailItem({ label, value, icon, color }: { label: string; value: strin
         <div className="flex items-start gap-2 py-2 px-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.05)' }}>
             {icon && <span className="text-sm mt-0.5 shrink-0">{icon}</span>}
             <div className="flex-1 min-w-0">
-                <div className="text-[10px] font-bold uppercase tracking-wider mb-0.5" style={{ color: color || 'var(--vp-text-dim)' }}>{label}</div>
-                <div className="text-xs leading-relaxed" style={{ color: 'var(--vp-text)' }}>{value}</div>
+                <div className="text-[10px] font-bold uppercase tracking-wider mb-0.5" style={{ color: color || 'rgba(255,255,255,0.5)' }}>{label}</div>
+                <div className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.92)' }}>{value}</div>
             </div>
         </div>
     );
@@ -494,7 +494,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         return (
                             <ScoreDetailModal title="Educación" icon="🎓" score={hvDetail.education.score} color="#8b5cf6" onClose={() => setActiveModal(null)}>
                                 <div className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: '#8b5cf6' }}>Criterio de evaluación</div>
-                                <div className="text-xs mb-4 leading-relaxed" style={{ color: 'var(--vp-text-dim)' }}>Se evalúa el nivel educativo: básica (10pts), técnica (30pts), universitaria (55-70pts), posgrado (85-100pts). Bonus por múltiples títulos.</div>
+                                <div className="text-xs mb-4 leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)' }}>Se evalúa el nivel educativo: básica (10pts), técnica (30pts), universitaria (55-70pts), posgrado (85-100pts). Bonus por múltiples títulos.</div>
                                 {edu.basic && <DetailItem icon="📚" label="Educación Básica" value={`Primaria: ${edu.basic.primary_completed ? 'Completada ✅' : 'No completada'} | Secundaria: ${edu.basic.secondary_completed ? 'Completada ✅' : 'No completada'}`} />}
                                 {tech.map((t: any, i: number) => <DetailItem key={`t${i}`} icon="🔧" label={`Técnico ${i + 1}`} value={`${t.specialty || t.degree || 'Sin especificar'} — ${t.institution || 'Sin institución'}${t.completed ? ' ✅' : ''}`} />)}
                                 {uni.map((u: any, i: number) => <DetailItem key={`u${i}`} icon="🎓" label={`Universidad ${i + 1}`} value={`${u.degree || 'Sin especificar'} — ${u.institution || ''}${u.completed ? ' ✅' : ''}${u.year ? ` (${u.year})` : ''}`} />)}
@@ -511,7 +511,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         return (
                             <ScoreDetailModal title="Experiencia Laboral" icon="💼" score={hvDetail.work.score} color="#8b5cf6" onClose={() => setActiveModal(null)}>
                                 <div className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: '#8b5cf6' }}>Criterio</div>
-                                <div className="text-xs mb-4 leading-relaxed" style={{ color: 'var(--vp-text-dim)' }}>Cada experiencia no-política = 15pts (máx 100). Bonus +10pts por empleos de 5+ años.</div>
+                                <div className="text-xs mb-4 leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)' }}>Cada experiencia no-política = 15pts (máx 100). Bonus +10pts por empleos de 5+ años.</div>
                                 {pureWork.length > 0 ? pureWork.map((w: any, i: number) => <DetailItem key={i} icon="💼" label={w.position || 'Cargo'} value={`${w.employer || ''}${w.period ? ` (${w.period})` : ''}${w.comment ? ` — ${w.comment}` : ''}`} />) : <DetailItem icon="ℹ️" label="Sin experiencia laboral" value="No se encontraron experiencias no-políticas en JNE." />}
                             </ScoreDetailModal>
                         );
@@ -522,7 +522,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         const elections = hv.elections || [];
                         return (
                             <ScoreDetailModal title="Experiencia Política" icon="🏛️" score={hvDetail.political.score} color="#8b5cf6" onClose={() => setActiveModal(null)}>
-                                <div className="text-xs mb-4 leading-relaxed" style={{ color: 'var(--vp-text-dim)' }}>Cada cargo político = 20pts (máx 100). Bonus +15pts por roles de liderazgo.</div>
+                                <div className="text-xs mb-4 leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)' }}>Cada cargo político = 20pts (máx 100). Bonus +15pts por roles de liderazgo.</div>
                                 {polHist.length > 0 && polHist.map((p: any, i: number) => <DetailItem key={`ph${i}`} icon="🏛️" label={p.position || 'Cargo'} value={`${p.organization || ''} (${p.start_year || '?'} - ${p.end_year || 'Actualidad'})`} />)}
                                 {elections.length > 0 && elections.map((e: any, i: number) => <DetailItem key={`el${i}`} icon="🗳️" label={e.position || 'Cargo'} value={`${e.organization || ''} (${e.period || '?'})${e.comment ? ` — ${e.comment}` : ''}`} />)}
                                 {polHist.length === 0 && elections.length === 0 && <DetailItem icon="ℹ️" label="Sin historial" value="No se encontró historial político en JNE." />}
@@ -536,7 +536,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         const vehs = fin.vehicles || [];
                         return (
                             <ScoreDetailModal title="Transparencia Financiera" icon="💰" score={hvDetail.finance.score} color="#8b5cf6" onClose={() => setActiveModal(null)}>
-                                <div className="text-xs mb-4 leading-relaxed" style={{ color: 'var(--vp-text-dim)' }}>Score 100 si declaró información financiera, 0 si no. No se juzga por monto.</div>
+                                <div className="text-xs mb-4 leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)' }}>Score 100 si declaró información financiera, 0 si no. No se juzga por monto.</div>
                                 {fin.total_income !== undefined && <DetailItem icon="💵" label="Ingreso Total" value={`S/ ${Number(fin.total_income || 0).toLocaleString()}${fin.year ? ` (${fin.year})` : ''}`} />}
                                 {props.map((p: any, i: number) => <DetailItem key={`pr${i}`} icon="🏠" label={`Propiedad ${i + 1}`} value={`${p.type || 'Inmueble'}${p.value ? ` — S/ ${Number(p.value).toLocaleString()}` : ''}`} />)}
                                 {vehs.map((v: any, i: number) => <DetailItem key={`vh${i}`} icon="🚗" label={`Vehículo ${i + 1}`} value={`${v.type || 'Vehículo'}${v.brand ? ` ${v.brand}` : ''}`} />)}
@@ -550,7 +550,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         const resignations = (hv.resignations || []).filter((r: any) => r && (r.organization || r.year));
                         return (
                             <ScoreDetailModal title="Limpieza Judicial" icon="⚖️" score={hvDetail.judicial.score} color="#8b5cf6" onClose={() => setActiveModal(null)}>
-                                <div className="text-xs mb-4 leading-relaxed" style={{ color: 'var(--vp-text-dim)' }}>Inicia en 100. Penales restan 20-50pts. Civiles restan 10pts. Sin renuncias: +5pts bonus.</div>
+                                <div className="text-xs mb-4 leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)' }}>Inicia en 100. Penales restan 20-50pts. Civiles restan 10pts. Sin renuncias: +5pts bonus.</div>
                                 {sentences.length === 0 ? <DetailItem icon="✅" label="Sin sentencias" value="No se registran sentencias judiciales." color="var(--vp-green)" /> : sentences.map((s: any, i: number) => <DetailItem key={i} icon="⚠️" label={`${s.type || 'Sentencia'}: ${s.crime || 'Sin detalle'}`} value={`${s.court ? `Juzgado: ${s.court}` : ''}${s.sentence ? ` — ${s.sentence}` : 'Sin sentencia especificada'}`} color="var(--vp-red)" />)}
                                 {resignations.length > 0 && resignations.map((r: any, i: number) => <DetailItem key={`rn${i}`} icon="🚪" label={`Renuncia ${i + 1}`} value={`${r.organization || ''}${r.year ? ` (${r.year})` : ''}`} />)}
                             </ScoreDetailModal>
@@ -564,7 +564,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         items.forEach(item => { const d = (item.dimension || '').toLowerCase(); JNE_DIMS.forEach(j => { if (d.includes(j.toLowerCase().substring(0, 5))) covered.add(j); }); });
                         return (
                             <ScoreDetailModal title="Cobertura Dimensional" icon="🌐" score={planDetail.coverage.score} color="var(--vp-blue)" onClose={() => setActiveModal(null)}>
-                                <div className="text-xs mb-4" style={{ color: 'var(--vp-text-dim)' }}>JNE exige 6 dimensiones. Score = (cubiertas / 6) x 100.</div>
+                                <div className="text-xs mb-4" style={{ color: 'rgba(255,255,255,0.7)' }}>JNE exige 6 dimensiones. Score = (cubiertas / 6) x 100.</div>
                                 {JNE_DIMS.map((d, i) => <DetailItem key={i} icon={covered.has(d) ? '✅' : '❌'} label={d} value={covered.has(d) ? 'Cubierta' : 'No cubierta'} color={covered.has(d) ? 'var(--vp-green)' : 'var(--vp-red)'} />)}
                             </ScoreDetailModal>
                         );
@@ -574,7 +574,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         const items = candidate.plan_gobierno || [];
                         return (
                             <ScoreDetailModal title="Especificidad" icon="🎯" score={planDetail.specificity.score} color="var(--vp-blue)" onClose={() => setActiveModal(null)}>
-                                <div className="text-xs mb-4" style={{ color: 'var(--vp-text-dim)' }}>Evalúa detalle de objetivos. Corto = 20pts, moderado = 50pts, detallado = 100pts.</div>
+                                <div className="text-xs mb-4" style={{ color: 'rgba(255,255,255,0.7)' }}>Evalúa detalle de objetivos. Corto = 20pts, moderado = 50pts, detallado = 100pts.</div>
                                 {items.map((item, i) => { const len = (item.objective || '').length; const lvl = len < 30 ? 'Vago' : len < 80 ? 'Moderado' : 'Detallado'; return <DetailItem key={i} icon={len >= 80 ? '✅' : '⚠️'} label={item.problem || `Ítem ${i + 1}`} value={`"${item.objective || 'Sin objetivo'}" (${len} chars — ${lvl})`} />; })}
                             </ScoreDetailModal>
                         );
@@ -584,7 +584,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         const items = candidate.plan_gobierno || [];
                         return (
                             <ScoreDetailModal title="Metas Concretas" icon="📈" score={planDetail.measurability.score} color="var(--vp-blue)" onClose={() => setActiveModal(null)}>
-                                <div className="text-xs mb-4" style={{ color: 'var(--vp-text-dim)' }}>Evalúa si cada ítem tiene metas medibles (+10 caracteres).</div>
+                                <div className="text-xs mb-4" style={{ color: 'rgba(255,255,255,0.7)' }}>Evalúa si cada ítem tiene metas medibles (+10 caracteres).</div>
                                 {items.map((item, i) => { const ok = (item.goals || '').trim().length > 10; return <DetailItem key={i} icon={ok ? '✅' : '❌'} label={item.problem || `Ítem ${i + 1}`} value={ok ? item.goals! : 'Sin meta concreta'} color={ok ? 'var(--vp-green)' : 'var(--vp-red)'} />; })}
                             </ScoreDetailModal>
                         );
@@ -594,7 +594,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         const items = candidate.plan_gobierno || [];
                         return (
                             <ScoreDetailModal title="Indicadores" icon="📏" score={planDetail.indicators.score} color="var(--vp-blue)" onClose={() => setActiveModal(null)}>
-                                <div className="text-xs mb-4" style={{ color: 'var(--vp-text-dim)' }}>Evalúa si cada ítem tiene indicadores de medición (+5 chars).</div>
+                                <div className="text-xs mb-4" style={{ color: 'rgba(255,255,255,0.7)' }}>Evalúa si cada ítem tiene indicadores de medición (+5 chars).</div>
                                 {items.map((item, i) => { const ok = (item.indicator || '').trim().length > 5; return <DetailItem key={i} icon={ok ? '✅' : '❌'} label={item.problem || `Ítem ${i + 1}`} value={ok ? item.indicator! : 'Sin indicador'} color={ok ? 'var(--vp-green)' : 'var(--vp-red)'} />; })}
                             </ScoreDetailModal>
                         );
@@ -604,7 +604,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         const items = candidate.plan_gobierno || [];
                         return (
                             <ScoreDetailModal title="Coherencia" icon="🔗" score={planDetail.coherence.score} color="var(--vp-blue)" onClose={() => setActiveModal(null)}>
-                                <div className="text-xs mb-4" style={{ color: 'var(--vp-text-dim)' }}>Evalúa coincidencia entre problema y objetivo planteado.</div>
+                                <div className="text-xs mb-4" style={{ color: 'rgba(255,255,255,0.7)' }}>Evalúa coincidencia entre problema y objetivo planteado.</div>
                                 {items.map((item, i) => <DetailItem key={i} icon="🔗" label={item.problem || `Ítem ${i + 1}`} value={`Objetivo: "${item.objective || 'Sin objetivo'}"`} />)}
                             </ScoreDetailModal>
                         );
@@ -612,7 +612,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
 
                     {activeModal === 'intencion' && (
                         <ScoreDetailModal title="Intención Ciudadana" icon="🗳️" score={Math.round(intencionScore)} color="var(--vp-gold)" onClose={() => setActiveModal(null)}>
-                            <div className="text-xs mb-4" style={{ color: 'var(--vp-text-dim)' }}>Mide la intención de voto de usuarios de VOTA.PE, normalizada al máximo en su cargo.</div>
+                            <div className="text-xs mb-4" style={{ color: 'rgba(255,255,255,0.7)' }}>Mide la intención de voto de usuarios de VOTA.PE, normalizada al máximo en su cargo.</div>
                             <DetailItem icon="🗳️" label="Votos recibidos" value={`${(candidate.vote_count || 0).toLocaleString()} votos en VOTA.PE`} />
                             <DetailItem icon="📊" label="Cálculo" value="Score = (votos / máx votos en su cargo) x 100. Peso: 25%." />
                             <DetailItem icon="ℹ️" label="Nota" value="Aumentará cuando más usuarios voten. Plataforma en fase inicial." color="var(--vp-gold)" />
@@ -627,15 +627,15 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         const fin = hv.finances || {};
                         return (
                             <ScoreDetailModal title="Integridad" icon="🛡️" score={Math.round(integrScore)} color="var(--vp-green)" onClose={() => setActiveModal(null)}>
-                                <div className="text-xs mb-4" style={{ color: 'var(--vp-text-dim)' }}>Evalúa: Judicial (40%), Estabilidad (20%), Transparencia (20%), Coherencia (20%).</div>
-                                <div className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--vp-text-dim)' }}>⚖️ Limpieza Judicial (40%)</div>
+                                <div className="text-xs mb-4" style={{ color: 'rgba(255,255,255,0.7)' }}>Evalúa: Judicial (40%), Estabilidad (20%), Transparencia (20%), Coherencia (20%).</div>
+                                <div className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(255,255,255,0.6)' }}>⚖️ Limpieza Judicial (40%)</div>
                                 {sentences.length === 0 ? <DetailItem icon="✅" label="Sin sentencias" value="Historial limpio." color="var(--vp-green)" /> : sentences.map((s: any, i: number) => <DetailItem key={i} icon="🔴" label={`${s.type}: ${s.crime || ''}`} value={s.sentence || 'Sin especificar'} color="var(--vp-red)" />)}
-                                <div className="text-[10px] font-bold uppercase tracking-wider mt-3 mb-1" style={{ color: 'var(--vp-text-dim)' }}>🏛️ Estabilidad Partidaria (20%)</div>
+                                <div className="text-[10px] font-bold uppercase tracking-wider mt-3 mb-1" style={{ color: 'rgba(255,255,255,0.6)' }}>🏛️ Estabilidad Partidaria (20%)</div>
                                 <DetailItem icon="🏛️" label="Partidos" value={`${parties.size} partido(s): ${[...parties].join(', ') || 'N/A'}`} />
                                 {resignations.length > 0 ? <DetailItem icon="🚪" label="Renuncias" value={`${resignations.length} renuncia(s)`} color="var(--vp-gold)" /> : <DetailItem icon="✅" label="Renuncias" value="Sin renuncias" color="var(--vp-green)" />}
-                                <div className="text-[10px] font-bold uppercase tracking-wider mt-3 mb-1" style={{ color: 'var(--vp-text-dim)' }}>💰 Transparencia (20%)</div>
+                                <div className="text-[10px] font-bold uppercase tracking-wider mt-3 mb-1" style={{ color: 'rgba(255,255,255,0.6)' }}>💰 Transparencia (20%)</div>
                                 <DetailItem icon={fin.total_income > 0 ? '✅' : '⚠️'} label="Declaración" value={fin.total_income > 0 ? `Ingreso: S/ ${Number(fin.total_income).toLocaleString()}` : 'Sin ingresos declarados'} />
-                                <div className="text-[10px] font-bold uppercase tracking-wider mt-3 mb-1" style={{ color: 'var(--vp-text-dim)' }}>📋 Coherencia (20%)</div>
+                                <div className="text-[10px] font-bold uppercase tracking-wider mt-3 mb-1" style={{ color: 'rgba(255,255,255,0.6)' }}>📋 Coherencia (20%)</div>
                                 <DetailItem icon="🗳️" label="Elecciones" value={`${(hv.elections || []).length} participación(es)`} />
                             </ScoreDetailModal>
                         );
