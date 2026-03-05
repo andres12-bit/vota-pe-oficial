@@ -209,6 +209,8 @@ async function seed() {
     // ==================== SEED PLAN DE GOBIERNO ====================
     const allCandidates = await pool.query(`SELECT id, party_id, position FROM candidates WHERE is_active = true`);
     let planCount = 0;
+    let planMatchCount = 0;
+    let planFallbackCount = 0;
 
     // Default plan template
     const PLAN_TEMPLATE = [
@@ -231,44 +233,69 @@ async function seed() {
         },
     ];
 
-    for (const cand of allCandidates.rows) {
-        const jnePartyId = partyIdToJneId[cand.party_id];
-        const partyPlan = jnePartyId ? planData.plans.find(p => String(p.party_jne_id) === String(jnePartyId)) : null;
+    console.log(`📋 Seeding plan de gobierno for ${allCandidates.rows.length} candidates...`);
+    console.log(`   Plan data has ${planData.plans.length} party plans`);
 
-        if (partyPlan && partyPlan.dimensions.length > 0) {
-            let sortOrder = 1;
-            for (const dim of partyPlan.dimensions) {
-                for (const item of dim.items) {
-                    await pool.query(
-                        `INSERT INTO candidate_plan_gobierno (candidate_id, dimension, problem, objective, goals, indicator, sort_order)
+    for (const cand of allCandidates.rows) {
+        try {
+            const jnePartyId = partyIdToJneId[cand.party_id];
+            const partyPlan = jnePartyId ? planData.plans.find(p => String(p.party_jne_id) === String(jnePartyId)) : null;
+
+            if (partyPlan && partyPlan.dimensions && partyPlan.dimensions.length > 0) {
+                planMatchCount++;
+                let sortOrder = 1;
+                for (const dim of partyPlan.dimensions) {
+                    for (const item of dim.items) {
+                        await pool.query(
+                            `INSERT INTO candidate_plan_gobierno (candidate_id, dimension, problem, objective, goals, indicator, sort_order)
              VALUES ($1,$2,$3,$4,$5,$6,$7)`,
-                        [cand.id, dim.dimension, item.problem, item.objective, item.goals, item.indicator, sortOrder++]
-                    );
-                    planCount++;
+                            [cand.id, dim.dimension, item.problem || '', item.objective || '', item.goals || '', item.indicator || '', sortOrder++]
+                        );
+                        planCount++;
+                    }
+                }
+                // Update PDF URLs (plan + resumen)
+                if (partyPlan.plan_pdf_url || partyPlan.resumen_pdf_url) {
+                    await pool.query(`UPDATE candidates SET plan_pdf_url = $1 WHERE id = $2`, [partyPlan.plan_pdf_url || null, cand.id]);
+                    if (partyPlan.resumen_pdf_url) {
+                        await pool.query(`UPDATE candidates SET plan_pdf_local = $1 WHERE id = $2`, [partyPlan.resumen_pdf_url, cand.id]);
+                    }
+                }
+            } else {
+                planFallbackCount++;
+                let sortOrder = 1;
+                for (const dim of PLAN_TEMPLATE) {
+                    for (const item of dim.items) {
+                        await pool.query(
+                            `INSERT INTO candidate_plan_gobierno (candidate_id, dimension, problem, objective, goals, indicator, sort_order)
+             VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+                            [cand.id, dim.dim, item.prob, item.obj, item.goals, item.ind, sortOrder++]
+                        );
+                        planCount++;
+                    }
                 }
             }
-            // Update PDF URLs (plan + resumen)
-            if (partyPlan.plan_pdf_url || partyPlan.resumen_pdf_url) {
-                await pool.query(`UPDATE candidates SET plan_pdf_url = COALESCE($1, plan_pdf_url) WHERE id = $2`, [partyPlan.plan_pdf_url || partyPlan.resumen_pdf_url, cand.id]);
-                if (partyPlan.resumen_pdf_url) {
-                    await pool.query(`UPDATE candidates SET plan_pdf_local = $1 WHERE id = $2`, [partyPlan.resumen_pdf_url, cand.id]);
-                }
-            }
-        } else {
-            let sortOrder = 1;
-            for (const dim of PLAN_TEMPLATE) {
-                for (const item of dim.items) {
-                    await pool.query(
-                        `INSERT INTO candidate_plan_gobierno (candidate_id, dimension, problem, objective, goals, indicator, sort_order)
+        } catch (planErr) {
+            console.error(`   ⚠️ Plan seed error for candidate ${cand.id}: ${planErr.message}`);
+            // Still try to insert template as fallback
+            try {
+                let sortOrder = 1;
+                for (const dim of PLAN_TEMPLATE) {
+                    for (const item of dim.items) {
+                        await pool.query(
+                            `INSERT INTO candidate_plan_gobierno (candidate_id, dimension, problem, objective, goals, indicator, sort_order)
              VALUES ($1,$2,$3,$4,$5,$6,$7)`,
-                        [cand.id, dim.dim, item.prob, item.obj, item.goals, item.ind, sortOrder++]
-                    );
-                    planCount++;
+                            [cand.id, dim.dim, item.prob, item.obj, item.goals, item.ind, sortOrder++]
+                        );
+                        planCount++;
+                    }
                 }
+            } catch (e2) {
+                console.error(`   ❌ Template fallback also failed for candidate ${cand.id}: ${e2.message}`);
             }
         }
     }
-    console.log(`✅ Seeded ${planCount} plan de gobierno items`);
+    console.log(`✅ Seeded ${planCount} plan de gobierno items (${planMatchCount} matched real data, ${planFallbackCount} used template)`);
 
     // ==================== SEED ENCUESTA POLLS (no simulated votes) ====================
     const POLLS = [
