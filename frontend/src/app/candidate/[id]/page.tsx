@@ -377,30 +377,23 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
 
                 {/* ════════ UNIFIED SCORE PANEL ════════ */}
                 <div className="panel-glow">
-                    {/* Gauges row */}
-                    <div className="flex items-center justify-between mb-4">
+                    {/* Compact header with inline scores */}
+                    <div className="flex items-center justify-between mb-3">
                         <h3 className="text-[10px] font-bold tracking-[2px] uppercase" style={{ color: 'var(--vp-text-dim)' }}>📊 Análisis del Score</h3>
-                        <div className="text-[9px] font-mono px-2 py-1 rounded" style={{ background: 'rgba(255,255,255,0.03)', color: 'var(--vp-text-dim)' }}>
-                            score = (HV×0.30) + (Plan×0.30) + (Intención×0.25) + (Integridad×0.15)
+                        <div className="flex items-center gap-1">
+                            <span className="text-xs font-black px-2 py-0.5 rounded" style={{ background: '#8b5cf611', color: '#8b5cf6', border: '1px solid #8b5cf633' }}>HV {hojaScore.toFixed(0)}</span>
+                            <span className="text-xs font-black px-2 py-0.5 rounded" style={{ background: 'rgba(41,121,255,0.06)', color: 'var(--vp-blue)', border: '1px solid rgba(41,121,255,0.2)' }}>Plan {planScore.toFixed(0)}</span>
+                            <span className="text-xs font-black px-2 py-0.5 rounded" style={{ background: 'rgba(245,158,11,0.06)', color: 'var(--vp-gold)', border: '1px solid rgba(245,158,11,0.2)' }}>Int. {intencionScore.toFixed(0)}</span>
+                            <span className="text-xs font-black px-2 py-0.5 rounded" style={{ background: 'rgba(0,230,118,0.06)', color: 'var(--vp-green)', border: '1px solid rgba(0,230,118,0.2)' }}>Integ. {integrScore.toFixed(0)}</span>
+                            <span className="text-sm font-black ml-2" style={{ color: 'var(--vp-red)' }}>{finalScore.toFixed(1)}</span>
                         </div>
                     </div>
-                    <div className="grid grid-cols-4 gap-2 mb-4">
-                        <ScoreGauge label="Hoja de Vida" value={hojaScore} color="#8b5cf6" subtitle="30%" />
-                        <ScoreGauge label="Plan Gob." value={planScore} color="var(--vp-blue)" subtitle="30%" />
-                        <ScoreGauge label="Intención" value={intencionScore} color="var(--vp-gold)" subtitle="25%" />
-                        <ScoreGauge label="Integridad" value={integrScore} color="var(--vp-green)" subtitle="15%" />
-                    </div>
-
                     {/* Compact formula bars */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-1 mb-3">
-                        <BreakdownBar label="📄 HV (30%)" value={formulaBreakdown.hojaVida.value} maxValue={30} color="#8b5cf6" />
-                        <BreakdownBar label="📋 Plan (30%)" value={formulaBreakdown.planGobierno.value} maxValue={30} color="var(--vp-blue)" />
-                        <BreakdownBar label="🗳️ Intención (25%)" value={formulaBreakdown.intencion.value} maxValue={25} color="var(--vp-gold)" />
-                        <BreakdownBar label="🛡️ Integridad (15%)" value={formulaBreakdown.integrity.value} maxValue={15} color="var(--vp-green)" />
-                    </div>
-                    <div className="mb-5 pt-2 flex justify-between items-center" style={{ borderTop: '1px solid var(--vp-border)' }}>
-                        <span className="text-[10px] font-bold uppercase" style={{ color: 'var(--vp-text-dim)' }}>Total</span>
-                        <span className="text-sm font-black" style={{ color: 'var(--vp-red)' }}>{finalScore.toFixed(2)}</span>
+                    <div className="grid grid-cols-4 gap-x-3 gap-y-0 mb-2">
+                        <BreakdownBar label="HV (30%)" value={formulaBreakdown.hojaVida.value} maxValue={30} color="#8b5cf6" />
+                        <BreakdownBar label="Plan (30%)" value={formulaBreakdown.planGobierno.value} maxValue={30} color="var(--vp-blue)" />
+                        <BreakdownBar label="Intención (25%)" value={formulaBreakdown.intencion.value} maxValue={25} color="var(--vp-gold)" />
+                        <BreakdownBar label="Integridad (15%)" value={formulaBreakdown.integrity.value} maxValue={15} color="var(--vp-green)" />
                     </div>
 
                     {/* ── Detailed Sub-breakdowns ── */}
@@ -706,73 +699,67 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                     </div>
                 )}
 
-                {/* === FÓRMULA PRESIDENCIAL === */}
+                {/* === FÓRMULA PRESIDENCIAL (compact) === */}
                 {candidate.vice_presidents && candidate.vice_presidents.length > 0 && (
                     <div className="panel-glow">
-                        <h3 className="text-xs font-bold tracking-[2px] uppercase mb-6" style={{ color: 'var(--vp-text-dim)' }}>
+                        <h3 className="text-xs font-bold tracking-[2px] uppercase mb-4" style={{ color: 'var(--vp-text-dim)' }}>
                             🏛️ Fórmula Presidencial
                         </h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                            {/* El candidato principal */}
-                            <div className="flex flex-col items-center text-center p-6 rounded-2xl" style={{ background: `${candidate.party_color}11`, border: `1px solid ${candidate.party_color}33` }}>
+                        <div className="flex items-center gap-4 flex-wrap">
+                            {/* Presidente */}
+                            <div className="flex items-center gap-3 px-4 py-3 rounded-xl flex-1 min-w-[200px]" style={{ background: `${candidate.party_color}11`, border: `1px solid ${candidate.party_color}33` }}>
                                 <img
-                                    src={getCandidatePhoto(candidate.photo, candidate.name, 96, candidate.party_color)}
-                                    onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(candidate.name, 96, candidate.party_color); }}
-                                    alt={candidate.name}
-                                    width={96} height={96}
-                                    className="w-24 h-24 rounded-full mb-4 object-cover"
-                                    style={{ border: `3px solid ${candidate.party_color}`, boxShadow: `0 0 20px ${candidate.party_color}33` }}
+                                    src={getCandidatePhoto(candidate.photo, candidate.name, 48, candidate.party_color)}
+                                    onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(candidate.name, 48, candidate.party_color); }}
+                                    alt={candidate.name} width={48} height={48}
+                                    className="w-12 h-12 rounded-full object-cover shrink-0"
+                                    style={{ border: `2px solid ${candidate.party_color}` }}
                                 />
-                                <div className="text-base font-bold" style={{ color: 'var(--vp-text)' }}>{candidate.name.split(' ').slice(-2).join(' ')}</div>
-                                <div className="text-[11px] font-bold tracking-wider uppercase mt-2" style={{ color: candidate.party_color }}>
-                                    Presidente(a) de la República
+                                <div>
+                                    <div className="text-sm font-bold" style={{ color: 'var(--vp-text)' }}>{candidate.name}</div>
+                                    <div className="text-[10px] font-bold uppercase tracking-wider" style={{ color: candidate.party_color }}>Presidente(a)</div>
                                 </div>
                             </div>
-
                             {/* Vicepresidentes */}
                             {candidate.vice_presidents.map(vp => (
-                                <div key={vp.id} className="flex flex-col items-center text-center p-6 rounded-2xl" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--vp-border)' }}>
+                                <div key={vp.id} className="flex items-center gap-3 px-4 py-3 rounded-xl flex-1 min-w-[200px]" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--vp-border)' }}>
                                     <img
-                                        src={getCandidatePhoto(vp.photo, vp.name, 96, candidate.party_color)}
-                                        onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(vp.name, 96, candidate.party_color); }}
-                                        alt={vp.name}
-                                        width={96} height={96}
-                                        className="w-24 h-24 rounded-full mb-4 object-cover"
+                                        src={getCandidatePhoto(vp.photo, vp.name, 48, candidate.party_color)}
+                                        onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(vp.name, 48, candidate.party_color); }}
+                                        alt={vp.name} width={48} height={48}
+                                        className="w-12 h-12 rounded-full object-cover shrink-0"
                                         style={{ border: '2px solid var(--vp-border)' }}
                                     />
-                                    <div className="text-base font-bold" style={{ color: 'var(--vp-text)' }}>{vp.name.split(' ').slice(-2).join(' ')}</div>
-                                    <div className="text-[11px] font-bold tracking-wider uppercase mt-2" style={{ color: 'var(--vp-text-dim)' }}>
-                                        {vp.position_label}
+                                    <div>
+                                        <div className="text-sm font-bold" style={{ color: 'var(--vp-text)' }}>{vp.name}</div>
+                                        <div className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--vp-text-dim)' }}>{vp.position_label}</div>
                                     </div>
-                                    {vp.biography && (
-                                        <div className="text-xs mt-3 leading-relaxed" style={{ color: 'var(--vp-text-dim)' }}>{vp.biography}</div>
-                                    )}
                                 </div>
                             ))}
                         </div>
                     </div>
                 )}
 
-                {/* === HOJA DE VIDA (Education & Experience) === */}
+                {/* === HOJA DE VIDA (compact) === */}
                 {(candidate.education || candidate.experience) && (
                     <div className="panel-glow">
-                        <h3 className="text-xs font-bold tracking-[2px] uppercase mb-6" style={{ color: 'var(--vp-text-dim)' }}>
-                            📋 Hoja de Vida
-                        </h3>
-                        <div className="text-[10px] px-3 py-2 rounded-lg mb-5" style={{ background: 'rgba(41,121,255,0.06)', border: '1px solid rgba(41,121,255,0.15)', color: 'var(--vp-text-dim)' }}>
-                            ℹ️ Información proveniente del <a href="https://votoinformado.jne.gob.pe" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--vp-blue)', textDecoration: 'underline' }}>Jurado Nacional de Elecciones (JNE)</a>. Mostrada con fines informativos. VOTA.PE no valida ni garantiza la veracidad de estos datos.
+                        <div className="flex items-center justify-between mb-3">
+                            <h3 className="text-xs font-bold tracking-[2px] uppercase" style={{ color: 'var(--vp-text-dim)' }}>📋 Hoja de Vida</h3>
+                            <div className="text-[9px] px-2 py-1 rounded" style={{ background: 'rgba(41,121,255,0.06)', border: '1px solid rgba(41,121,255,0.15)', color: 'var(--vp-text-dim)' }}>
+                                ℹ️ Fuente: <a href="https://votoinformado.jne.gob.pe" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--vp-blue)', textDecoration: 'underline' }}>JNE</a>
+                            </div>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-[1.5rem] data-block-gap">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             {candidate.education && (
-                                <div className="p-5 rounded-2xl" style={{ background: 'rgba(68,138,255,0.05)', border: '1px solid rgba(68,138,255,0.15)' }}>
-                                    <div className="flex items-center gap-2.5 mb-4">
-                                        <span className="text-xl">🎓</span>
-                                        <span className="text-sm font-bold tracking-wider uppercase" style={{ color: 'var(--vp-blue)' }}>Formación Académica</span>
+                                <div className="p-3 rounded-xl" style={{ background: 'rgba(68,138,255,0.05)', border: '1px solid rgba(68,138,255,0.15)' }}>
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <span className="text-sm">🎓</span>
+                                        <span className="text-xs font-bold tracking-wider uppercase" style={{ color: 'var(--vp-blue)' }}>Formación Académica</span>
                                     </div>
-                                    <div className="text-sm leading-loose" style={{ color: 'var(--vp-text)' }}>
-                                        {candidate.education.split('. ').map((line, i) => (
-                                            <div key={i} className="flex items-start gap-2.5 mb-2.5">
-                                                <span className="text-xs mt-0.5 shrink-0" style={{ color: 'var(--vp-blue)' }}>●</span>
+                                    <div className="text-xs leading-relaxed" style={{ color: 'var(--vp-text)' }}>
+                                        {candidate.education.split('. ').filter(l => l.trim()).map((line, i) => (
+                                            <div key={i} className="flex items-start gap-1.5 mb-1">
+                                                <span className="text-[9px] mt-0.5 shrink-0" style={{ color: 'var(--vp-blue)' }}>•</span>
                                                 <span>{line.replace(/\.$/, '')}</span>
                                             </div>
                                         ))}
@@ -780,15 +767,15 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                                 </div>
                             )}
                             {candidate.experience && (
-                                <div className="p-5 rounded-2xl" style={{ background: 'rgba(0,230,118,0.05)', border: '1px solid rgba(0,230,118,0.15)' }}>
-                                    <div className="flex items-center gap-2.5 mb-4">
-                                        <span className="text-xl">💼</span>
-                                        <span className="text-sm font-bold tracking-wider uppercase" style={{ color: 'var(--vp-green)' }}>Experiencia Profesional</span>
+                                <div className="p-3 rounded-xl" style={{ background: 'rgba(0,230,118,0.05)', border: '1px solid rgba(0,230,118,0.15)' }}>
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <span className="text-sm">💼</span>
+                                        <span className="text-xs font-bold tracking-wider uppercase" style={{ color: 'var(--vp-green)' }}>Experiencia Profesional</span>
                                     </div>
-                                    <div className="text-sm leading-loose" style={{ color: 'var(--vp-text)' }}>
-                                        {candidate.experience.split('. ').map((line, i) => (
-                                            <div key={i} className="flex items-start gap-2.5 mb-2.5">
-                                                <span className="text-xs mt-0.5 shrink-0" style={{ color: 'var(--vp-green)' }}>●</span>
+                                    <div className="text-xs leading-relaxed" style={{ color: 'var(--vp-text)' }}>
+                                        {candidate.experience.split('. ').filter(l => l.trim()).map((line, i) => (
+                                            <div key={i} className="flex items-start gap-1.5 mb-1">
+                                                <span className="text-[9px] mt-0.5 shrink-0" style={{ color: 'var(--vp-green)' }}>•</span>
                                                 <span>{line.replace(/\.$/, '')}</span>
                                             </div>
                                         ))}
@@ -796,14 +783,9 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                                 </div>
                             )}
                         </div>
-                        {candidate.birth_date && (
-                            <div className="mt-4 text-sm" style={{ color: 'var(--vp-text-dim)' }}>
-                                📅 Fecha de nacimiento: <span className="font-semibold" style={{ color: 'var(--vp-text)' }}>{candidate.birth_date}</span>
-                            </div>
-                        )}
-                        <div className="mt-5 pt-4" style={{ borderTop: '1px solid var(--vp-border)' }}>
+                        <div className="mt-3 pt-3" style={{ borderTop: '1px solid var(--vp-border)' }}>
                             <Link href={`/candidate/${resolvedParams.id}/hoja-vida`}
-                                className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-bold uppercase tracking-wider transition-all hover:scale-[1.02]"
+                                className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all hover:scale-[1.02]"
                                 style={{
                                     background: 'linear-gradient(135deg, rgba(188,29,25,0.12), rgba(188,29,25,0.05))',
                                     border: '1px solid rgba(188,29,25,0.25)',
