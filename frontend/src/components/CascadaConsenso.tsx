@@ -48,22 +48,34 @@ function PeruMapSVG() {
     return (
         <svg viewBox="0 0 300 400" className="cascada-peru-map" xmlns="http://www.w3.org/2000/svg">
             <defs>
-                <linearGradient id="peruHeat" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#c62828" stopOpacity="0.4" />
-                    <stop offset="40%" stopColor="#f59e0b" stopOpacity="0.3" />
-                    <stop offset="70%" stopColor="#1565c0" stopOpacity="0.2" />
-                    <stop offset="100%" stopColor="#6a1b9a" stopOpacity="0.15" />
-                </linearGradient>
+                <radialGradient id="peruHeatRadial" cx="45%" cy="45%" r="60%">
+                    <stop offset="0%" stopColor="#c62828" stopOpacity="0.7" />
+                    <stop offset="30%" stopColor="#e53935" stopOpacity="0.5" />
+                    <stop offset="55%" stopColor="#ff6d00" stopOpacity="0.4" />
+                    <stop offset="80%" stopColor="#f59e0b" stopOpacity="0.25" />
+                    <stop offset="100%" stopColor="#f59e0b" stopOpacity="0.1" />
+                </radialGradient>
                 <filter id="glow">
-                    <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+                    <feGaussianBlur stdDeviation="6" result="coloredBlur" />
                     <feMerge><feMergeNode in="coloredBlur" /><feMergeNode in="SourceGraphic" /></feMerge>
                 </filter>
+                <filter id="sparkleGlow">
+                    <feGaussianBlur stdDeviation="2" result="blur" />
+                    <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                </filter>
             </defs>
-            <path d="M130,20 L110,25 L95,40 L80,45 L65,55 L55,70 L45,90 L40,110 L35,130 L30,145 L25,165 L30,185 L40,200 L45,215 L50,235 L55,250 L65,265 L75,280 L85,295 L95,310 L110,325 L125,335 L140,340 L155,345 L170,340 L185,330 L195,315 L205,295 L210,275 L215,255 L220,235 L225,215 L230,195 L225,175 L215,155 L205,140 L195,125 L185,110 L175,95 L165,80 L155,65 L145,50 L138,35 Z" fill="url(#peruHeat)" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" filter="url(#glow)" />
-            <circle cx="120" cy="180" r="8" fill="#c62828" opacity="0.4"><animate attributeName="opacity" values="0.2;0.5;0.2" dur="3s" repeatCount="indefinite" /></circle>
-            <circle cx="150" cy="220" r="5" fill="#f59e0b" opacity="0.3"><animate attributeName="opacity" values="0.1;0.4;0.1" dur="4s" repeatCount="indefinite" /></circle>
-            <circle cx="100" cy="140" r="6" fill="#1565c0" opacity="0.35"><animate attributeName="opacity" values="0.15;0.45;0.15" dur="3.5s" repeatCount="indefinite" /></circle>
-            <circle cx="170" cy="280" r="4" fill="#6a1b9a" opacity="0.3"><animate attributeName="opacity" values="0.1;0.35;0.1" dur="2.5s" repeatCount="indefinite" /></circle>
+            <path d="M130,20 L110,25 L95,40 L80,45 L65,55 L55,70 L45,90 L40,110 L35,130 L30,145 L25,165 L30,185 L40,200 L45,215 L50,235 L55,250 L65,265 L75,280 L85,295 L95,310 L110,325 L125,335 L140,340 L155,345 L170,340 L185,330 L195,315 L205,295 L210,275 L215,255 L220,235 L225,215 L230,195 L225,175 L215,155 L205,140 L195,125 L185,110 L175,95 L165,80 L155,65 L145,50 L138,35 Z" fill="url(#peruHeatRadial)" stroke="rgba(198,40,40,0.25)" strokeWidth="1.5" filter="url(#glow)" />
+            {/* Heat hotspots */}
+            <circle cx="120" cy="180" r="14" fill="#c62828" opacity="0.35"><animate attributeName="opacity" values="0.2;0.45;0.2" dur="2.5s" repeatCount="indefinite" /></circle>
+            <circle cx="150" cy="130" r="10" fill="#e53935" opacity="0.3"><animate attributeName="opacity" values="0.15;0.4;0.15" dur="3s" repeatCount="indefinite" /></circle>
+            <circle cx="100" cy="240" r="8" fill="#ff6d00" opacity="0.3"><animate attributeName="opacity" values="0.15;0.35;0.15" dur="3.5s" repeatCount="indefinite" /></circle>
+            <circle cx="170" cy="280" r="7" fill="#f59e0b" opacity="0.25"><animate attributeName="opacity" values="0.1;0.3;0.1" dur="2.8s" repeatCount="indefinite" /></circle>
+            {/* Sparkle dots */}
+            <circle cx="135" cy="160" r="2" fill="#fff" opacity="0.7" filter="url(#sparkleGlow)"><animate attributeName="opacity" values="0.3;0.8;0.3" dur="1.8s" repeatCount="indefinite" /></circle>
+            <circle cx="110" cy="200" r="1.5" fill="#fff" opacity="0.6" filter="url(#sparkleGlow)"><animate attributeName="opacity" values="0.2;0.7;0.2" dur="2.2s" repeatCount="indefinite" /></circle>
+            <circle cx="155" cy="250" r="1.5" fill="#fff" opacity="0.5" filter="url(#sparkleGlow)"><animate attributeName="opacity" values="0.2;0.6;0.2" dur="2.5s" repeatCount="indefinite" /></circle>
+            <circle cx="90" cy="170" r="1" fill="#fff" opacity="0.5" filter="url(#sparkleGlow)"><animate attributeName="opacity" values="0.1;0.6;0.1" dur="3s" repeatCount="indefinite" /></circle>
+            <circle cx="170" cy="310" r="1" fill="#fff" opacity="0.4" filter="url(#sparkleGlow)"><animate attributeName="opacity" values="0.1;0.5;0.1" dur="2s" repeatCount="indefinite" /></circle>
         </svg>
     );
 }
@@ -117,7 +129,7 @@ export default function CascadaConsenso({ onNavigateEncuesta }: Props) {
                 <div className="cascada-map-bg"><PeruMapSVG /></div>
                 <div style={{ position: 'relative', zIndex: 2 }}>
                     <div className="cascada-header">
-                        <div><h3 className="cascada-title">ACTIVIDAD <span style={{ color: '#1565c0' }}>EN VIVO</span></h3></div>
+                        <div><h3 className="cascada-title">ACTIVIDAD <span style={{ color: 'var(--vp-red)' }}>EN VIVO</span></h3></div>
                         <div className="cascada-active-badge"><div className="cascada-active-dot" /><span>{Math.max(18, stats.regions)} ▸</span></div>
                     </div>
                     <div className="cascada-subtitle"><h4>CASCADA DE CONSENSO</h4><p>Índice Medición de actualidad electoral</p></div>
@@ -163,7 +175,7 @@ export default function CascadaConsenso({ onNavigateEncuesta }: Props) {
                                     <div className="encuesta-question"><span className="encuesta-emoji">{poll.emoji || '📊'}</span><span>{poll.question}</span></div>
                                     <div className="encuesta-result">
                                         <span className="encuesta-votes">{poll.total_votes.toLocaleString()} votes</span>
-                                        <div className="encuesta-bar-track"><div className="encuesta-bar-fill" style={{ width: `${topPct}%`, background: i === 0 ? 'linear-gradient(90deg, #1565c0, #42a5f5)' : BAR_COLORS[i % BAR_COLORS.length] }} /></div>
+                                        <div className="encuesta-bar-track"><div className="encuesta-bar-fill" style={{ width: `${topPct}%`, background: 'linear-gradient(90deg, #f59e0b, #d97706)' }} /></div>
                                         <span className="encuesta-pct">{topPct}%</span>
                                     </div>
                                     {isExpanded && (

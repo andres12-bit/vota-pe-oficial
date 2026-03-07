@@ -4002,9 +4002,9 @@ body {
 
 .modules-row-2col {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1.85fr 1fr;
   gap: 1.5rem;
-  align-items: stretch;
+  align-items: start;
 }
 
 /* Draft recovery banner */
@@ -8928,17 +8928,19 @@ body {
 
 .cascada-panel {
   min-height: 200px;
+  overflow: hidden;
 }
 
 .cascada-map-bg {
   position: absolute;
-  top: 0;
-  right: -20px;
-  width: 200px;
-  height: 100%;
-  opacity: 0.6;
+  top: 10%;
+  right: -10px;
+  width: 180px;
+  height: 80%;
+  opacity: 0.85;
   z-index: 1;
   pointer-events: none;
+  filter: drop-shadow(0 0 20px rgba(198, 40, 40, 0.4)) drop-shadow(0 0 40px rgba(245, 158, 11, 0.2));
 }
 
 .cascada-peru-map {
@@ -9028,7 +9030,7 @@ body {
   flex: 1;
   height: 8px;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.06);
   overflow: hidden;
 }
 
@@ -9084,14 +9086,15 @@ body {
 .encuesta-card {
   padding: 10px 12px;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.06);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .encuesta-card:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(217, 119, 6, 0.2);
 }
 
 .encuesta-question {
@@ -9126,7 +9129,7 @@ body {
   flex: 1;
   height: 6px;
   border-radius: 3px;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.06);
   overflow: hidden;
 }
 
@@ -9148,7 +9151,7 @@ body {
 .encuesta-expanded {
   margin-top: 8px;
   padding-top: 8px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -9189,7 +9192,7 @@ body {
 .encuesta-option-bar-track {
   height: 4px;
   border-radius: 2px;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(0, 0, 0, 0.04);
   overflow: hidden;
 }
 
@@ -9970,6 +9973,13 @@ body {
    ================================================================ */
 
 @media (max-width: 768px) {
+  .cancha-stats-bar {
+    gap: 8px;
+    font-size: 10px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+
   .hero-title {
     font-size: 20px;
   }
