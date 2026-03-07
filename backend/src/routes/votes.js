@@ -1,5 +1,5 @@
 /**
- * VOTA.PE — Votes Route
+ * PulsoElectoral.pe — Votes Route
  *
  * POST /api/votes — Cast a vote (with anti-fraud, scoring recalculation, cache invalidation)
  * GET  /api/votes/stats — Vote statistics

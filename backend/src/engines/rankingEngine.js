@@ -1,5 +1,5 @@
 /**
- * VOTA.PE — Candidate Scoring Engine (Ranking Engine)
+ * PulsoElectoral.pe — Candidate Scoring Engine (Ranking Engine)
  *
  * Formula:
  *   final_candidate_score = (hoja_score × 0.30) + (plan_score × 0.30) + (intencion × 0.25) + (integridad × 0.15)
@@ -20,26 +20,22 @@ class RankingEngine {
 
     /**
  * Calculate final score for a candidate (pure computation, no DB)
- * NEW Formula:
- *   final_score = (hoja_score × 0.30) + (plan_score × 0.30) + (intencion × 0.25) + (integridad × 0.15)
+ * Formula:
+ *   final_score = (hoja_score × 0.30) + (plan_score × 0.30) + (experience_score × 0.25) + (integridad × 0.15)
  *
- * Where intencion = normalized vote count (0-100) relative to position max
+ * Where experience_score = work experience quality (0-100)
+ * Note: vote_count (Intención Ciudadana) is an indicator only, not part of the formula.
  */
-    static calculateFinalScore(candidate, maxVotesInPosition = 100) {
+    static calculateFinalScore(candidate) {
         const hojaScore = parseFloat(candidate.hoja_score) || 0;
         const planScore = parseFloat(candidate.plan_score) || 0;
-        const voteCount = parseInt(candidate.vote_count) || 0;
+        const experienceScore = parseFloat(candidate.experience_score) || 0;
         const integrityScore = parseFloat(candidate.integrity_score) || 100;
-
-        // Normalize votes: relative to the most-voted candidate in same position
-        const intencionScore = maxVotesInPosition > 0
-            ? Math.min(100, (voteCount / maxVotesInPosition) * 100)
-            : 0;
 
         const finalScore =
             (hojaScore * 0.30) +
             (planScore * 0.30) +
-            (intencionScore * 0.25) +
+            (experienceScore * 0.25) +
             (integrityScore * 0.15);
 
         return Math.min(100, Math.max(0, parseFloat(finalScore.toFixed(2))));
@@ -79,6 +75,7 @@ class RankingEngine {
         // Build score envelope
         const hojaScore = parseFloat(candidate.hoja_score) || 0;
         const planScore = parseFloat(candidate.plan_score) || 0;
+        const experienceScore = parseFloat(candidate.experience_score) || 0;
         const integrityScore = parseFloat(candidate.integrity_score) || 100;
         const scoreData = {
             candidate_id: candidateId,
@@ -88,8 +85,8 @@ class RankingEngine {
                 hoja_contribution: parseFloat((hojaScore * 0.30).toFixed(2)),
                 plan_score: planScore,
                 plan_contribution: parseFloat((planScore * 0.30).toFixed(2)),
-                vote_count: parseInt(candidate.vote_count) || 0,
-                intencion_contribution: parseFloat((Math.min(100, (parseInt(candidate.vote_count) || 0)) * 0.25).toFixed(2)),
+                experience_score: experienceScore,
+                experience_contribution: parseFloat((experienceScore * 0.25).toFixed(2)),
                 integrity_score: integrityScore,
                 integrity_contribution: parseFloat((integrityScore * 0.15).toFixed(2)),
             },
@@ -179,33 +176,63 @@ class RankingEngine {
     }
 
     /**
-     * Recalculate party score and update ranking
-     */
+ * Recalculate party score using PLANCHA-SPECIFIC formula:
+ *   plancha_score = (Antecedentes × 0.30) + (Plan × 0.25) + (HV × 0.25) + (Score Prom. × 0.20)
+ *
+ * Components:
+ *   - Antecedentes (30%): % of candidates with clean judicial records (integrity_score >= 80)
+ *   - Plan de Gobierno (25%): Average plan_score across all candidates
+ *   - Hoja de Vida (25%): Average hoja_score across all candidates
+ *   - Score Promedio (20%): Average final_score across all candidates
+ */
     static async recalculatePartyScore(partyId) {
-        // Calculate averages across all party candidates
+        // Get all scoring data for this party's candidates
         const result = await pool.query(
             `SELECT 
-                AVG(final_score) as avg_score, 
-                COUNT(*) as total_candidates,
-                SUM(final_score) as total_score,
-                AVG(intelligence_score) as avg_intelligence,
-                AVG(momentum_score) as avg_momentum,
-                AVG(integrity_score) as avg_integrity,
-                SUM(vote_count) as total_votes
-             FROM candidates 
-             WHERE party_id = $1 AND is_active = true`,
+            AVG(final_score) as avg_score, 
+            AVG(hoja_score) as avg_hoja,
+            AVG(plan_score) as avg_plan,
+            AVG(integrity_score) as avg_integrity,
+            AVG(experience_score) as avg_experience,
+            COUNT(*) as total_candidates,
+            SUM(final_score) as total_score,
+            SUM(vote_count) as total_votes
+         FROM candidates 
+         WHERE party_id = $1 AND is_active = true`,
+            [partyId]
+        );
+
+        // Count candidates with clean judicial records (no sentences in hoja_de_vida)
+        const cleanResult = await pool.query(
+            `SELECT COUNT(*) as clean_count
+         FROM candidates
+         WHERE party_id = $1 AND is_active = true AND has_no_sentences = true`,
             [partyId]
         );
 
         const stats = result.rows[0];
+        const totalCandidates = parseInt(stats.total_candidates) || 0;
+        const cleanCount = parseInt(cleanResult.rows[0]?.clean_count) || 0;
+
+        // Calculate each component (0-100 scale)
+        const antecedentesScore = totalCandidates > 0 ? (cleanCount / totalCandidates) * 100 : 0;
+        const avgPlan = parseFloat(stats.avg_plan) || 0;
+        const avgHV = parseFloat(stats.avg_hoja) || 0;
         const avgScore = parseFloat(stats.avg_score) || 0;
-        const partyFullScore = Math.min(100, Math.max(0, parseFloat(avgScore.toFixed(2))));
+
+        // Apply plancha formula
+        const partyFullScore = Math.min(100, Math.max(0, parseFloat((
+            (antecedentesScore * 0.30) +
+            (avgPlan * 0.25) +
+            (avgHV * 0.25) +
+            (avgScore * 0.20)
+        ).toFixed(2))));
 
         // Upsert party_scores table
         await pool.query(
             `INSERT INTO party_scores (party_id, party_full_score, last_updated)
-             VALUES ($1, $2, NOW())
-             ON CONFLICT (party_id) DO UPDATE SET party_full_score = $2, last_updated = NOW()`,
+         VALUES ($1, $2, NOW())
+         ON CONFLICT (party_id) DO UPDATE SET party_full_score = $2, last_updated = NOW()`,
             [partyId, partyFullScore]
         );
 
@@ -217,23 +244,29 @@ class RankingEngine {
 
         // Recalculate ALL party ranking positions
         await pool.query(`
-            WITH ranked AS (
-                SELECT party_id, ROW_NUMBER() OVER (ORDER BY party_full_score DESC) as rn
-                FROM party_scores
-            )
-            UPDATE party_scores ps SET ranking_position = r.rn
-            FROM ranked r WHERE ps.party_id = r.party_id
-        `);
+        WITH ranked AS (
+            SELECT party_id, ROW_NUMBER() OVER (ORDER BY party_full_score DESC) as rn
+            FROM party_scores
+        )
+        UPDATE party_scores ps SET ranking_position = r.rn
+        FROM ranked r WHERE ps.party_id = r.party_id
+    `);
 
         const scoreData = {
             party_id: partyId,
             party_full_score: partyFullScore,
-            total_candidates: parseInt(stats.total_candidates) || 0,
+            total_candidates: totalCandidates,
             total_score: parseFloat(stats.total_score) || 0,
             total_votes: parseInt(stats.total_votes) || 0,
-            avg_intelligence: parseFloat(parseFloat(stats.avg_intelligence || 0).toFixed(2)),
-            avg_momentum: parseFloat(parseFloat(stats.avg_momentum || 0).toFixed(2)),
+            // Plancha breakdown
+            antecedentes_score: parseFloat(antecedentesScore.toFixed(2)),
+            antecedentes_clean: cleanCount,
+            antecedentes_total: totalCandidates,
+            avg_plan: parseFloat(avgPlan.toFixed(2)),
+            avg_hoja: parseFloat(avgHV.toFixed(2)),
+            avg_score: parseFloat(avgScore.toFixed(2)),
             avg_integrity: parseFloat(parseFloat(stats.avg_integrity || 0).toFixed(2)),
+            avg_experience: parseFloat(parseFloat(stats.avg_experience || 0).toFixed(2)),
             cached_at: Date.now(),
         };
 
@@ -242,7 +275,6 @@ class RankingEngine {
 
         return scoreData;
     }
-
     /**
      * Invalidate party cache
      */

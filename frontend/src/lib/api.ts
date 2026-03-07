@@ -20,6 +20,7 @@ export interface Candidate {
     final_score: number;
     hoja_score: number;
     plan_score: number;
+    experience_score: number;
     vote_count: number;
     party_name: string;
     party_abbreviation: string;

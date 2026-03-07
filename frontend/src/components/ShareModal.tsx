@@ -13,19 +13,19 @@ export default function ShareModal({ onClose }: Props) {
     const totalSelected = (selection.president ? 1 : 0) +
         selection.senators.length + selection.deputies.length + selection.andean.length;
 
-    const shareText = `🗳️ Mi selección electoral en VOTA.PE\n\n🏛️ Presidente: ${presidentName}\n⭐ Calidad: ${'★'.repeat(qualityStars)}${'☆'.repeat(5 - qualityStars)} (${qualityScore}/100)\n📊 ${totalSelected} candidato(s) seleccionado(s)\n\nCrea tu propia selección en vota.pe`;
+    const shareText = `🗳️ Mi selección electoral en PulsoElectoral.pe\n\n🏛️ Presidente: ${presidentName}\n⭐ Calidad: ${'★'.repeat(qualityStars)}${'☆'.repeat(5 - qualityStars)} (${qualityScore}/100)\n📊 ${totalSelected} candidato(s) seleccionado(s)\n\nCrea tu propia selección en PulsoElectoral.pe`;
 
     const encodedText = encodeURIComponent(shareText);
-    const siteUrl = encodeURIComponent('https://vota.pe');
+    const siteUrl = encodeURIComponent('https://PulsoElectoral.pe');
 
     const handleCopy = async () => {
         try {
-            await navigator.clipboard.writeText(shareText + '\n\nhttps://vota.pe');
+            await navigator.clipboard.writeText(shareText + '\n\nhttps://PulsoElectoral.pe');
             alert('¡Enlace copiado!');
         } catch {
             // Fallback
             const ta = document.createElement('textarea');
-            ta.value = shareText + '\n\nhttps://vota.pe';
+            ta.value = shareText + '\n\nhttps://PulsoElectoral.pe';
             document.body.appendChild(ta);
             ta.select();
             document.execCommand('copy');
@@ -52,7 +52,7 @@ export default function ShareModal({ onClose }: Props) {
 
                 <div className="share-options">
                     <a
-                        href={`https://api.whatsapp.com/send?text=${encodedText}%0A%0Ahttps://vota.pe`}
+                        href={`https://api.whatsapp.com/send?text=${encodedText}%0A%0Ahttps://PulsoElectoral.pe`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="share-option share-whatsapp"
@@ -83,7 +83,7 @@ export default function ShareModal({ onClose }: Props) {
                         <span>Copiar enlace</span>
                     </button>
                     <a
-                        href={`mailto:?subject=Mi%20selecci%C3%B3n%20electoral%20en%20VOTA.PE&body=${encodedText}%0A%0Ahttps://vota.pe`}
+                        href={`mailto:?subject=Mi%20selecci%C3%B3n%20electoral%20en%20PulsoElectoral.pe&body=${encodedText}%0A%0Ahttps://PulsoElectoral.pe`}
                         className="share-option share-email"
                     >
                         <span className="share-option-icon">✉️</span>

@@ -10,22 +10,22 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "VOTA.PE — Inteligencia Electoral en Tiempo Real",
+  title: "PulsoElectoral.pe — Inteligencia Electoral en Tiempo Real",
   description: "Plataforma de inteligencia electoral del Perú. Analiza candidatos, partidos, rankings, encuestas y planes de gobierno. Datos del JNE. Elecciones 2026.",
-  keywords: "elecciones perú 2026, candidatos, votación, ranking político, encuesta, JNE, intención de voto, partidos políticos perú",
-  metadataBase: new URL('https://votape-web.onrender.com'),
+  keywords: "elecciones perú 2026, candidatos, votación, ranking político, encuesta, JNE, intención de voto, partidos políticos perú, pulso electoral",
+  metadataBase: new URL('https://pulsoelectoral.pe'),
   alternates: { canonical: '/' },
   openGraph: {
-    title: "VOTA.PE — Inteligencia Electoral en Tiempo Real",
+    title: "PulsoElectoral.pe — Inteligencia Electoral en Tiempo Real",
     description: "Plataforma de inteligencia electoral del Perú. Analiza candidatos, partidos y encuestas. Elecciones 2026.",
-    url: 'https://votape-web.onrender.com',
-    siteName: 'VOTA.PE',
+    url: 'https://pulsoelectoral.pe',
+    siteName: 'PulsoElectoral.pe',
     type: 'website',
     locale: 'es_PE',
   },
   twitter: {
     card: 'summary_large_image',
-    title: "VOTA.PE — Inteligencia Electoral en Tiempo Real",
+    title: "PulsoElectoral.pe — Inteligencia Electoral en Tiempo Real",
     description: "Analiza candidatos, partidos y encuestas electorales del Perú 2026.",
   },
   robots: {
@@ -48,18 +48,18 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "WebSite",
-              "name": "VOTA.PE",
-              "url": "https://votape-web.onrender.com",
+              "name": "PulsoElectoral.pe",
+              "url": "https://pulsoelectoral.pe",
               "description": "Plataforma de inteligencia electoral del Perú. Elecciones 2026.",
               "inLanguage": "es",
               "publisher": {
                 "@type": "Organization",
-                "name": "VOTA.PE",
-                "url": "https://votape-web.onrender.com"
+                "name": "PulsoElectoral.pe",
+                "url": "https://pulsoelectoral.pe"
               },
               "potentialAction": {
                 "@type": "SearchAction",
-                "target": "https://votape-web.onrender.com/search?q={search_term_string}",
+                "target": "https://pulsoelectoral.pe/search?q={search_term_string}",
                 "query-input": "required name=search_term_string"
               }
             })

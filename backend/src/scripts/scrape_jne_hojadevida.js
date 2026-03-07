@@ -1,5 +1,5 @@
 /**
- * JNE Hoja de Vida Scraper — VOTA.PE
+ * JNE Hoja de Vida Scraper — PulsoElectoral.pe
  * 
  * Extracts complete candidate profiles (education, work experience,
  * political history, finances, sentences) from the JNE Voto Informado portal.
@@ -260,7 +260,7 @@ async function main() {
         } catch { }
     }
 
-    console.log('🗳️  JNE Hoja de Vida Scraper — VOTA.PE');
+    console.log('🗳️  JNE Hoja de Vida Scraper — PulsoElectoral.pe');
     console.log('========================================\n');
 
     const result = {

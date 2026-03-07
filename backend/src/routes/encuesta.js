@@ -1,5 +1,5 @@
 /**
- * VOTA.PE — Encuesta (Poll) Route
+ * PulsoElectoral.pe — Encuesta (Poll) Route
  *
  * GET  /api/encuesta         — List all active polls with results
  * POST /api/encuesta/:id/vote — Vote on a poll option

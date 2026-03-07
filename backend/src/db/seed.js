@@ -1,5 +1,5 @@
 /**
- * VOTA.PE — Real JNE Data Seed
+ * PulsoElectoral.pe — Real JNE Data Seed
  * Loads 6,960 candidates from jne_hojadevida_full.json
  * Source: JNE Voto Informado — HVConsolidado API (2026)
  */
@@ -554,7 +554,7 @@ async function seed() {
 
         console.log(`
 ╔══════════════════════════════════════════╗
-║     🗳️  VOTA.PE SEED COMPLETE (JNE)     ║
+║     🗳️  PulsoElectoral.pe SEED COMPLETE (JNE)     ║
 ╠══════════════════════════════════════════╣
 ║  Source:      JNE Voto Informado 2026    ║
 ║  Parties:     ${jneData.parties.length.toString().padStart(6)}                   ║

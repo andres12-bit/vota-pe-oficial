@@ -1,10 +1,10 @@
 /**
- * VOTA.PE — Next.js Sitemap Generator
+ * PulsoElectoral.pe — Next.js Sitemap Generator
  * Auto-generates sitemap.xml for SEO
  */
 import type { MetadataRoute } from 'next';
 
-const BASE_URL = 'https://votape-web.onrender.com';
+const BASE_URL = 'https://pulsoelectoral.pe';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const routes: MetadataRoute.Sitemap = [

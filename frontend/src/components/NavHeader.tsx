@@ -86,18 +86,30 @@ export default function NavHeader({ activeTab, onTabChange }: NavHeaderProps) {
                     {/* Logo */}
                     <div className="navbar-left">
                         <Link href="/" className="flex items-center" style={{ textDecoration: 'none' }} onClick={() => onTabChange?.('votar')}>
-                            <img
-                                src="/images/logo-votape-transparent.png"
-                                alt="VOTA.PE"
-                                style={{ height: '100px', width: 'auto', filter: 'drop-shadow(0 2px 8px rgba(198,40,40,0.15))' }}
-                                className="logo-desktop"
-                            />
-                            <img
-                                src="/images/logo-votape-transparent.png"
-                                alt="VOTA.PE"
-                                style={{ height: '55px', width: 'auto' }}
-                                className="logo-mobile"
-                            />
+                            {/* Desktop */}
+                            <div className="logo-desktop" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <img
+                                    src="/images/peru-map-icon.png"
+                                    alt=""
+                                    style={{ height: '50px', width: 'auto' }}
+                                />
+                                <div style={{ lineHeight: 1.1 }}>
+                                    <div>
+                                        <span style={{ fontSize: '26px', fontWeight: 900, color: '#1B2A4A', letterSpacing: '-0.5px' }}>Pulso</span>
+                                        <span style={{ fontSize: '26px', fontWeight: 900, color: '#c62828', letterSpacing: '-0.5px' }}>Electoral</span>
+                                    </div>
+                                    <div style={{ fontSize: '15px', fontWeight: 800, color: '#c62828', textAlign: 'right', marginTop: '-2px' }}>.pe</div>
+                                </div>
+                            </div>
+                            {/* Mobile */}
+                            <div className="logo-mobile" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                <img src="/images/peru-map-icon.png" alt="" style={{ height: '32px', width: 'auto' }} />
+                                <div style={{ lineHeight: 1.1 }}>
+                                    <span style={{ fontSize: '15px', fontWeight: 900, color: '#1B2A4A' }}>Pulso</span>
+                                    <span style={{ fontSize: '15px', fontWeight: 900, color: '#c62828' }}>Electoral</span>
+                                    <span style={{ fontSize: '10px', fontWeight: 800, color: '#c62828', marginLeft: '2px' }}>.pe</span>
+                                </div>
+                            </div>
                         </Link>
                     </div>
 
@@ -144,6 +156,14 @@ export default function NavHeader({ activeTab, onTabChange }: NavHeaderProps) {
                         >
                             PLANCHAS
                         </button>
+
+                        {/* RADAR */}
+                        <button
+                            onClick={() => router.push('/radar')}
+                            className={`vp-nav-item vp-nav-radar`}
+                        >
+                            📡 RADAR ELECTORAL
+                        </button>
                     </nav>
 
                     {/* Right: Login + LIVE (desktop) */}
@@ -164,10 +184,10 @@ export default function NavHeader({ activeTab, onTabChange }: NavHeaderProps) {
                                 </button>
                                 {showUserMenu && (
                                     <div className="absolute right-0 top-full mt-2 w-48 rounded-xl py-1 z-50 animate-fade-in"
-                                        style={{ background: '#1a1a2e', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
-                                        <div className="px-3 py-2" style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                                            <div className="text-xs font-bold" style={{ color: '#fff' }}>{user.name}</div>
-                                            <div className="text-[10px]" style={{ color: 'rgba(255,255,255,0.5)' }}>{user.email || user.phone || user.alias}</div>
+                                        style={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.1)', boxShadow: '0 8px 32px rgba(0,0,0,0.12)' }}>
+                                        <div className="px-3 py-2" style={{ borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
+                                            <div className="text-xs font-bold" style={{ color: '#1a1a2e' }}>{user.name}</div>
+                                            <div className="text-[10px]" style={{ color: 'rgba(0,0,0,0.5)' }}>{user.email || user.phone || user.alias}</div>
                                         </div>
                                         <button
                                             onClick={() => { logout(); setShowUserMenu(false); }}
@@ -221,106 +241,110 @@ export default function NavHeader({ activeTab, onTabChange }: NavHeaderProps) {
                             </svg>
                         </button>
                     </div>
-                </div>
-            </header>
+                </div >
+            </header >
 
             {/* Mobile search bar dropdown */}
-            {showMobileSearch && (
-                <div className="mobile-search-dropdown animate-fade-in">
-                    <form
-                        onSubmit={(e) => { e.preventDefault(); const q = (e.currentTarget.elements.namedItem('mobileSearch') as HTMLInputElement)?.value?.trim(); if (q) { window.location.href = `/search?q=${encodeURIComponent(q)}`; setShowMobileSearch(false); } }}
-                        className="mobile-search-form"
-                    >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, color: 'var(--vp-text-dim)' }}>
-                            <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
-                        </svg>
-                        <input
-                            type="text"
-                            name="mobileSearch"
-                            placeholder="Buscar candidatos, partidos..."
-                            className="mobile-search-input"
-                            autoFocus
-                        />
-                        <button type="button" onClick={() => setShowMobileSearch(false)} className="mobile-search-close">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-                        </button>
-                    </form>
-                </div>
-            )}
-
-            {/* Mobile slide-out navigation */}
-            {showMobileMenu && (
-                <div className="mobile-nav-overlay animate-fade-in" onClick={() => setShowMobileMenu(false)}>
-                    <div className="mobile-nav-panel" onClick={(e) => e.stopPropagation()}>
-                        {/* Close button */}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                            <span style={{ fontSize: 13, fontWeight: 800, letterSpacing: 1, textTransform: 'uppercase' as const, color: 'var(--vp-text-dim)' }}>Menú</span>
-                            <button onClick={() => setShowMobileMenu(false)} className="mobile-icon-btn" style={{ width: 32, height: 32 }}>
+            {
+                showMobileSearch && (
+                    <div className="mobile-search-dropdown animate-fade-in">
+                        <form
+                            onSubmit={(e) => { e.preventDefault(); const q = (e.currentTarget.elements.namedItem('mobileSearch') as HTMLInputElement)?.value?.trim(); if (q) { window.location.href = `/search?q=${encodeURIComponent(q)}`; setShowMobileSearch(false); } }}
+                            className="mobile-search-form"
+                        >
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, color: 'var(--vp-text-dim)' }}>
+                                <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
+                            </svg>
+                            <input
+                                type="text"
+                                name="mobileSearch"
+                                placeholder="Buscar candidatos, partidos..."
+                                className="mobile-search-input"
+                                autoFocus
+                            />
+                            <button type="button" onClick={() => setShowMobileSearch(false)} className="mobile-search-close">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                             </button>
-                        </div>
+                        </form>
+                    </div>
+                )
+            }
 
-                        {/* Navigation */}
-                        <div className="mobile-nav-section">
-                            <div className="mobile-nav-label">Explorar Candidatos</div>
-                            {EXPLORAR_ITEMS.map(item => (
-                                <button
-                                    key={item.id}
-                                    onClick={() => handleTabClick(item.id)}
-                                    className={`mobile-nav-item ${activeTab === item.id ? 'active' : ''}`}
-                                >
-                                    <span className="mobile-nav-icon">{NAV_ICONS[item.id]}</span> {item.label}
-                                </button>
-                            ))}
-                        </div>
-                        <div className="mobile-nav-divider" />
-                        <button onClick={() => handleTabClick('encuesta')} className={`mobile-nav-item ${activeTab === 'encuesta' ? 'active' : ''}`}>
-                            <span className="mobile-nav-icon">{NAV_ICONS.encuesta}</span> Encuesta
-                        </button>
-                        <button onClick={() => handleTabClick('planchas')} className={`mobile-nav-item ${activeTab === 'planchas' ? 'active' : ''}`}>
-                            <span className="mobile-nav-icon">{NAV_ICONS.planchas}</span> Planchas
-                        </button>
-                        <div className="mobile-nav-divider" />
-
-                        {/* LIVE status */}
-                        <div className="mobile-nav-item" style={{ cursor: 'default' }}>
-                            <div className={`vp-live-dot ${isConnected ? 'vp-live-connected' : ''}`} style={{ width: 8, height: 8 }} />
-                            <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1 }}>LIVE</span>
-                        </div>
-                        <div className="mobile-nav-divider" />
-
-                        {/* Account */}
-                        {isLoggedIn && user ? (
-                            <div className="mobile-nav-section">
-                                <div className="mobile-nav-user">
-                                    <div style={{ width: 36, height: 36, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 900, background: 'var(--vp-red)', color: '#fff' }}>
-                                        {user.name.charAt(0).toUpperCase()}
-                                    </div>
-                                    <div>
-                                        <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--vp-text)' }}>{user.name}</div>
-                                        <div style={{ fontSize: 11, color: 'var(--vp-text-dim)' }}>{user.email || user.phone || user.alias}</div>
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={() => { logout(); setShowMobileMenu(false); }}
-                                    className="mobile-nav-item"
-                                    style={{ color: 'var(--vp-red)' }}
-                                >
-                                    <span className="mobile-nav-icon">{NAV_ICONS.logout}</span> Cerrar sesión
+            {/* Mobile slide-out navigation */}
+            {
+                showMobileMenu && (
+                    <div className="mobile-nav-overlay animate-fade-in" onClick={() => setShowMobileMenu(false)}>
+                        <div className="mobile-nav-panel" onClick={(e) => e.stopPropagation()}>
+                            {/* Close button */}
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                                <span style={{ fontSize: 13, fontWeight: 800, letterSpacing: 1, textTransform: 'uppercase' as const, color: 'var(--vp-text-dim)' }}>Menú</span>
+                                <button onClick={() => setShowMobileMenu(false)} className="mobile-icon-btn" style={{ width: 32, height: 32 }}>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                                 </button>
                             </div>
-                        ) : (
-                            <button
-                                onClick={() => { setShowLogin(true); setShowMobileMenu(false); }}
-                                className="mobile-nav-login-btn"
-                            >
-                                <span style={{ color: 'white', display: 'flex', alignItems: 'center' }}>{NAV_ICONS.user}</span>
-                                Mi Cuenta
+
+                            {/* Navigation */}
+                            <div className="mobile-nav-section">
+                                <div className="mobile-nav-label">Explorar Candidatos</div>
+                                {EXPLORAR_ITEMS.map(item => (
+                                    <button
+                                        key={item.id}
+                                        onClick={() => handleTabClick(item.id)}
+                                        className={`mobile-nav-item ${activeTab === item.id ? 'active' : ''}`}
+                                    >
+                                        <span className="mobile-nav-icon">{NAV_ICONS[item.id]}</span> {item.label}
+                                    </button>
+                                ))}
+                            </div>
+                            <div className="mobile-nav-divider" />
+                            <button onClick={() => handleTabClick('encuesta')} className={`mobile-nav-item ${activeTab === 'encuesta' ? 'active' : ''}`}>
+                                <span className="mobile-nav-icon">{NAV_ICONS.encuesta}</span> Encuesta
                             </button>
-                        )}
+                            <button onClick={() => handleTabClick('planchas')} className={`mobile-nav-item ${activeTab === 'planchas' ? 'active' : ''}`}>
+                                <span className="mobile-nav-icon">{NAV_ICONS.planchas}</span> Planchas
+                            </button>
+                            <div className="mobile-nav-divider" />
+
+                            {/* LIVE status */}
+                            <div className="mobile-nav-item" style={{ cursor: 'default' }}>
+                                <div className={`vp-live-dot ${isConnected ? 'vp-live-connected' : ''}`} style={{ width: 8, height: 8 }} />
+                                <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1 }}>LIVE</span>
+                            </div>
+                            <div className="mobile-nav-divider" />
+
+                            {/* Account */}
+                            {isLoggedIn && user ? (
+                                <div className="mobile-nav-section">
+                                    <div className="mobile-nav-user">
+                                        <div style={{ width: 36, height: 36, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 900, background: 'var(--vp-red)', color: '#fff' }}>
+                                            {user.name.charAt(0).toUpperCase()}
+                                        </div>
+                                        <div>
+                                            <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--vp-text)' }}>{user.name}</div>
+                                            <div style={{ fontSize: 11, color: 'var(--vp-text-dim)' }}>{user.email || user.phone || user.alias}</div>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => { logout(); setShowMobileMenu(false); }}
+                                        className="mobile-nav-item"
+                                        style={{ color: 'var(--vp-red)' }}
+                                    >
+                                        <span className="mobile-nav-icon">{NAV_ICONS.logout}</span> Cerrar sesión
+                                    </button>
+                                </div>
+                            ) : (
+                                <button
+                                    onClick={() => { setShowLogin(true); setShowMobileMenu(false); }}
+                                    className="mobile-nav-login-btn"
+                                >
+                                    <span style={{ color: 'white', display: 'flex', alignItems: 'center' }}>{NAV_ICONS.user}</span>
+                                    Mi Cuenta
+                                </button>
+                            )}
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
         </>
     );
 }

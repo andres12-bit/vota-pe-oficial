@@ -1,5 +1,5 @@
 /**
- * VOTA.PE — Momentum Engine
+ * PulsoElectoral.pe — Momentum Engine
  *
  * Calculates momentum based on recent vote velocity and acceleration.
  * Momentum = weighted recent votes with time-decay windows.

@@ -36,7 +36,7 @@ function verifyToken(token) {
 // Admin login endpoint (before auth middleware)
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
-    const adminKey = process.env.ADMIN_KEY || 'votape-admin-2026';
+    const adminKey = process.env.ADMIN_KEY || 'pulsoelectoral-admin-2026';
 
     // Check credentials
     if ((username === 'admin' && password === adminKey) || password === adminKey) {
@@ -64,7 +64,7 @@ const adminAuth = (req, res, next) => {
 
     // 2. Check legacy x-admin-key header (backward compat)
     const adminKey = req.headers['x-admin-key'];
-    if (adminKey === process.env.ADMIN_KEY || adminKey === 'votape-admin-2026') {
+    if (adminKey === process.env.ADMIN_KEY || adminKey === 'pulsoelectoral-admin-2026') {
         return next();
     }
 

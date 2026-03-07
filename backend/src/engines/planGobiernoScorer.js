@@ -1,5 +1,5 @@
 /**
- * VOTA.PE — Plan de Gobierno Scorer
+ * PulsoElectoral.pe — Plan de Gobierno Scorer
  *
  * Evaluates the quality, coherence, and specificity of a candidate's government plan.
  * Scale: 0 to 100

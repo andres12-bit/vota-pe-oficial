@@ -51,7 +51,7 @@ class JNEIngestionEngine {
             const response = await fetch(source.apiUrl, {
                 headers: {
                     'Accept': 'application/json',
-                    'User-Agent': 'VOTA.PE Electoral Intelligence System'
+                    'User-Agent': 'PulsoElectoral.pe Electoral Intelligence System'
                 },
                 signal: AbortSignal.timeout(10000) // 10s timeout
             });

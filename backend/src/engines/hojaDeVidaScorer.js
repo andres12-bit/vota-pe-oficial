@@ -1,5 +1,5 @@
 /**
- * VOTA.PE — Hoja de Vida Scorer
+ * PulsoElectoral.pe — Hoja de Vida Scorer
  *
  * Evaluates candidate CV quality based on JNE data.
  * Scale: 0 to 100
@@ -172,10 +172,11 @@ const HojaDeVidaScorer = {
             cached_at: Date.now(),
         };
 
-        // Update DB
+        // Update DB — also persist workScore as experience_score for the ranking formula
+        const experienceScore = parseFloat(workScore.toFixed(2));
         await pool.query(
-            'UPDATE candidates SET hoja_score = $1, updated_at = NOW() WHERE id = $2',
-            [finalScore, candidateId]
+            'UPDATE candidates SET hoja_score = $1, experience_score = $2, updated_at = NOW() WHERE id = $3',
+            [finalScore, experienceScore, candidateId]
         );
 
         // Cache

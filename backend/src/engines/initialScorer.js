@@ -1,5 +1,5 @@
 /**
- * VOTA.PE — Initial Scorer
+ * PulsoElectoral.pe — Initial Scorer
  *
  * Runs all scoring engines on every candidate to populate initial scores.
  * Run: DATABASE_URL=... node src/engines/initialScorer.js
@@ -12,13 +12,14 @@ const IntegrityScorer = require('./integrityScorer');
 const RankingEngine = require('./rankingEngine');
 
 async function runInitialScoring() {
-    console.log('🔄 VOTA.PE — Running initial scoring for all candidates...\n');
+    console.log('🔄 PulsoElectoral.pe — Running initial scoring for all candidates...\n');
 
     // 1. Ensure new columns exist (ALTER TABLE for existing DBs)
     try {
         await pool.query('ALTER TABLE candidates ADD COLUMN IF NOT EXISTS hoja_score NUMERIC(6,2) DEFAULT 0');
         await pool.query('ALTER TABLE candidates ADD COLUMN IF NOT EXISTS plan_score NUMERIC(6,2) DEFAULT 0');
-        console.log('✅ Database columns verified (hoja_score, plan_score)');
+        await pool.query('ALTER TABLE candidates ADD COLUMN IF NOT EXISTS experience_score NUMERIC(6,2) DEFAULT 0');
+        console.log('✅ Database columns verified (hoja_score, plan_score, experience_score)');
     } catch (err) {
         console.log('ℹ️  Columns may already exist:', err.message);
     }
@@ -57,8 +58,7 @@ async function runInitialScoring() {
 
     let recalcCount = 0;
     for (const candidate of candidates.rows) {
-        const maxVotes = maxVotesByPosition[candidate.position] || 1;
-        const finalScore = RankingEngine.calculateFinalScore(candidate, maxVotes);
+        const finalScore = RankingEngine.calculateFinalScore(candidate);
 
         await pool.query(
             'UPDATE candidates SET final_score = $1, updated_at = NOW() WHERE id = $2',
@@ -94,13 +94,13 @@ async function runInitialScoring() {
 
     console.log('\n🏅 TOP 10 PRESIDENTIAL CANDIDATES (new formula):');
     console.log('─'.repeat(90));
-    console.log('  #  | Candidato                        | Partido | Final | HV   | Plan | Votos | Int');
+    console.log('  #  | Candidato                        | Partido | Final | HV   | Plan | Exp  | Int');
     console.log('─'.repeat(90));
     top5.rows.forEach((c, i) => {
         const name = c.name.substring(0, 32).padEnd(32);
         const party = (c.abbreviation || '').substring(0, 7).padEnd(7);
         console.log(
-            `  ${String(i + 1).padStart(2)} | ${name} | ${party} | ${String(c.final_score).padStart(5)} | ${String(c.hoja_score).padStart(4)} | ${String(c.plan_score).padStart(4)} | ${String(c.vote_count).padStart(5)} | ${String(c.integrity_score).padStart(3)}`
+            `  ${String(i + 1).padStart(2)} | ${name} | ${party} | ${String(c.final_score).padStart(5)} | ${String(c.hoja_score).padStart(4)} | ${String(c.plan_score).padStart(4)} | ${String(c.experience_score || 0).padStart(4)} | ${String(c.integrity_score).padStart(3)}`
         );
     });
     console.log('─'.repeat(90));

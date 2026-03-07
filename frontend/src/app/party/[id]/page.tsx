@@ -98,8 +98,7 @@ export default function PartyPage({ params }: { params: Promise<{ id: string }> 
         const scores = allCandidates.map(c => Number(c.final_score));
         const hojaScores = allCandidates.map(c => Number((c as any).hoja_score || 0));
         const planScores = allCandidates.map(c => Number((c as any).plan_score || 0));
-        const maxVotes = Math.max(...allCandidates.map(c => c.vote_count || 0), 1);
-        const intencionScores = allCandidates.map(c => Math.min(100, ((c.vote_count || 0) / maxVotes) * 100));
+        const experienceScores = allCandidates.map(c => Number(c.experience_score || 0));
         const integrity = allCandidates.map(c => Number(c.integrity_score));
 
         // Region analysis
@@ -130,13 +129,19 @@ export default function PartyPage({ params }: { params: Promise<{ id: string }> 
             return (hv.sentences || []).length === 0;
         });
 
+        // Antecedentes: % of candidates with clean judicial records (no sentences)
+        const cleanCount = cleanCandidates.length;
+        const antecedentesScore = allCandidates.length > 0 ? (cleanCount / allCandidates.length) * 100 : 0;
+
         return {
             totalCandidates: allCandidates.length,
             avgScore: avg(scores),
             avgHoja: avg(hojaScores),
             avgPlan: avg(planScores),
-            avgIntencion: avg(intencionScores),
+            avgExperiencia: avg(experienceScores),
             avgIntegrity: avg(integrity),
+            antecedentesScore,
+            cleanCount,
             topScore: Math.max(...scores),
             topRegion: topRegion ? topRegion[0] : 'N/A',
             topByPosition,
@@ -224,14 +229,14 @@ export default function PartyPage({ params }: { params: Promise<{ id: string }> 
                                     </div>
                                 </div>
 
-                                {/* Score Bars with new formula */}
+                                {/* Score Bars — Plancha Formula */}
                                 <div className="text-[9px] font-bold tracking-wider uppercase mb-1.5" style={{ color: 'var(--vp-text-dim)' }}>
-                                    Componentes del Score (promedio plancha)
+                                    Fórmula de Plancha
                                 </div>
-                                <ScoreBar label="Hoja de Vida" value={analytics.avgHoja} color="#8b5cf6" />
+                                <ScoreBar label={`Antecedentes (${analytics.cleanCount}/${analytics.totalCandidates})`} value={analytics.antecedentesScore} color="#0ea5e9" />
                                 <ScoreBar label="Plan de Gob." value={analytics.avgPlan} color="#2563eb" />
-                                <ScoreBar label="Intención" value={analytics.avgIntencion} color="#f59e0b" />
-                                <ScoreBar label="Integridad" value={analytics.avgIntegrity} color="#16a34a" />
+                                <ScoreBar label="Hoja de Vida" value={analytics.avgHoja} color="#8b5cf6" />
+                                <ScoreBar label="Score Prom." value={analytics.avgScore} color="#f59e0b" />
                             </div>
 
                             {/* Right: Presidential Candidate compact */}

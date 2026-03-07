@@ -208,7 +208,7 @@ export default function CanchaDemocracia({ candidates, onVote }: Props) {
                 {/* Center circle label */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none" style={{ zIndex: 1 }}>
                     <div className="text-[7px] sm:text-[8px] font-bold tracking-[2px] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>
-                        VOTA.PE
+                        PulsoElectoral.pe
                     </div>
                 </div>
             </div>

@@ -170,7 +170,7 @@ export default function HojaDeVidaPage({ params }: { params: Promise<{ id: strin
                     <div style={{ fontSize: 12, color: '#1e40af', lineHeight: 1.5 }}>
                         <strong>Fuente de datos:</strong> Toda la información de esta hoja de vida proviene del portal{' '}
                         <a href="https://votoinformado.jne.gob.pe" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', fontWeight: 600 }}>Voto Informado del Jurado Nacional de Elecciones (JNE)</a>.
-                        Es de acceso público y se presenta con fines informativos y educativos. VOTA.PE no modifica, valida ni garantiza la veracidad de esta información.
+                        Es de acceso público y se presenta con fines informativos y educativos. PulsoElectoral.pe no modifica, valida ni garantiza la veracidad de esta información.
                     </div>
                 </div>
 
@@ -465,7 +465,7 @@ export default function HojaDeVidaPage({ params }: { params: Promise<{ id: strin
 
                 {/* Footer */}
                 <div style={{ textAlign: 'center', marginTop: 30, color: '#9ca3af', fontSize: 12 }}>
-                    Fuente: Jurado Nacional de Elecciones — Voto Informado | VOTA.PE
+                    Fuente: Jurado Nacional de Elecciones — Voto Informado | PulsoElectoral.pe
                 </div>
             </div>
 

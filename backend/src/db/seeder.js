@@ -1,5 +1,5 @@
 /**
- * VOTA.PE — Database Seeder
+ * PulsoElectoral.pe — Database Seeder
  * Loads real JNE data into PostgreSQL with scores at 0.
  * Run AFTER migrations: DATABASE_URL=... node src/db/seeder.js
  */

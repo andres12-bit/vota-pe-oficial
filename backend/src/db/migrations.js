@@ -1,5 +1,5 @@
 /**
- * VOTA.PE — Database Migrations
+ * PulsoElectoral.pe — Database Migrations
  * Creates all tables in PostgreSQL.
  * Run: DATABASE_URL=... node src/db/migrations.js
  */
@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS candidates (
   intelligence_score NUMERIC(6,2) DEFAULT 0,
   momentum_score NUMERIC(6,2) DEFAULT 0,
   integrity_score NUMERIC(6,2) DEFAULT 0,
+  experience_score NUMERIC(6,2) DEFAULT 0,
   risk_score NUMERIC(6,2) DEFAULT 0,
   hoja_score NUMERIC(6,2) DEFAULT 0,
   plan_score NUMERIC(6,2) DEFAULT 0,

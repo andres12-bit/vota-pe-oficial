@@ -142,10 +142,10 @@ export default function LoginModal() {
                     <button onClick={handleClose} className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center text-lg transition-colors hover:bg-white/10" style={{ color: 'var(--vp-text-dim)' }}>
                         ✕
                     </button>
-                    <img src="/logo.svg" alt="VOTA.PE" width={50} height={50} className="mx-auto mb-3 rounded-full" style={{ boxShadow: '0 0 20px var(--vp-red-glow)' }} />
+                    <img src="/logo.svg" alt="PulsoElectoral.pe" width={50} height={50} className="mx-auto mb-3 rounded-full" style={{ boxShadow: '0 0 20px var(--vp-red-glow)' }} />
                     <h2 className="text-lg font-black tracking-wider uppercase">
                         <span style={{ color: 'var(--vp-text)' }}>Ingresar a </span>
-                        <span style={{ color: 'var(--vp-red)' }}>VOTA.PE</span>
+                        <span style={{ color: 'var(--vp-red)' }}>PulsoElectoral.pe</span>
                     </h2>
                     <p className="text-xs mt-1" style={{ color: 'var(--vp-text-dim)' }}>
                         Elige cómo quieres identificarte
@@ -196,7 +196,7 @@ export default function LoginModal() {
                                 {loading && <Spinner />}
                             </button>
                             <p className="text-[10px] text-center mt-2" style={{ color: 'var(--vp-text-dim)' }}>
-                                Al continuar aceptas los términos de uso de VOTA.PE
+                                Al continuar aceptas los términos de uso de PulsoElectoral.pe
                             </p>
                         </div>
                     )}

@@ -1,5 +1,5 @@
 /**
- * Redis Client for VOTA.PE
+ * Redis Client for PulsoElectoral.pe
  * 
  * Provides Redis connection with automatic fallback to in-memory cache
  * when Redis is not available (development/single-instance mode).

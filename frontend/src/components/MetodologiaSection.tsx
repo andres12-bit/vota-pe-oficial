@@ -154,7 +154,7 @@ export default function MetodologiaSection() {
                         <div className="modal-block modal-block-highlight">
                             <h3 className="modal-block-title">Transparencia</h3>
                             <p className="modal-block-text">
-                                <strong>VOTA.pe no promueve candidatos ni partidos políticos.</strong><br />
+                                <strong>PulsoElectoral.pe no promueve candidatos ni partidos políticos.</strong><br />
                                 La plataforma muestra tendencias y evaluaciones generadas por datos públicos y participación ciudadana.
                                 Toda la información de candidatos proviene de las hojas de vida presentadas ante el Jurado Nacional de Elecciones (JNE).
                             </p>

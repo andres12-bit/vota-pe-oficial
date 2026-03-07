@@ -1,10 +1,10 @@
 /**
- * VOTA.PE — Candidate Page Layout with Dynamic SEO
+ * PulsoElectoral.pe — Candidate Page Layout with Dynamic SEO
  */
 import type { Metadata } from 'next';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-const SITE_URL = 'https://votape-web.onrender.com';
+const SITE_URL = 'https://pulsoelectoral.pe';
 
 const positionLabels: Record<string, string> = {
     president: 'Candidato(a) Presidencial',
@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
         if (!res.ok) throw new Error('Not found');
         const candidate = await res.json();
 
-        const title = `${candidate.name} — ${positionLabels[candidate.position] || candidate.position} | VOTA.PE`;
+        const title = `${candidate.name} — ${positionLabels[candidate.position] || candidate.position} | PulsoElectoral.pe`;
         const description = `Perfil electoral de ${candidate.name}. ${candidate.party_name || ''}. Score: ${candidate.final_score}. Inteligencia: ${candidate.intelligence_score}. ${candidate.biography?.substring(0, 120) || ''}`;
 
         return {
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
                 title,
                 description,
                 url: `${SITE_URL}/candidate/${id}`,
-                siteName: 'VOTA.PE',
+                siteName: 'PulsoElectoral.pe',
                 type: 'profile',
                 locale: 'es_PE',
                 images: candidate.photo ? [{ url: candidate.photo, width: 200, height: 200, alt: candidate.name }] : [],
@@ -49,8 +49,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
         };
     } catch {
         return {
-            title: 'Candidato | VOTA.PE',
-            description: 'Perfil electoral del candidato — VOTA.PE Inteligencia Electoral en Tiempo Real',
+            title: 'Candidato | PulsoElectoral.pe',
+            description: 'Perfil electoral del candidato — PulsoElectoral.pe Inteligencia Electoral en Tiempo Real',
         };
     }
 }

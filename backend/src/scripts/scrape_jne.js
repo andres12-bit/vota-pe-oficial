@@ -1,5 +1,5 @@
 /**
- * JNE Real Data Scraper for VOTA.PE
+ * JNE Real Data Scraper for PulsoElectoral.pe
  * Fetches real candidate data from the JNE (Jurado Nacional de Elecciones) API
  * and saves it as a JSON file for seeding the in-memory database.
  * 
@@ -85,7 +85,7 @@ function sleep(ms) {
 }
 
 async function main() {
-    console.log('🗳️  JNE Real Data Scraper for VOTA.PE');
+    console.log('🗳️  JNE Real Data Scraper for PulsoElectoral.pe');
     console.log('=====================================\n');
 
     const allData = {

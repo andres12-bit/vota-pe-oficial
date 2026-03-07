@@ -21,7 +21,7 @@ function setupWebSocket(server) {
         // Send welcome message
         ws.send(JSON.stringify({
             type: 'connected',
-            data: { message: 'Connected to VOTA.PE real-time feed', timestamp: Date.now() }
+            data: { message: 'Connected to PulsoElectoral.pe real-time feed', timestamp: Date.now() }
         }));
     });
 

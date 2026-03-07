@@ -1,5 +1,5 @@
 /**
- * VOTA.PE — Intelligence Engine
+ * PulsoElectoral.pe — Intelligence Engine
  *
  * Calculates intelligence_score for each candidate (0-100).
  * 

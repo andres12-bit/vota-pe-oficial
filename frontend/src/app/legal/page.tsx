@@ -18,13 +18,13 @@ export default function LegalPage() {
 
                     <div className="space-y-4 text-sm leading-relaxed" style={{ color: 'var(--vp-text-dim)' }}>
                         <p>
-                            VOTA.PE es una plataforma digital independiente de información electoral. <strong>No pertenece ni está afiliada al Jurado Nacional de Elecciones (JNE), ONPE, RENIEC, ni a ningún partido político o candidato.</strong>
+                            PulsoElectoral.pe es una plataforma digital independiente de información electoral. <strong>No pertenece ni está afiliada al Jurado Nacional de Elecciones (JNE), ONPE, RENIEC, ni a ningún partido político o candidato.</strong>
                         </p>
                         <p>
                             La información de candidatos, partidos y planes de gobierno proviene de fuentes públicas oficiales, principalmente del <a href="https://votoinformado.jne.gob.pe" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--vp-blue)', textDecoration: 'underline' }}>Jurado Nacional de Elecciones (JNE)</a>, y es mostrada con fines informativos y educativos.
                         </p>
                         <p>
-                            VOTA.PE <strong>no promueve, financia ni respalda</strong> a ningún candidato o agrupación política.
+                            PulsoElectoral.pe <strong>no promueve, financia ni respalda</strong> a ningún candidato o agrupación política.
                         </p>
                         <p>
                             La sección de intención de voto es un mecanismo digital de participación ciudadana abierto, <strong>no constituye encuesta electoral científica</strong> y no reemplaza estudios realizados por empresas registradas ante el JNE.
@@ -42,7 +42,7 @@ export default function LegalPage() {
                     </h2>
 
                     <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--vp-text-dim)' }}>
-                        La funcionalidad de intención de voto de VOTA.PE es una herramienta digital interactiva que permite a los usuarios expresar su preferencia política de manera libre y voluntaria.
+                        La funcionalidad de intención de voto de PulsoElectoral.pe es una herramienta digital interactiva que permite a los usuarios expresar su preferencia política de manera libre y voluntaria.
                     </p>
 
                     <p className="text-sm font-semibold mb-3" style={{ color: 'var(--vp-text)' }}>
@@ -82,13 +82,14 @@ export default function LegalPage() {
                         El &quot;Score Final&quot; de cada candidato se calcula con la siguiente fórmula:
                     </p>
                     <div className="p-3 rounded-lg text-xs font-mono mb-3" style={{ background: 'rgba(255,255,255,0.03)', color: 'var(--vp-text)', border: '1px solid var(--vp-border)' }}>
-                        score = (hoja_de_vida × 0.30) + (plan_de_gobierno × 0.30) + (intención_ciudadana × 0.25) + (integridad × 0.15)
+                        score = (hoja_de_vida × 0.30) + (plan_de_gobierno × 0.30) + (experiencia_laboral × 0.25) + (integridad × 0.15)
                     </div>
                     <ul className="text-sm leading-relaxed space-y-1" style={{ color: 'var(--vp-text-dim)' }}>
                         <li>• <strong>Hoja de Vida (30%)</strong>: Evaluación de educación, experiencia laboral, experiencia política, transparencia financiera y limpieza judicial del candidato (datos del JNE)</li>
                         <li>• <strong>Plan de Gobierno (30%)</strong>: Cobertura dimensional, especificidad, metas cuantificables, indicadores y coherencia del plan presentado al JNE</li>
-                        <li>• <strong>Intención Ciudadana (25%)</strong>: Participación de usuarios en la plataforma, normalizada por posición</li>
+                        <li>• <strong>Experiencia Laboral (25%)</strong>: Evaluación de la experiencia profesional y laboral declarada ante el JNE. Cada puesto válido suma puntos, con bonificación por antigüedad</li>
                         <li>• <strong>Integridad (15%)</strong>: Indicador de transparencia y limpieza del candidato</li>
+                        <li>• <em>Nota: La Intención Ciudadana (votos en PulsoElectoral.pe) se muestra como indicador informativo, pero no forma parte de la fórmula de puntuación</em></li>
                     </ul>
                 </div>
 
@@ -98,7 +99,7 @@ export default function LegalPage() {
                         🔒 Privacidad
                     </h2>
                     <p className="text-sm leading-relaxed" style={{ color: 'var(--vp-text-dim)' }}>
-                        VOTA.PE recopila datos mínimos necesarios: dirección IP y huella digital del navegador para
+                        PulsoElectoral.pe recopila datos mínimos necesarios: dirección IP y huella digital del navegador para
                         prevenir fraude en votación. No se recopilan datos personales identificables. No se comparten
                         datos con terceros.
                     </p>

@@ -1,5 +1,5 @@
 /**
- * VOTA.PE — Integrity Scorer
+ * PulsoElectoral.pe — Integrity Scorer
  *
  * Evaluates candidate integrity based on JNE data.
  * Scale: 0 to 100 (higher = more integrity / cleaner record)

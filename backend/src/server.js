@@ -18,6 +18,7 @@ const adminRouter = require('./routes/admin');
 const coordinationRouter = require('./routes/coordination');
 const ingestionRouter = require('./routes/ingestion');
 const encuestaRouter = require('./routes/encuesta');
+const radarRouter = require('./routes/radar');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -31,6 +32,8 @@ app.use(helmet({
 
 // CORS — restrict to known origins
 const ALLOWED_ORIGINS = [
+    'https://pulsoelectoral.pe',
+    'https://www.pulsoelectoral.pe',
     'https://votape-web.onrender.com',
     'http://localhost:3000',
     'http://localhost:3001',
@@ -127,12 +130,13 @@ app.use('/api/admin', adminRouter);
 app.use('/api/coordination', coordinationRouter);
 app.use('/api/admin/ingestion', ingestionRouter);
 app.use('/api/encuesta', encuestaRouter);
+app.use('/api/radar', radarRouter);
 
 // Health check
 app.get('/api/health', (req, res) => {
     res.json({
         status: 'ok',
-        service: 'VOTA.PE API',
+        service: 'PulsoElectoral.pe API',
         timestamp: new Date().toISOString(),
         wsClients: req.app.get('wsClientCount') ? req.app.get('wsClientCount')() : 0
     });
@@ -171,7 +175,7 @@ const dbMode = process.env.DATABASE_URL ? '🐘 PostgreSQL' : '🧠 In-Memory';
 server.listen(PORT, HOST, async () => {
     console.log(`
 ╔══════════════════════════════════════════╗
-║          🗳️  VOTA.PE API SERVER          ║
+║          🗳️  PulsoElectoral.pe API SERVER          ║
 ║       Political Intelligence Engine      ║
 ╠══════════════════════════════════════════╣
 ║  REST API:  http://${HOST}:${PORT}               ║

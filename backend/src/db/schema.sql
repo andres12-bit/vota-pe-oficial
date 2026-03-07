@@ -1,4 +1,4 @@
--- VOTA.PE Database Schema
+-- PulsoElectoral.pe Database Schema
 -- PostgreSQL
 
 -- Enable extensions

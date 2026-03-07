@@ -1,5 +1,5 @@
 /**
- * JNE Plan de Gobierno Scraper — VOTA.PE
+ * JNE Plan de Gobierno Scraper — PulsoElectoral.pe
  * 
  * Scrapes plan de gobierno data from JNE Voto Informado:
  *   GET /detalle-plangobierno?IdPlanGobierno=X → structured summary with dimensions
@@ -96,7 +96,7 @@ function parsePlanGobierno(detail) {
 }
 
 async function main() {
-    console.log('📋 JNE Plan de Gobierno Scraper — VOTA.PE');
+    console.log('📋 JNE Plan de Gobierno Scraper — PulsoElectoral.pe');
     console.log('==========================================\n');
 
     const result = { scraped_at: new Date().toISOString(), plans: [] };

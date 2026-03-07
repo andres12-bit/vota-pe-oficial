@@ -1,5 +1,5 @@
 /**
- * VOTA.PE — Database Pool (Dual Mode)
+ * PulsoElectoral.pe — Database Pool (Dual Mode)
  * 
  * MODE 1: If DATABASE_URL is set → connects to real PostgreSQL
  * MODE 2: If DATABASE_URL is absent → uses in-memory DB with seed data
@@ -547,7 +547,8 @@ function initializeData() {
       final_score: Math.min(100, finalScore),
       hoja_score: 0,
       plan_score: 0,
-      vote_count: voteCount,
+      experience_score: 0,
+      vote_count: 0,
       is_active: isActive,
       jne_status: raw.status || 'INSCRITO',
       list_position: raw.list_position || 0,
@@ -622,7 +623,7 @@ function seedEncuestaPolls() {
         'Keiko Fujimori', 'César Acuña', 'Hernando de Soto',
         'Daniel Urresti', 'Lescano Ancieta', 'Otro candidato'
       ],
-      simulated_votes: [2840, 1920, 2150, 1680, 1340, 870],
+      simulated_votes: [],
     },
     {
       question: '¿Cuál es el tema más importante para el Perú?',
@@ -632,7 +633,7 @@ function seedEncuestaPolls() {
         'Economía y empleo', 'Seguridad ciudadana', 'Educación',
         'Salud pública', 'Lucha contra la corrupción', 'Infraestructura'
       ],
-      simulated_votes: [3200, 4100, 2800, 2300, 3500, 1100],
+      simulated_votes: [],
     },
     {
       question: '¿Confías en el sistema electoral peruano?',
@@ -641,7 +642,7 @@ function seedEncuestaPolls() {
       options: [
         'Sí, totalmente', 'Parcialmente', 'No confío', 'Necesita reforma total'
       ],
-      simulated_votes: [980, 3400, 4200, 2420],
+      simulated_votes: [],
     },
     {
       question: '¿A qué Partido le darías tu voto?',
@@ -651,7 +652,7 @@ function seedEncuestaPolls() {
         'Fuerza Popular', 'Alianza para el Progreso', 'Renovación Popular',
         'Avanza País', 'Partido Morado', 'Otro partido'
       ],
-      simulated_votes: [2100, 1750, 1980, 1430, 1620, 2120],
+      simulated_votes: [],
     },
     {
       question: '¿Cuál debe ser la prioridad del gobierno 2026-2031?',
@@ -662,7 +663,7 @@ function seedEncuestaPolls() {
         'Reforma del poder judicial', 'Construcción de carreteras e infraestructura',
         'Seguridad y lucha contra el crimen'
       ],
-      simulated_votes: [3100, 2600, 2200, 1800, 3300],
+      simulated_votes: [],
     },
   ];
 
@@ -791,14 +792,26 @@ function handleSelect(resolved, q, params) {
     return { rows: [...store.encuesta_polls], rowCount: store.encuesta_polls.length };
   }
 
-  // COUNT queries (exclude subqueries inside other primary queries like parties)
-  if (resolved.includes('count(*)') && !resolved.includes('from parties')) {
+  // COUNT queries (exclude subqueries inside other primary queries like parties, and exclude AVG queries that also contain count(*))
+  if (resolved.includes('count(*)') && !resolved.includes('from parties') && !resolved.includes('avg(')) {
     if (resolved.includes('from candidates')) {
       let items = store.candidates;
       if (resolved.includes('is_active = true')) items = items.filter(c => c.is_active);
       if (resolved.includes("and position = ")) {
         const pos = params.find(p => ['president', 'senator', 'deputy', 'andean'].includes(p));
         if (pos) items = items.filter(c => c.position === pos);
+      }
+      // Party filter
+      if (resolved.includes('party_id') && params[0]) {
+        items = items.filter(c => c.party_id === parseInt(params[0]));
+      }
+      // Sentences filter (for Antecedentes/clean count — uses actual hoja_de_vida sentences data)
+      if (resolved.includes('has_no_sentences')) {
+        items = items.filter(c => {
+          const hv = c.hoja_de_vida || {};
+          return !hv.sentences || hv.sentences.length === 0;
+        });
+        return { rows: [{ clean_count: items.length, cnt: items.length, count: items.length, total: items.length }] };
       }
       return { rows: [{ cnt: items.length, count: items.length, total: items.length }] };
     }
@@ -863,20 +876,37 @@ function handleSelect(resolved, q, params) {
     return { rows: [{ score_0: score0, score_1_25: score125, score_26_50: score2650, score_51_75: score5175, score_76_100: score76100, avg_hv: avgHv, avg_plan: avgPlan, avg_final: avgFinal }] };
   }
 
+  // COUNT queries with integrity_score filter (for Antecedentes in plancha formula)
+  // IMPORTANT: Must NOT match when query also contains AVG() — those go to the AVG handler below
+  if (resolved.includes('count(') && resolved.includes('integrity_score') && resolved.includes('from candidates') && !resolved.includes('avg(')) {
+    let items = store.candidates;
+    if (params[0]) items = items.filter(c => c.party_id === parseInt(params[0]) && c.is_active);
+    else if (resolved.includes('is_active = true')) items = items.filter(c => c.is_active);
+    const cleanItems = items.filter(c => (parseFloat(c.integrity_score) || 0) >= 80);
+    return { rows: [{ clean_count: cleanItems.length }] };
+  }
+
   // SUM(vote_count) / AVG queries
   if (resolved.includes('avg(') || resolved.includes('sum(')) {
     let items = store.candidates;
-    if (params[0]) items = items.filter(c => c.party_id === parseInt(params[0]) && c.is_active);
+    if (params[0]) {
+      const pid = parseInt(params[0]);
+      items = items.filter(c => c.party_id === pid && c.is_active);
+    }
+    else if (resolved.includes('is_active = true')) items = items.filter(c => c.is_active);
     const cnt = items.length;
     const total = items.reduce((s, c) => s + (c.final_score || 0), 0);
     const totalVotes = items.reduce((s, c) => s + (c.vote_count || 0), 0);
     const avgInt = cnt > 0 ? items.reduce((s, c) => s + (parseFloat(c.intelligence_score) || 0), 0) / cnt : 0;
     const avgMom = cnt > 0 ? items.reduce((s, c) => s + (parseFloat(c.momentum_score) || 0), 0) / cnt : 0;
     const avgInteg = cnt > 0 ? items.reduce((s, c) => s + (parseFloat(c.integrity_score) || 0), 0) / cnt : 0;
-    if (resolved.includes('sum(vote_count)') || resolved.includes("sum(vote_count)")) {
+    const avgHoja = cnt > 0 ? items.reduce((s, c) => s + (parseFloat(c.hoja_score) || 0), 0) / cnt : 0;
+    const avgPlan = cnt > 0 ? items.reduce((s, c) => s + (parseFloat(c.plan_score) || 0), 0) / cnt : 0;
+    const avgExp = cnt > 0 ? items.reduce((s, c) => s + (parseFloat(c.experience_score) || 0), 0) / cnt : 0;
+    if ((resolved.includes('sum(vote_count)') || resolved.includes("sum(vote_count)")) && !resolved.includes('avg(')) {
       return { rows: [{ total: totalVotes }] };
     }
-    return { rows: [{ avg_score: cnt > 0 ? total / cnt : 0, total_candidates: cnt, total_score: total, total_votes: totalVotes, avg_intelligence: avgInt, avg_momentum: avgMom, avg_integrity: avgInteg }] };
+    return { rows: [{ avg_score: cnt > 0 ? total / cnt : 0, total_candidates: cnt, total_score: total, total_votes: totalVotes, avg_intelligence: avgInt, avg_momentum: avgMom, avg_integrity: avgInteg, avg_hoja: avgHoja, avg_plan: avgPlan, avg_experience: avgExp }] };
   }
 
   // Position type grouping
@@ -1220,7 +1250,11 @@ function handleUpdate(q, params) {
     if (q.includes('vote_count = vote_count + 1')) {
       candidate.vote_count = (candidate.vote_count || 0) + 1;
     }
-    if (q.includes('set hoja_score') && !q.includes('plan_score')) {
+    if (q.includes('set hoja_score') && q.includes('experience_score')) {
+      // UPDATE candidates SET hoja_score = $1, experience_score = $2, updated_at = NOW() WHERE id = $3
+      candidate.hoja_score = parseFloat(params[0]) || 0;
+      candidate.experience_score = parseFloat(params[1]) || 0;
+    } else if (q.includes('set hoja_score') && !q.includes('plan_score')) {
       // UPDATE candidates SET hoja_score = $1, updated_at = NOW() WHERE id = $2
       candidate.hoja_score = parseFloat(params[0]) || 0;
     }
