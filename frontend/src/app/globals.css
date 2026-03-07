@@ -8367,9 +8367,11 @@ body {
 /* --- Responsive --- */
 @media (max-width: 640px) {
   .cancha-stats-bar {
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: nowrap;
     gap: 6px;
-    font-size: 12px;
+    font-size: 10px;
+    white-space: nowrap;
   }
 
   .cancha-field-container {

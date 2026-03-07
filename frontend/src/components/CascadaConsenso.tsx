@@ -44,39 +44,14 @@ function timeAgo(ms: number): string {
     return `hace ${Math.floor(seconds / 60)}m`;
 }
 
-function PeruMapSVG() {
+function PeruMapImage() {
     return (
-        <svg viewBox="0 0 300 400" className="cascada-peru-map" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <radialGradient id="peruHeatRadial" cx="45%" cy="45%" r="60%">
-                    <stop offset="0%" stopColor="#c62828" stopOpacity="0.7" />
-                    <stop offset="30%" stopColor="#e53935" stopOpacity="0.5" />
-                    <stop offset="55%" stopColor="#ff6d00" stopOpacity="0.4" />
-                    <stop offset="80%" stopColor="#f59e0b" stopOpacity="0.25" />
-                    <stop offset="100%" stopColor="#f59e0b" stopOpacity="0.1" />
-                </radialGradient>
-                <filter id="glow">
-                    <feGaussianBlur stdDeviation="6" result="coloredBlur" />
-                    <feMerge><feMergeNode in="coloredBlur" /><feMergeNode in="SourceGraphic" /></feMerge>
-                </filter>
-                <filter id="sparkleGlow">
-                    <feGaussianBlur stdDeviation="2" result="blur" />
-                    <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-                </filter>
-            </defs>
-            <path d="M130,20 L110,25 L95,40 L80,45 L65,55 L55,70 L45,90 L40,110 L35,130 L30,145 L25,165 L30,185 L40,200 L45,215 L50,235 L55,250 L65,265 L75,280 L85,295 L95,310 L110,325 L125,335 L140,340 L155,345 L170,340 L185,330 L195,315 L205,295 L210,275 L215,255 L220,235 L225,215 L230,195 L225,175 L215,155 L205,140 L195,125 L185,110 L175,95 L165,80 L155,65 L145,50 L138,35 Z" fill="url(#peruHeatRadial)" stroke="rgba(198,40,40,0.25)" strokeWidth="1.5" filter="url(#glow)" />
-            {/* Heat hotspots */}
-            <circle cx="120" cy="180" r="14" fill="#c62828" opacity="0.35"><animate attributeName="opacity" values="0.2;0.45;0.2" dur="2.5s" repeatCount="indefinite" /></circle>
-            <circle cx="150" cy="130" r="10" fill="#e53935" opacity="0.3"><animate attributeName="opacity" values="0.15;0.4;0.15" dur="3s" repeatCount="indefinite" /></circle>
-            <circle cx="100" cy="240" r="8" fill="#ff6d00" opacity="0.3"><animate attributeName="opacity" values="0.15;0.35;0.15" dur="3.5s" repeatCount="indefinite" /></circle>
-            <circle cx="170" cy="280" r="7" fill="#f59e0b" opacity="0.25"><animate attributeName="opacity" values="0.1;0.3;0.1" dur="2.8s" repeatCount="indefinite" /></circle>
-            {/* Sparkle dots */}
-            <circle cx="135" cy="160" r="2" fill="#fff" opacity="0.7" filter="url(#sparkleGlow)"><animate attributeName="opacity" values="0.3;0.8;0.3" dur="1.8s" repeatCount="indefinite" /></circle>
-            <circle cx="110" cy="200" r="1.5" fill="#fff" opacity="0.6" filter="url(#sparkleGlow)"><animate attributeName="opacity" values="0.2;0.7;0.2" dur="2.2s" repeatCount="indefinite" /></circle>
-            <circle cx="155" cy="250" r="1.5" fill="#fff" opacity="0.5" filter="url(#sparkleGlow)"><animate attributeName="opacity" values="0.2;0.6;0.2" dur="2.5s" repeatCount="indefinite" /></circle>
-            <circle cx="90" cy="170" r="1" fill="#fff" opacity="0.5" filter="url(#sparkleGlow)"><animate attributeName="opacity" values="0.1;0.6;0.1" dur="3s" repeatCount="indefinite" /></circle>
-            <circle cx="170" cy="310" r="1" fill="#fff" opacity="0.4" filter="url(#sparkleGlow)"><animate attributeName="opacity" values="0.1;0.5;0.1" dur="2s" repeatCount="indefinite" /></circle>
-        </svg>
+        <img
+            src="/images/peru-heat-map.png"
+            alt="Mapa del Perú - Actividad Electoral"
+            className="cascada-peru-map"
+            loading="lazy"
+        />
     );
 }
 
@@ -126,7 +101,7 @@ export default function CascadaConsenso({ onNavigateEncuesta }: Props) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {/* ===== ACTIVIDAD EN VIVO ===== */}
             <div className="panel-glow module-card cascada-panel" style={{ marginBottom: 0, position: 'relative', overflow: 'hidden' }}>
-                <div className="cascada-map-bg"><PeruMapSVG /></div>
+                <div className="cascada-map-bg"><PeruMapImage /></div>
                 <div style={{ position: 'relative', zIndex: 2 }}>
                     <div className="cascada-header">
                         <div><h3 className="cascada-title">ACTIVIDAD <span style={{ color: 'var(--vp-red)' }}>EN VIVO</span></h3></div>
