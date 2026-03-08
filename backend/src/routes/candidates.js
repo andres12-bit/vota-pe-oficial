@@ -40,6 +40,22 @@ router.get('/', async (req, res) => {
     }
 });
 
+// GET /api/candidates/sector-analysis — PDF-based sector analysis for all parties
+router.get('/sector-analysis', async (req, res) => {
+    try {
+        const fs = require('fs');
+        const dataPath = require('path').join(__dirname, '..', 'data', 'sector_analysis.json');
+        if (fs.existsSync(dataPath)) {
+            const data = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
+            res.json(data);
+        } else {
+            res.json({ analysis: {} });
+        }
+    } catch (err) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 // GET /api/candidates/:id - single candidate profile
 router.get('/:id', async (req, res) => {
     try {

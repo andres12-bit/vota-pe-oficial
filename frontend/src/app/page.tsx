@@ -266,7 +266,7 @@ function HomeContent() {
                         </svg>
                       </div>
 
-                      {/* Bottom row — Senado, Diputados, P.Andino */}
+                      {/* SENADO row */}
                       <div className="cancha-pos-row">
                         {/* SENADO */}
                         <div className="cancha-pos" onClick={() => setActiveTab('senator')}>
@@ -290,7 +290,10 @@ function HomeContent() {
                           )}
                           <span className="cancha-pos-label">SENADO</span>
                         </div>
+                      </div>
 
+                      {/* DIPUTADOS row */}
+                      <div className="cancha-pos-row">
                         {/* DIPUTADOS */}
                         <div className="cancha-pos" onClick={() => setActiveTab('deputy')}>
                           {selection.deputies.length > 0 ? (
@@ -313,7 +316,10 @@ function HomeContent() {
                           )}
                           <span className="cancha-pos-label">DIPUTADOS</span>
                         </div>
+                      </div>
 
+                      {/* P. ANDINO row */}
+                      <div className="cancha-pos-row">
                         {/* PARLAMENTO ANDINO */}
                         <div className="cancha-pos" onClick={() => setActiveTab('andean')}>
                           {selection.andean.length > 0 ? (
@@ -339,7 +345,7 @@ function HomeContent() {
                       </div>
                     </div>
 
-                    {/* Progress bar */}
+                    {/* Progress bar — at the very bottom of the field */}
                     {(() => {
                       const filled = (selection.president ? 1 : 0) + (selection.senators.length > 0 ? 1 : 0) + (selection.deputies.length > 0 ? 1 : 0) + (selection.andean.length > 0 ? 1 : 0);
                       const pct = Math.round((filled / 4) * 100);

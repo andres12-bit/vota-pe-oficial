@@ -44,17 +44,6 @@ function timeAgo(ms: number): string {
     return `hace ${Math.floor(seconds / 60)}m`;
 }
 
-function PeruMapImage() {
-    return (
-        <img
-            src="/images/peru-heat-map.png"
-            alt="Mapa del Perú - Actividad Electoral"
-            className="cascada-peru-map"
-            loading="lazy"
-        />
-    );
-}
-
 export default function CascadaConsenso({ onNavigateEncuesta }: Props) {
     const [votes, setVotes] = useState<VoteEvent[]>([]);
     const [polls, setPolls] = useState<EncuestaPoll[]>([]);
@@ -100,27 +89,24 @@ export default function CascadaConsenso({ onNavigateEncuesta }: Props) {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {/* ===== ACTIVIDAD EN VIVO ===== */}
-            <div className="panel-glow module-card cascada-panel" style={{ marginBottom: 0, position: 'relative', overflow: 'hidden' }}>
-                <div className="cascada-map-bg"><PeruMapImage /></div>
-                <div style={{ position: 'relative', zIndex: 2 }}>
-                    <div className="cascada-header">
-                        <div><h3 className="cascada-title">ACTIVIDAD <span style={{ color: 'var(--vp-red)' }}>EN VIVO</span></h3></div>
-                        <div className="cascada-active-badge"><div className="cascada-active-dot" /><span>{Math.max(18, stats.regions)} ▸</span></div>
-                    </div>
-                    <div className="cascada-subtitle"><h4>CASCADA DE CONSENSO</h4><p>Índice Medición de actualidad electoral</p></div>
-                    <div className="cascada-positions">
-                        {POSITIONS.map(pos => {
-                            const count = stats.posCount[pos] || 0;
-                            const pct = maxPosVotes > 0 ? (count / maxPosVotes) * 100 : 0;
-                            return (
-                                <div key={pos} className="cascada-pos-row">
-                                    <span className="cascada-pos-label">{POSITION_LABELS[pos]}</span>
-                                    <span className="cascada-pos-count" style={{ color: POSITION_COLORS[pos] }}>{count}</span>
-                                    <div className="cascada-pos-bar-track"><div className="cascada-pos-bar-fill" style={{ width: `${pct}%`, background: POSITION_GRADIENTS[pos] }} /></div>
-                                </div>
-                            );
-                        })}
-                    </div>
+            <div className="panel-glow module-card cascada-panel" style={{ marginBottom: 0 }}>
+                <div className="cascada-header">
+                    <div><h3 className="cascada-title">ACTIVIDAD <span style={{ color: 'var(--vp-red)' }}>EN VIVO</span></h3></div>
+                    <div className="cascada-active-badge"><div className="cascada-active-dot" /><span>{Math.max(18, stats.regions)} ▸</span></div>
+                </div>
+                <div className="cascada-subtitle"><h4>CASCADA DE CONSENSO</h4><p>Índice Medición de actualidad electoral</p></div>
+                <div className="cascada-positions">
+                    {POSITIONS.map(pos => {
+                        const count = stats.posCount[pos] || 0;
+                        const pct = maxPosVotes > 0 ? (count / maxPosVotes) * 100 : 0;
+                        return (
+                            <div key={pos} className="cascada-pos-row">
+                                <span className="cascada-pos-label">{POSITION_LABELS[pos]}</span>
+                                <div className="cascada-pos-bar-track"><div className="cascada-pos-bar-fill" style={{ width: `${Math.max(pct, 8)}%`, background: POSITION_GRADIENTS[pos] }} /></div>
+                                <span className="cascada-pos-count" style={{ color: POSITION_COLORS[pos] }}>{count}</span>
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
 

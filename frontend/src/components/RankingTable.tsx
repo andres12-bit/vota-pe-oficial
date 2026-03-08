@@ -141,15 +141,13 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
             </div>
 
             {/* Table Header */}
-            <div className="hidden md:grid grid-cols-[40px_1fr_80px_40px_90px_90px_80px_90px] gap-2 px-6 py-2 text-[10px] font-bold tracking-wider uppercase" style={{ color: 'var(--vp-text-dim)', borderBottom: '1px solid var(--vp-border)' }}>
+            <div style={{ display: 'none', gridTemplateColumns: '40px 1fr 70px 80px 80px 90px', gap: '8px', padding: '8px 24px', fontSize: '10px', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase' as const, color: 'var(--vp-text-dim)', borderBottom: '1px solid var(--vp-border)' }} className="md:!grid">
                 <span>#</span>
                 <span>Candidato</span>
                 <span className="text-center">Score</span>
-                <span className="text-center">Tend.</span>
-                <span className="text-center">Momentum</span>
-                <span className="text-center">Inteligencia</span>
+                <span className="text-center" style={{ lineHeight: '1.2' }}>Plan Gob.<br /><span style={{ fontSize: '8px', opacity: 0.7 }}>(Coherencia)</span></span>
+                <span className="text-center">Sentencias</span>
                 <span className="text-center">Votar</span>
-                <span className="text-center">Selección</span>
             </div>
 
             {/* Candidates */}
@@ -159,23 +157,23 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
                     return (
                         <div key={candidate.id}>
                             {/* Desktop */}
-                            <div className="hidden md:grid grid-cols-[40px_1fr_80px_40px_90px_90px_80px_90px] gap-2 items-center px-6 py-4 rounded-lg transition-colors hover:bg-white/5 ranking-row" style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
+                            <div style={{ display: 'none', gridTemplateColumns: '40px 1fr 70px 80px 80px 90px', gap: '8px', alignItems: 'center', padding: '16px 24px', borderRadius: '8px', borderBottom: '1px solid rgba(255,255,255,0.03)' }} className="md:!grid ranking-row hover:bg-white/5 transition-colors">
                                 <span className="text-sm font-bold" style={{ color: globalRank <= 3 ? 'var(--vp-gold)' : 'var(--vp-text-dim)' }}>
                                     {globalRank}
                                 </span>
-                                <Link href={`/candidate/${candidate.id}`} className="flex items-center gap-3 pl-1">
+                                <Link href={`/candidate/${candidate.id}`} className="flex items-center gap-3 pl-1 min-w-0 overflow-hidden">
                                     <img
                                         src={getCandidatePhoto(candidate.photo, candidate.name, 48, candidate.party_color)}
                                         onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(candidate.name, 48, candidate.party_color); }}
                                         alt={candidate.name}
                                         width={48}
                                         height={48}
-                                        className="candidate-avatar"
+                                        className="candidate-avatar shrink-0"
                                         style={{ width: 48, height: 48 }}
                                         loading="lazy"
                                     />
-                                    <div>
-                                        <div className="text-sm font-semibold" style={{ color: 'var(--vp-text)' }}>{candidate.name}</div>
+                                    <div className="min-w-0 overflow-hidden">
+                                        <div className="text-sm font-semibold truncate" style={{ color: 'var(--vp-text)' }}>{candidate.name}</div>
                                         <div className="text-[10px] flex items-center gap-1" style={{ color: candidate.party_color }}>
                                             {candidate.party_abbreviation}
                                             {candidate.list_position ? (
@@ -185,44 +183,35 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
                                             ) : null}
                                             <span style={{ color: 'var(--vp-text-dim)' }}>— {candidate.region}</span>
                                         </div>
-                                        <div className="mt-0.5"><StarRating rating={Number(candidate.stars_rating)} /></div>
+                                        <div className="flex items-center gap-2 mt-0.5">
+                                            <TrendIndicator momentum={Number(candidate.momentum_score)} />
+                                            <span className="text-[9px] font-semibold" style={{ color: 'var(--vp-text-dim)' }}>Intención {Number(candidate.momentum_score).toFixed(0)}</span>
+                                            <span style={{ color: 'var(--vp-text-dim)', fontSize: '8px' }}>|</span>
+                                            <StarRating rating={Number(candidate.stars_rating)} />
+                                        </div>
                                     </div>
                                 </Link>
                                 <div className="text-center">
                                     <span className="score-badge">{Number(candidate.final_score).toFixed(1)}</span>
                                 </div>
-                                <div className="text-center">
-                                    <TrendIndicator momentum={Number(candidate.momentum_score)} />
+                                <div className="text-center text-xs font-bold" style={{ color: Number(candidate.plan_score) >= 60 ? 'var(--vp-green)' : Number(candidate.plan_score) >= 30 ? '#ca8a04' : 'var(--vp-red)' }}>
+                                    {Math.round(Number(candidate.plan_score))}%
                                 </div>
-                                <div className="text-center">
-                                    <div className="w-full h-1 rounded-full mx-auto" style={{ background: 'rgba(255,255,255,0.05)', maxWidth: '70px' }}>
-                                        <div className="momentum-bar" style={{ width: `${Math.min(100, Number(candidate.momentum_score))}%` }} />
-                                    </div>
-                                    <span className="text-[10px] mt-1 block" style={{ color: 'var(--vp-text-dim)' }}>{Number(candidate.momentum_score).toFixed(1)}</span>
-                                </div>
-                                <div className="text-center text-xs font-semibold" style={{ color: Number(candidate.intelligence_score) > 60 ? 'var(--vp-green)' : 'var(--vp-text-dim)' }}>
-                                    {Number(candidate.intelligence_score).toFixed(1)}
-                                </div>
-                                <div className="text-center">
-                                    <button
-                                        onClick={() => onVote(candidate.id, candidate.position)}
-                                        className="text-xs font-bold px-3 py-1 rounded-lg transition-all hover:scale-105"
-                                        style={{ background: 'var(--vp-red)', color: 'white', boxShadow: '0 0 8px var(--vp-red-glow)' }}
-                                    >
-                                        VOTAR
-                                    </button>
+                                <div className="text-center text-xs font-bold">
+                                    {(() => { const hv = (candidate as any).hoja_de_vida || {}; const count = (hv.sentences || []).length; return count > 0 ? <span style={{ color: 'var(--vp-red)' }}>⚠️ {count}</span> : <span style={{ color: 'var(--vp-green)' }}>✅ 0</span>; })()}
                                 </div>
                                 <div className="text-center">
                                     {isInCart(candidate.id) ? (
-                                        <span className="text-[10px] font-bold px-2 py-1 rounded-lg" style={{ color: 'var(--vp-green)', background: 'rgba(0,230,118,0.1)' }}>
-                                            ✅ Agregado
+                                        <span className="text-[10px] font-bold px-3 py-1.5 rounded-lg inline-block" style={{ color: 'var(--vp-green)', background: 'rgba(0,230,118,0.1)' }}>
+                                            ✅ Votado
                                         </span>
                                     ) : (
                                         <button
-                                            onClick={() => addCandidate(candidate)}
-                                            className="agregar-seleccion-btn text-[10px] font-bold px-2 py-1 rounded-lg transition-all hover:scale-105"
+                                            onClick={() => { onVote(candidate.id, candidate.position); addCandidate(candidate); }}
+                                            className="text-xs font-bold px-3 py-1.5 rounded-lg transition-all hover:scale-105"
+                                            style={{ background: 'var(--vp-red)', color: 'white', boxShadow: '0 0 8px var(--vp-red-glow)' }}
                                         >
-                                            ➕ Agregar
+                                            🗳️ VOTAR
                                         </button>
                                     )}
                                 </div>

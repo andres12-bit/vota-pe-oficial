@@ -158,6 +158,9 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
     const [candidate, setCandidate] = useState<Candidate | null>(null);
     const [loading, setLoading] = useState(true);
     const [activeModal, setActiveModal] = useState<string | null>(null);
+    const [sectorData, setSectorData] = useState<any>(null);
+    const [sectorModal, setSectorModal] = useState<{ id: string; name: string; emoji: string; percentage: number } | null>(null);
+    const [showAiModal, setShowAiModal] = useState(false);
 
     useEffect(() => {
         async function load() {
@@ -171,6 +174,9 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
             }
         }
         load();
+        // Fetch sector analysis
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/candidates/sector-analysis`)
+            .then(r => r.json()).then(d => setSectorData(d)).catch(() => { });
     }, [resolvedParams.id]);
 
     if (loading) {
@@ -349,6 +355,21 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                                 <span className="text-xs font-semibold px-2 py-0.5 rounded" style={{ background: 'var(--vp-red-dim)', color: 'var(--vp-red)' }}>
                                     {positionLabels[candidate.position] || candidate.position}
                                 </span>
+                                {sectorData?.analysis && (() => {
+                                    const pn = ((candidate as any).party_jne_name || '').toUpperCase().replace(/[^A-Z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+                                    const me = Object.values(sectorData.analysis as Record<string, any>).find((e: any) => {
+                                        const en = (e.party_name || '').toUpperCase().replace(/[^A-Z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+                                        return en === pn || pn.includes(en) || en.includes(pn);
+                                    });
+                                    const aiPct = me?.ai_analysis?.percentage || 0;
+                                    return (
+                                        <span className="text-xs font-bold px-2 py-0.5 rounded-lg cursor-pointer hover:scale-105 transition-transform inline-flex items-center gap-1"
+                                            style={{ background: 'rgba(41,121,255,0.1)', color: 'var(--vp-blue)', border: '1px solid rgba(41,121,255,0.3)' }}
+                                            onClick={() => setShowAiModal(true)}>
+                                            🤖 IA: {aiPct}%
+                                        </span>
+                                    );
+                                })()}
                             </div>
                             <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-2">
                                 <StarRating rating={starsVal} />
@@ -642,7 +663,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                     })()}
                 </div>
 
-                {/* Proposals */}
+                {/* Proposals — hidden by request
                 {candidate.proposals && candidate.proposals.length > 0 && (
                     <div className="panel-glow">
                         <h3 className="text-xs font-bold tracking-[2px] uppercase mb-5" style={{ color: 'var(--vp-text-dim)' }}>
@@ -665,6 +686,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         </div>
                     </div>
                 )}
+                */}
 
                 {/* Events Timeline */}
                 {candidate.events && candidate.events.length > 0 && (
@@ -803,6 +825,242 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         </div>
                     </div>
                 )}
+
+                {/* === ANÁLISIS SECTORIAL DEL PLAN DE GOBIERNO (PDF COMPLETO) === */}
+                {(() => {
+                    if (!sectorData || !sectorData.analysis) return null;
+                    const partyName = ((candidate as any).party_jne_name || '').toUpperCase().replace(/[^A-Z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+                    const matchEntry = Object.values(sectorData.analysis as Record<string, any>).find((entry: any) => {
+                        const entryName = (entry.party_name || '').toUpperCase().replace(/[^A-Z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+                        return entryName === partyName || partyName.includes(entryName) || entryName.includes(partyName);
+                    });
+                    if (!matchEntry) return null;
+                    const sectors = (matchEntry as any).sectors || [];
+                    const ai = (matchEntry as any).ai_analysis || { percentage: 0, total_matches: 0 };
+                    const totalWords = (matchEntry as any).total_words || 0;
+                    const getBarColor = (pct: number) => pct >= 60 ? 'var(--vp-green)' : pct >= 30 ? '#ca8a04' : pct > 0 ? 'var(--vp-red)' : 'rgba(255,255,255,0.1)';
+
+                    // Keyword map for filtering plan_gobierno items by sector
+                    const SECTOR_KW: Record<string, string[]> = {
+                        agricultura: ['agrícola', 'agricultura', 'ganadería', 'agropecuario', 'agro', 'riego', 'semilla', 'cosecha', 'campesino', 'agrario', 'cultivo', 'ganado'],
+                        pesca: ['pesca', 'acuicultura', 'marítimo', 'pesquero', 'hidrobiológico', 'litoral', 'recurso marino'],
+                        mineria: ['minería', 'minero', 'petróleo', 'gas natural', 'hidrocarburo', 'canon', 'mina', 'oro', 'cobre', 'zinc', 'plata'],
+                        energia: ['energía', 'eléctrica', 'electricidad', 'renovable', 'solar', 'eólica', 'hidroeléctrica', 'electrificación'],
+                        industria: ['industria', 'manufactura', 'producción', 'fábrica', 'productividad', 'mype', 'pyme', 'mipyme'],
+                        comercio: ['comercio', 'exportación', 'importación', 'arancel', 'mercado', 'competitividad', 'emprendimiento', 'tlc'],
+                        transporte: ['transporte', 'vial', 'carretera', 'ferrocarril', 'tren', 'puerto', 'aeropuerto', 'logística', 'tránsito', 'metro'],
+                        telecom: ['telecomunicación', 'internet', 'digital', 'tic', 'tecnología', 'conectividad', 'fibra óptica', 'banda ancha', 'gobierno digital'],
+                        turismo: ['turismo', 'turístico', 'patrimonio', 'arqueológico', 'hotelería', 'visitante', 'turista', 'artesanía'],
+                        cultura: ['cultura', 'cultural', 'arte', 'museo', 'patrimonio cultural', 'identidad', 'intercultural', 'quechua'],
+                        educacion: ['educación', 'educativo', 'escuela', 'universidad', 'docente', 'profesor', 'alumno', 'estudiante', 'pedagógico', 'colegio', 'enseñanza', 'aprendizaje'],
+                        salud: ['salud', 'hospital', 'médico', 'sanitario', 'vacuna', 'epidemia', 'essalud', 'paciente', 'clínica', 'enfermedad', 'desnutrición', 'anemia'],
+                        seguridad: ['seguridad', 'policía', 'delincuencia', 'narcotráfico', 'defensa', 'militar', 'crimen', 'violencia', 'seguridad ciudadana'],
+                        justicia: ['justicia', 'judicial', 'corrupción', 'fiscal', 'penal', 'juez', 'poder judicial', 'impunidad', 'anticorrupción'],
+                        economia: ['economía', 'económico', 'fiscal', 'tributario', 'presupuesto', 'deuda', 'inflación', 'pbi', 'inversión', 'finanzas'],
+                        trabajo: ['empleo', 'trabajo', 'laboral', 'sueldo', 'salario', 'pensión', 'desempleo', 'informalidad', 'trabajador', 'afp', 'onp'],
+                        vivienda: ['vivienda', 'construcción', 'urbanismo', 'saneamiento', 'agua potable', 'alcantarillado'],
+                        ambiente: ['ambiente', 'ambiental', 'contaminación', 'deforestación', 'residuo', 'reciclaje', 'clima', 'ecológico', 'biodiversidad', 'bosque', 'amazonía'],
+                        social: ['social', 'pobreza', 'inclusión', 'discapacidad', 'adulto mayor', 'género', 'niñez', 'vulnerable', 'programa social', 'igualdad'],
+                        deporte: ['deporte', 'deportivo', 'recreación', 'olímpico', 'estadio', 'atleta', 'actividad física'],
+                        exterior: ['exterior', 'diplomacia', 'relaciones internacionales', 'tratado', 'frontera', 'migración', 'cooperación internacional'],
+                        gobierno: ['gobierno', 'administración pública', 'descentralización', 'gestión pública', 'funcionario', 'burocracia', 'reforma del estado', 'modernización', 'municipalidad'],
+                    };
+
+                    const normalize = (s: string) => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+                    // Filter plan items matching a sector
+                    const getMatchingItems = (sectorId: string) => {
+                        const keywords = SECTOR_KW[sectorId] || [];
+                        if (!candidate.plan_gobierno || keywords.length === 0) return [];
+                        return candidate.plan_gobierno.filter(item => {
+                            const text = normalize([item.dimension, item.problem, item.objective, item.goals, item.indicator].join(' '));
+                            return keywords.some(kw => text.includes(normalize(kw)));
+                        });
+                    };
+
+                    return (
+                        <>
+                            <div className="panel-glow">
+                                <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+                                    <h3 className="text-xs font-bold tracking-[2px] uppercase" style={{ color: 'var(--vp-text-dim)' }}>
+                                        📊 Análisis Sectorial del Plan de Gobierno
+                                    </h3>
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg cursor-pointer hover:scale-105 transition-transform"
+                                            style={{ background: ai.percentage > 0 ? 'rgba(41,121,255,0.1)' : 'rgba(255,255,255,0.03)', border: `1px solid ${ai.percentage > 0 ? 'rgba(41,121,255,0.3)' : 'rgba(255,255,255,0.08)'}` }}
+                                            onClick={() => setShowAiModal(true)}>
+                                            <span className="text-sm">🤖</span>
+                                            <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: ai.percentage > 0 ? 'var(--vp-blue)' : 'var(--vp-text-dim)' }}>
+                                                IA: {ai.percentage}%
+                                            </span>
+                                        </div>
+                                        <span className="text-[10px]" style={{ color: 'var(--vp-text-dim)' }}>{totalWords.toLocaleString()} palabras analizadas (PDF)</span>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+                                    {sectors.map((sector: any) => (
+                                        <div key={sector.id} className="flex items-center gap-3 py-1.5 cursor-pointer rounded-lg hover:bg-[rgba(255,255,255,0.03)] transition-colors px-1 -mx-1"
+                                            style={{ opacity: sector.percentage === 0 ? 0.4 : 1 }}
+                                            onClick={() => sector.percentage > 0 && setSectorModal({ id: sector.id, name: sector.name, emoji: sector.emoji, percentage: sector.percentage })}>
+                                            <span className="text-sm w-6 text-center shrink-0">{sector.emoji}</span>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center justify-between mb-0.5">
+                                                    <span className="text-[11px] font-semibold truncate" style={{ color: 'var(--vp-text)' }}>{sector.name}</span>
+                                                    <span className="text-[10px] font-bold ml-2 shrink-0" style={{ color: getBarColor(sector.percentage) }}>
+                                                        {sector.percentage}%
+                                                    </span>
+                                                </div>
+                                                <div className="w-full h-1.5 rounded-full" style={{ background: 'rgba(255,255,255,0.06)' }}>
+                                                    <div className="h-full rounded-full transition-all duration-500" style={{ width: `${sector.percentage}%`, background: getBarColor(sector.percentage), minWidth: sector.percentage > 0 ? '4px' : '0' }} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="mt-4 pt-3 text-[9px]" style={{ borderTop: '1px solid rgba(255,255,255,0.05)', color: 'var(--vp-text-dim)' }}>
+                                    * Análisis basado en el PDF completo del plan de gobierno. Click en un sector para ver propuestas relacionadas.
+                                </div>
+                            </div>
+
+                            {/* Sector Detail Modal */}
+                            {sectorModal && (() => {
+                                const items = getMatchingItems(sectorModal.id);
+                                return (
+                                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
+                                        onClick={(e) => { if (e.target === e.currentTarget) setSectorModal(null); }}>
+                                        <div className="w-full max-w-2xl max-h-[80vh] overflow-y-auto rounded-2xl" style={{ background: 'var(--vp-bg-panel-solid)', border: '1px solid var(--vp-border)' }}>
+                                            <div className="sticky top-0 z-10 flex items-center justify-between p-5 rounded-t-2xl" style={{ background: 'var(--vp-bg-panel-solid)', borderBottom: '1px solid var(--vp-border)' }}>
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-2xl">{sectorModal.emoji}</span>
+                                                    <div>
+                                                        <h3 className="text-base font-bold" style={{ color: 'var(--vp-text)' }}>{sectorModal.name}</h3>
+                                                        <span className="text-xs font-bold" style={{ color: getBarColor(sectorModal.percentage) }}>{sectorModal.percentage}% del plan de gobierno</span>
+                                                    </div>
+                                                </div>
+                                                <button onClick={() => setSectorModal(null)} className="w-8 h-8 rounded-full flex items-center justify-center text-lg hover:scale-110 transition-transform"
+                                                    style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--vp-text-dim)' }}>✕</button>
+                                            </div>
+                                            <div className="p-5 space-y-3">
+                                                {items.length > 0 ? items.map((item, idx) => (
+                                                    <div key={item.id || idx} className="p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--vp-border)' }}>
+                                                        <div className="text-[9px] font-bold uppercase tracking-wider mb-2 px-2 py-0.5 rounded-full inline-block" style={{ background: 'rgba(41,121,255,0.08)', color: 'var(--vp-blue)' }}>
+                                                            {item.dimension}
+                                                        </div>
+                                                        <div className="text-sm font-semibold mb-1" style={{ color: 'var(--vp-text)' }}>📌 {item.problem}</div>
+                                                        <div className="text-xs leading-relaxed mb-2" style={{ color: 'var(--vp-text)' }}>🎯 {item.objective}</div>
+                                                        {item.goals && <div className="text-[11px] leading-relaxed" style={{ color: 'var(--vp-text-dim)' }}>📐 Meta: {item.goals}</div>}
+                                                    </div>
+                                                )) : (
+                                                    <div className="text-center py-8">
+                                                        <span className="text-3xl">📋</span>
+                                                        <p className="text-sm mt-2" style={{ color: 'var(--vp-text-dim)' }}>No se encontraron propuestas específicas del resumen JNE para este sector.</p>
+                                                        <p className="text-[10px] mt-1" style={{ color: 'var(--vp-text-dim)' }}>El porcentaje se calculó del PDF completo, que contiene más detalle que el resumen estructurado.</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })()}
+
+                            {/* AI Content Detection Modal */}
+                            {showAiModal && (() => {
+                                const signals = ai.signals || {};
+                                const classLabel = ai.classification === 'alto' ? '🔴 Alta probabilidad de contenido IA'
+                                    : ai.classification === 'moderado' ? '🟡 Probabilidad moderada de contenido IA'
+                                        : ai.classification === 'bajo' ? '🟢 Baja probabilidad de contenido IA'
+                                            : '✅ Mínima probabilidad de contenido IA';
+                                const signalLabels: Record<string, { label: string; emoji: string; description: string }> = {
+                                    sentence_uniformity: { label: 'Uniformidad de oraciones', emoji: '📏', description: 'IA genera oraciones de largo similar' },
+                                    vocabulary_diversity: { label: 'Diversidad de vocabulario', emoji: '📖', description: 'IA usa vocabulario más repetitivo' },
+                                    formulaic_phrases: { label: 'Frases formulaicas', emoji: '🔄', description: 'Expresiones típicas de texto generado por IA' },
+                                    paragraph_uniformity: { label: 'Uniformidad de párrafos', emoji: '📐', description: 'IA genera párrafos de tamaño similar' },
+                                    connector_density: { label: 'Densidad de conectores', emoji: '🔗', description: 'IA usa más conectores y transiciones' },
+                                    word_uniformity: { label: 'Uniformidad de palabras', emoji: '🔤', description: 'IA usa palabras de largo más uniforme' },
+                                };
+                                const getSignalColor = (score: number) => score >= 60 ? 'var(--vp-red)' : score >= 30 ? '#ca8a04' : 'var(--vp-green)';
+                                return (
+                                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
+                                        onClick={(e) => { if (e.target === e.currentTarget) setShowAiModal(false); }}>
+                                        <div className="w-full max-w-lg max-h-[80vh] overflow-y-auto rounded-2xl" style={{ background: 'var(--vp-bg-panel-solid)', border: '1px solid var(--vp-border)' }}>
+                                            <div className="sticky top-0 z-10 flex items-center justify-between p-5 rounded-t-2xl" style={{ background: 'var(--vp-bg-panel-solid)', borderBottom: '1px solid var(--vp-border)' }}>
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-2xl">🤖</span>
+                                                    <div>
+                                                        <h3 className="text-base font-bold" style={{ color: 'var(--vp-text)' }}>Detección de Contenido IA</h3>
+                                                        <span className="text-xs font-bold" style={{ color: ai.percentage >= 40 ? 'var(--vp-red)' : 'var(--vp-text-dim)' }}>{ai.percentage}% probabilidad de contenido generado por IA</span>
+                                                    </div>
+                                                </div>
+                                                <button onClick={() => setShowAiModal(false)} className="w-8 h-8 rounded-full flex items-center justify-center text-lg hover:scale-110 transition-transform"
+                                                    style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--vp-text-dim)' }}>✕</button>
+                                            </div>
+                                            <div className="p-5">
+                                                {/* Gauge + Classification */}
+                                                <div className="flex items-center gap-4 mb-5 p-4 rounded-xl" style={{ background: ai.percentage >= 40 ? 'rgba(255,23,68,0.05)' : 'rgba(0,230,118,0.05)', border: `1px solid ${ai.percentage >= 40 ? 'rgba(255,23,68,0.15)' : 'rgba(0,230,118,0.15)'}` }}>
+                                                    <div className="relative w-16 h-16 shrink-0">
+                                                        <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
+                                                            <circle cx="18" cy="18" r="15.5" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="3" />
+                                                            <circle cx="18" cy="18" r="15.5" fill="none" stroke={ai.percentage >= 40 ? 'var(--vp-red)' : ai.percentage >= 20 ? '#ca8a04' : 'var(--vp-green)'} strokeWidth="3" strokeDasharray={`${ai.percentage} ${100 - ai.percentage}`} strokeLinecap="round" />
+                                                        </svg>
+                                                        <div className="absolute inset-0 flex items-center justify-center">
+                                                            <span className="text-sm font-black" style={{ color: ai.percentage >= 40 ? 'var(--vp-red)' : 'var(--vp-green)' }}>{ai.percentage}%</span>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <div className="text-xs font-bold mb-1" style={{ color: 'var(--vp-text)' }}>{classLabel}</div>
+                                                        <div className="text-[11px] leading-relaxed" style={{ color: 'var(--vp-text-dim)' }}>
+                                                            {ai.details || 'Análisis basado en patrones estadísticos del texto extraído del PDF completo.'}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Signal Breakdown */}
+                                                <h4 className="text-[10px] font-bold uppercase tracking-wider mb-3" style={{ color: 'var(--vp-text-dim)' }}>📊 Señales de detección</h4>
+                                                <div className="space-y-3 mb-5">
+                                                    {Object.entries(signalLabels).map(([key, meta]) => {
+                                                        const sig = signals[key];
+                                                        if (!sig) return null;
+                                                        return (
+                                                            <div key={key} className="p-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--vp-border)' }}>
+                                                                <div className="flex items-center justify-between mb-1">
+                                                                    <span className="text-[11px] font-semibold" style={{ color: 'var(--vp-text)' }}>{meta.emoji} {meta.label}</span>
+                                                                    <span className="text-[10px] font-bold" style={{ color: getSignalColor(sig.score) }}>{sig.score}/100</span>
+                                                                </div>
+                                                                <div className="w-full h-1.5 rounded-full mb-1" style={{ background: 'rgba(255,255,255,0.06)' }}>
+                                                                    <div className="h-full rounded-full transition-all" style={{ width: `${sig.score}%`, background: getSignalColor(sig.score), minWidth: sig.score > 0 ? '4px' : '0' }} />
+                                                                </div>
+                                                                <div className="text-[9px]" style={{ color: 'var(--vp-text-dim)' }}>{meta.description}</div>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+
+                                                {/* Top Formulaic Phrases */}
+                                                {signals.formulaic_phrases?.topPhrases?.length > 0 && (
+                                                    <>
+                                                        <h4 className="text-[10px] font-bold uppercase tracking-wider mb-3" style={{ color: 'var(--vp-text-dim)' }}>🔄 Frases formulaicas detectadas</h4>
+                                                        <div className="space-y-1.5">
+                                                            {signals.formulaic_phrases.topPhrases.map((p: any, i: number) => (
+                                                                <div key={i} className="flex items-center justify-between py-1.5 px-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--vp-border)' }}>
+                                                                    <span className="text-[11px]" style={{ color: 'var(--vp-text)' }}>"{p.phrase}"</span>
+                                                                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'rgba(255,23,68,0.1)', color: 'var(--vp-red)' }}>{p.count}x</span>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </>
+                                                )}
+
+                                                <div className="mt-4 pt-3 text-[9px]" style={{ borderTop: '1px solid rgba(255,255,255,0.05)', color: 'var(--vp-text-dim)' }}>
+                                                    * Detección heurística basada en análisis estadístico de patrones de escritura. No es un resultado definitivo.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })()}
+                        </>
+                    );
+                })()}
 
                 {/* === PLAN DE GOBIERNO === */}
                 {candidate.plan_gobierno && candidate.plan_gobierno.length > 0 && (() => {

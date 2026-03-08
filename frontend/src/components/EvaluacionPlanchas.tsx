@@ -131,137 +131,130 @@ export default function EvaluacionPlanchas({ onNavigate }: Props) {
                 </div>
             ) : (
                 <>
-                    {/* === STATS DASHBOARD === */}
-                    <div className="planchas-stats-row">
-                        <div className="planchas-stat-card">
-                            <div className="planchas-stat-number" style={{ color: 'var(--vp-red)' }}>{partyScores.length}</div>
-                            <div className="planchas-stat-label">Planchas evaluadas</div>
-                        </div>
-                        <div className="planchas-stat-card">
-                            <div className="planchas-stat-number" style={{ color: getScoreColor(avgScore) }}>{avgScore.toFixed(1)}</div>
-                            <div className="planchas-stat-label">Score promedio</div>
-                        </div>
-                        <div className="planchas-stat-card">
-                            <div className="planchas-stat-number" style={{ color: '#16a34a' }}>{excellent + good}</div>
-                            <div className="planchas-stat-label">Buenas+ (60+)</div>
-                        </div>
-                        <div className="planchas-stat-card">
-                            <div className="planchas-stat-number" style={{ color: '#dc2626' }}>{low}</div>
-                            <div className="planchas-stat-label">Bajas (&lt;40)</div>
-                        </div>
-                    </div>
+                    <div className="planchas-two-col">
+                        {/* === LEFT COLUMN: Ranking === */}
+                        <div className="planchas-col-left">
+                            <div className="planchas-section">
+                                <div className="planchas-section-title">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ color: 'var(--vp-text-dim)' }}>
+                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                    </svg>
+                                    Ranking de planchas
+                                </div>
+                                <div className="planchas-ranking">
+                                    {topParties.map((party, i) => {
+                                        const scoreColor = getScoreColor(party.avgScore);
+                                        const medals = ['🥇', '🥈', '🥉'];
+                                        const pct = maxScore > 0 ? (party.avgScore / maxScore) * 100 : 0;
 
-                    {/* === TOP 2 comparison === */}
-                    {first && second && (
-                        <div className="planchas-comparison">
-                            <div className="planchas-compare-card planchas-compare-best">
-                                <div className="planchas-compare-badge" style={{ background: '#d4a017' }}>🥇 1ra Mejor Plancha</div>
-                                <img
-                                    src={getCandidatePhoto(first.presidentPhoto || null, first.presidentName || first.name, 48, first.presidentPartyColor || first.color)}
-                                    onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(first.presidentName || first.name, 48, first.presidentPartyColor || first.color); }}
-                                    alt={first.presidentName || first.name}
-                                    className="planchas-compare-photo"
-                                />
-                                <div className="planchas-compare-name">{first.presidentName || first.abbreviation}</div>
-                                <div className="planchas-compare-party">{first.abbreviation}</div>
-                                <div className="planchas-compare-score" style={{ color: getScoreColor(first.avgScore) }}>{first.avgScore.toFixed(1)}</div>
-                            </div>
-                            <div className="planchas-compare-vs">VS</div>
-                            <div className="planchas-compare-card planchas-compare-best">
-                                <div className="planchas-compare-badge" style={{ background: '#9e9e9e' }}>🥈 2da Mejor Plancha</div>
-                                <img
-                                    src={getCandidatePhoto(second.presidentPhoto || null, second.presidentName || second.name, 48, second.presidentPartyColor || second.color)}
-                                    onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(second.presidentName || second.name, 48, second.presidentPartyColor || second.color); }}
-                                    alt={second.presidentName || second.name}
-                                    className="planchas-compare-photo"
-                                />
-                                <div className="planchas-compare-name">{second.presidentName || second.abbreviation}</div>
-                                <div className="planchas-compare-party">{second.abbreviation}</div>
-                                <div className="planchas-compare-score" style={{ color: getScoreColor(second.avgScore) }}>{second.avgScore.toFixed(1)}</div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* === DISTRIBUTION BAR === */}
-                    <div className="planchas-section">
-                        <div className="planchas-section-title">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ color: 'var(--vp-text-dim)' }}>
-                                <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z" />
-                            </svg>
-                            Distribución de calidad
-                        </div>
-                        <div className="planchas-dist-bar">
-                            {excellent > 0 && <div className="planchas-dist-segment" style={{ flex: excellent, background: '#16a34a' }} title={`Excelente: ${excellent}`} />}
-                            {good > 0 && <div className="planchas-dist-segment" style={{ flex: good, background: '#22c55e' }} title={`Buena: ${good}`} />}
-                            {regular > 0 && <div className="planchas-dist-segment" style={{ flex: regular, background: '#ca8a04' }} title={`Regular: ${regular}`} />}
-                            {low > 0 && <div className="planchas-dist-segment" style={{ flex: low, background: '#dc2626' }} title={`Baja: ${low}`} />}
-                        </div>
-                        <div className="planchas-dist-legend">
-                            <span><span className="planchas-legend-dot" style={{ background: '#16a34a' }} />Excelente ({excellent})</span>
-                            <span><span className="planchas-legend-dot" style={{ background: '#22c55e' }} />Buena ({good})</span>
-                            <span><span className="planchas-legend-dot" style={{ background: '#ca8a04' }} />Regular ({regular})</span>
-                            <span><span className="planchas-legend-dot" style={{ background: '#dc2626' }} />Baja ({low})</span>
-                        </div>
-                    </div>
-
-                    {/* === TOP RANKING WITH PHOTOS === */}
-                    <div className="planchas-section">
-                        <div className="planchas-section-title">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ color: 'var(--vp-text-dim)' }}>
-                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                            </svg>
-                            Ranking de planchas
-                        </div>
-                        <div className="planchas-ranking">
-                            {topParties.map((party, i) => {
-                                const scoreColor = getScoreColor(party.avgScore);
-                                const medals = ['🥇', '🥈', '🥉'];
-                                const pct = maxScore > 0 ? (party.avgScore / maxScore) * 100 : 0;
-
-                                return (
-                                    <div key={party.id} className="planchas-rank-row">
-                                        <span className="planchas-rank-pos">
-                                            {i < 3 ? medals[i] : <span className="planchas-rank-num">{i + 1}</span>}
-                                        </span>
-                                        {/* Candidate Photo */}
-                                        <img
-                                            src={getCandidatePhoto(party.presidentPhoto || null, party.presidentName || party.name, 36, party.presidentPartyColor || party.color)}
-                                            onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(party.presidentName || party.name, 36, party.presidentPartyColor || party.color); }}
-                                            alt={party.presidentName || party.name}
-                                            className="planchas-rank-photo"
-                                        />
-                                        <div className="planchas-rank-color" style={{ background: party.color }} />
-                                        <div className="planchas-rank-info">
-                                            <div className="planchas-rank-name">{party.abbreviation}</div>
-                                            <div className="planchas-rank-full">
-                                                {party.presidentName || party.name}
+                                        return (
+                                            <div key={party.id} className="planchas-rank-row">
+                                                <span className="planchas-rank-pos">
+                                                    {i < 3 ? medals[i] : <span className="planchas-rank-num">{i + 1}</span>}
+                                                </span>
+                                                <img
+                                                    src={getCandidatePhoto(party.presidentPhoto || null, party.presidentName || party.name, 36, party.presidentPartyColor || party.color)}
+                                                    onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(party.presidentName || party.name, 36, party.presidentPartyColor || party.color); }}
+                                                    alt={party.presidentName || party.name}
+                                                    className="planchas-rank-photo"
+                                                />
+                                                <div className="planchas-rank-color" style={{ background: party.color }} />
+                                                <div className="planchas-rank-info">
+                                                    <div className="planchas-rank-name">{party.abbreviation}</div>
+                                                    <div className="planchas-rank-full">{party.presidentName || party.name}</div>
+                                                </div>
+                                                <div className="planchas-rank-bar-track">
+                                                    <div className="planchas-rank-bar-fill" style={{ width: `${pct}%`, background: scoreColor }} />
+                                                </div>
+                                                <div className="planchas-rank-score-wrap">
+                                                    <span className="planchas-rank-score" style={{ color: scoreColor }}>{party.avgScore.toFixed(1)}</span>
+                                                    <span className="planchas-rank-label" style={{ color: scoreColor }}>{getScoreLabel(party.avgScore)}</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className="planchas-rank-bar-track">
-                                            <div className="planchas-rank-bar-fill" style={{ width: `${pct}%`, background: scoreColor }} />
-                                        </div>
-                                        <div className="planchas-rank-score-wrap">
-                                            <span className="planchas-rank-score" style={{ color: scoreColor }}>
-                                                {party.avgScore.toFixed(1)}
-                                            </span>
-                                            <span className="planchas-rank-label" style={{ color: scoreColor }}>
-                                                {getScoreLabel(party.avgScore)}
-                                            </span>
-                                        </div>
-                                    </div>
-                                );
-                            })}
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                            <div className="text-center mt-5">
+                                <button onClick={() => onNavigate('planchas')} className="evaluacion-cta-btn">Ver análisis completo →</button>
+                            </div>
                         </div>
-                    </div>
 
-                    {/* === CTA === */}
-                    <div className="text-center mt-5">
-                        <button
-                            onClick={() => onNavigate('planchas')}
-                            className="evaluacion-cta-btn"
-                        >
-                            Ver análisis completo →
-                        </button>
+                        {/* === RIGHT COLUMN: Stats + Comparison + Distribution === */}
+                        <div className="planchas-col-right">
+                            {/* Stats Dashboard */}
+                            <div className="planchas-stats-row planchas-stats-grid">
+                                <div className="planchas-stat-card">
+                                    <div className="planchas-stat-number" style={{ color: 'var(--vp-red)' }}>{partyScores.length}</div>
+                                    <div className="planchas-stat-label">Planchas evaluadas</div>
+                                </div>
+                                <div className="planchas-stat-card">
+                                    <div className="planchas-stat-number" style={{ color: getScoreColor(avgScore) }}>{avgScore.toFixed(1)}</div>
+                                    <div className="planchas-stat-label">Score promedio</div>
+                                </div>
+                                <div className="planchas-stat-card">
+                                    <div className="planchas-stat-number" style={{ color: '#16a34a' }}>{excellent + good}</div>
+                                    <div className="planchas-stat-label">Buenas+ (60+)</div>
+                                </div>
+                                <div className="planchas-stat-card">
+                                    <div className="planchas-stat-number" style={{ color: '#dc2626' }}>{low}</div>
+                                    <div className="planchas-stat-label">Bajas (&lt;40)</div>
+                                </div>
+                            </div>
+
+                            {/* Top 2 comparison */}
+                            {first && second && (
+                                <div className="planchas-comparison">
+                                    <div className="planchas-compare-card planchas-compare-best">
+                                        <div className="planchas-compare-badge" style={{ background: '#d4a017' }}>🥇 1ra Mejor Plancha</div>
+                                        <img
+                                            src={getCandidatePhoto(first.presidentPhoto || null, first.presidentName || first.name, 48, first.presidentPartyColor || first.color)}
+                                            onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(first.presidentName || first.name, 48, first.presidentPartyColor || first.color); }}
+                                            alt={first.presidentName || first.name}
+                                            className="planchas-compare-photo"
+                                        />
+                                        <div className="planchas-compare-name">{first.presidentName || first.abbreviation}</div>
+                                        <div className="planchas-compare-party">{first.abbreviation}</div>
+                                        <div className="planchas-compare-score" style={{ color: getScoreColor(first.avgScore) }}>{first.avgScore.toFixed(1)}</div>
+                                    </div>
+                                    <div className="planchas-compare-vs">VS</div>
+                                    <div className="planchas-compare-card planchas-compare-best">
+                                        <div className="planchas-compare-badge" style={{ background: '#9e9e9e' }}>🥈 2da Mejor Plancha</div>
+                                        <img
+                                            src={getCandidatePhoto(second.presidentPhoto || null, second.presidentName || second.name, 48, second.presidentPartyColor || second.color)}
+                                            onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(second.presidentName || second.name, 48, second.presidentPartyColor || second.color); }}
+                                            alt={second.presidentName || second.name}
+                                            className="planchas-compare-photo"
+                                        />
+                                        <div className="planchas-compare-name">{second.presidentName || second.abbreviation}</div>
+                                        <div className="planchas-compare-party">{second.abbreviation}</div>
+                                        <div className="planchas-compare-score" style={{ color: getScoreColor(second.avgScore) }}>{second.avgScore.toFixed(1)}</div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Distribution bar */}
+                            <div className="planchas-section">
+                                <div className="planchas-section-title">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ color: 'var(--vp-text-dim)' }}>
+                                        <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z" />
+                                    </svg>
+                                    Distribución de calidad
+                                </div>
+                                <div className="planchas-dist-bar">
+                                    {excellent > 0 && <div className="planchas-dist-segment" style={{ flex: excellent, background: '#16a34a' }} title={`Excelente: ${excellent}`} />}
+                                    {good > 0 && <div className="planchas-dist-segment" style={{ flex: good, background: '#22c55e' }} title={`Buena: ${good}`} />}
+                                    {regular > 0 && <div className="planchas-dist-segment" style={{ flex: regular, background: '#ca8a04' }} title={`Regular: ${regular}`} />}
+                                    {low > 0 && <div className="planchas-dist-segment" style={{ flex: low, background: '#dc2626' }} title={`Baja: ${low}`} />}
+                                </div>
+                                <div className="planchas-dist-legend">
+                                    <span><span className="planchas-legend-dot" style={{ background: '#16a34a' }} />Excelente ({excellent})</span>
+                                    <span><span className="planchas-legend-dot" style={{ background: '#22c55e' }} />Buena ({good})</span>
+                                    <span><span className="planchas-legend-dot" style={{ background: '#ca8a04' }} />Regular ({regular})</span>
+                                    <span><span className="planchas-legend-dot" style={{ background: '#dc2626' }} />Baja ({low})</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </>
             )}
