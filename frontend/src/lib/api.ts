@@ -116,6 +116,11 @@ export async function getRanking(position: string): Promise<Candidate[]> {
     return data.ranking;
 }
 
+export async function getCandidatesBySector(sector: string, position: string): Promise<Candidate[]> {
+    const data = await apiFetch<{ candidates: Candidate[] }>(`/api/candidates/by-sector?sector=${encodeURIComponent(sector)}&position=${encodeURIComponent(position)}`);
+    return data.candidates;
+}
+
 export async function getGlobalRankingAndMomentum() {
     return apiFetch<{ top_momentum: Candidate[]; global_ranking: Candidate[] }>('/api/ranking');
 }

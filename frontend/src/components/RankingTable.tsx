@@ -1,10 +1,35 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { Candidate } from '@/lib/api';
+import { useState, useMemo, useEffect, useCallback } from 'react';
+import { Candidate, getCandidatesBySector } from '@/lib/api';
 import { getAvatarUrl, getCandidatePhoto } from '@/lib/avatars';
 import { useSelection } from '@/lib/selection';
 import Link from 'next/link';
+
+const SECTORS = [
+    { id: 'agricultura', name: 'Agricultura y Ganadería', emoji: '🌾' },
+    { id: 'pesca', name: 'Pesca y Acuicultura', emoji: '🐟' },
+    { id: 'mineria', name: 'Minería e Hidrocarburos', emoji: '⛏️' },
+    { id: 'energia', name: 'Energía', emoji: '⚡' },
+    { id: 'industria', name: 'Industria y Producción', emoji: '🏭' },
+    { id: 'comercio', name: 'Comercio', emoji: '🛒' },
+    { id: 'transporte', name: 'Transporte y Logística', emoji: '🚛' },
+    { id: 'telecom', name: 'Telecomunicaciones y Tecnología', emoji: '📡' },
+    { id: 'turismo', name: 'Turismo', emoji: '🏖️' },
+    { id: 'cultura', name: 'Cultura', emoji: '🎭' },
+    { id: 'educacion', name: 'Educación', emoji: '📚' },
+    { id: 'salud', name: 'Salud', emoji: '🏥' },
+    { id: 'seguridad', name: 'Seguridad y Defensa', emoji: '🛡️' },
+    { id: 'justicia', name: 'Justicia', emoji: '⚖️' },
+    { id: 'economia', name: 'Economía y Finanzas', emoji: '💰' },
+    { id: 'trabajo', name: 'Trabajo y Empleo', emoji: '👷' },
+    { id: 'vivienda', name: 'Vivienda y Construcción', emoji: '🏗️' },
+    { id: 'ambiente', name: 'Medio Ambiente', emoji: '🌿' },
+    { id: 'social', name: 'Desarrollo Social', emoji: '🤝' },
+    { id: 'deporte', name: 'Deporte y Recreación', emoji: '⚽' },
+    { id: 'exterior', name: 'Relaciones Exteriores', emoji: '🌐' },
+    { id: 'gobierno', name: 'Gobierno y Admin. Pública', emoji: '🏛️' },
+];
 
 interface Props {
     candidates: Candidate[];
@@ -43,9 +68,41 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
     const [regionFilter, setRegionFilter] = useState('');
     const [partyFilter, setPartyFilter] = useState('');
     const [searchFilter, setSearchFilter] = useState('');
+    const [sectorFilter, setSectorFilter] = useState('');
+    const [sectorCandidates, setSectorCandidates] = useState<Candidate[] | null>(null);
+    const [sectorLoading, setSectorLoading] = useState(false);
     const [page, setPage] = useState(1);
     const { state: selState, addCandidate, isInCart } = useSelection();
     const cartActive = selState === 'draft' || selState === 'editing';
+
+    // Fetch candidates by sector when filter changes
+    const handleSectorSelect = useCallback(async (sectorId: string) => {
+        if (sectorId === sectorFilter) {
+            // Deselect
+            setSectorFilter('');
+            setSectorCandidates(null);
+            setPage(1);
+            return;
+        }
+        setSectorFilter(sectorId);
+        setSectorLoading(true);
+        setPage(1);
+        try {
+            const data = await getCandidatesBySector(sectorId, position);
+            setSectorCandidates(data);
+        } catch (err) {
+            console.error('Error fetching sector candidates:', err);
+            setSectorCandidates([]);
+        } finally {
+            setSectorLoading(false);
+        }
+    }, [sectorFilter, position]);
+
+    // Reset sector filter when position changes
+    useEffect(() => {
+        setSectorFilter('');
+        setSectorCandidates(null);
+    }, [position]);
 
     // Extract unique regions dynamically from actual data
     const uniqueRegions = useMemo(() => {
@@ -69,7 +126,7 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
 
     // Filter and paginate
     const filtered = useMemo(() => {
-        let list = candidates;
+        let list = sectorCandidates !== null ? sectorCandidates : candidates;
         if (regionFilter) list = list.filter(c => c.region === regionFilter);
         if (partyFilter) list = list.filter(c => c.party_abbreviation === partyFilter);
         if (searchFilter) {
@@ -77,7 +134,7 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
             list = list.filter(c => c.name.toLowerCase().includes(q) || c.party_name?.toLowerCase().includes(q));
         }
         return list;
-    }, [candidates, regionFilter, partyFilter, searchFilter]);
+    }, [candidates, sectorCandidates, regionFilter, partyFilter, searchFilter]);
 
     const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
     const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -97,8 +154,41 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
                     <span className="text-glow-red" style={{ color: 'var(--vp-red)' }}>{positionLabels[position] || position}</span>
                 </h2>
                 <span className="text-xs px-3 py-1 rounded-full" style={{ background: 'var(--vp-red-dim)', color: 'var(--vp-red)' }}>
-                    {filtered.length} candidatos
+                    {sectorLoading ? '...' : filtered.length} candidatos
                 </span>
+            </div>
+
+            {/* Sector Filter Chips */}
+            <div style={{ marginBottom: 16 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--vp-text-dim)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    🏷️ Filtrar por sector
+                </div>
+                <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 8, scrollbarWidth: 'thin' }}>
+                    {SECTORS.map(s => (
+                        <button
+                            key={s.id}
+                            onClick={() => handleSectorSelect(s.id)}
+                            style={{
+                                display: 'flex', alignItems: 'center', gap: 4,
+                                padding: '6px 12px', borderRadius: 20, fontSize: 11, fontWeight: 600,
+                                whiteSpace: 'nowrap', cursor: 'pointer', transition: 'all 0.2s',
+                                border: sectorFilter === s.id ? '2px solid var(--vp-red)' : '1px solid var(--vp-border)',
+                                background: sectorFilter === s.id ? 'var(--vp-red)' : 'rgba(255,255,255,0.6)',
+                                color: sectorFilter === s.id ? '#fff' : 'var(--vp-text)',
+                                boxShadow: sectorFilter === s.id ? '0 2px 8px rgba(200,30,30,0.3)' : 'none',
+                            }}
+                        >
+                            <span>{s.emoji}</span>
+                            <span>{s.name}</span>
+                        </button>
+                    ))}
+                </div>
+                {sectorFilter && (
+                    <div style={{ marginTop: 6, fontSize: 11, color: 'var(--vp-text-dim)' }}>
+                        Mostrando candidatos con propuestas en <strong style={{ color: 'var(--vp-red)' }}>{SECTORS.find(s => s.id === sectorFilter)?.name}</strong>
+                        <button onClick={() => { setSectorFilter(''); setSectorCandidates(null); setPage(1); }} style={{ marginLeft: 8, color: 'var(--vp-red)', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', fontSize: 11 }}>✕ Quitar filtro</button>
+                    </div>
+                )}
             </div>
 
             {/* Filters */}
@@ -129,9 +219,9 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
                     <option value="">Todos los partidos</option>
                     {uniqueParties.map(([abbr, name]) => <option key={abbr} value={abbr}>{abbr} — {name}</option>)}
                 </select>
-                {(regionFilter || partyFilter || searchFilter) && (
+                {(regionFilter || partyFilter || searchFilter || sectorFilter) && (
                     <button
-                        onClick={() => { setRegionFilter(''); setPartyFilter(''); setSearchFilter(''); setPage(1); }}
+                        onClick={() => { setRegionFilter(''); setPartyFilter(''); setSearchFilter(''); setSectorFilter(''); setSectorCandidates(null); setPage(1); }}
                         className="text-[10px] px-4 py-2 rounded-lg font-bold whitespace-nowrap"
                         style={{ background: 'var(--vp-red-dim)', color: 'var(--vp-red)' }}
                     >
