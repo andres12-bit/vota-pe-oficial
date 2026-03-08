@@ -206,7 +206,7 @@ class RankingEngine {
         const cleanResult = await pool.query(
             `SELECT COUNT(*) as clean_count
          FROM candidates
-         WHERE party_id = $1 AND is_active = true AND has_no_sentences = true`,
+         WHERE party_id = $1 AND is_active = true AND integrity_score >= 80`,
             [partyId]
         );
 
