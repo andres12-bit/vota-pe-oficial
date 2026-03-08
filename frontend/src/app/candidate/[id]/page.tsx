@@ -324,6 +324,24 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
             <NavHeader />
 
             <main className="internal-page-wrapper space-y-10">
+                {/* Party Link — Ver plancha completa */}
+                <div className="panel-glow">
+                    <Link href={`/party/${candidate.party_id}`}
+                        className="flex items-center justify-between p-3 rounded-xl transition-all hover:scale-[1.01]"
+                        style={{ background: `${candidate.party_color}11`, border: `1px solid ${candidate.party_color}33` }}>
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg flex items-center justify-center text-xs font-black" style={{ background: candidate.party_color + '33', color: candidate.party_color }}>
+                                {candidate.party_abbreviation}
+                            </div>
+                            <div>
+                                <div className="text-sm font-bold" style={{ color: 'var(--vp-text)' }}>{candidate.party_name}</div>
+                                <div className="text-[10px]" style={{ color: 'var(--vp-text-dim)' }}>Ver plancha completa →</div>
+                            </div>
+                        </div>
+                        <span className="text-xl">→</span>
+                    </Link>
+                </div>
+
                 {/* Profile Hero Card */}
                 <div className="panel-glow relative overflow-hidden">
                     {/* Background decoration */}
@@ -1173,23 +1191,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                     );
                 })()}
 
-                {/* Party Link */}
-                <div className="panel-glow">
-                    <Link href={`/party/${candidate.party_id}`}
-                        className="flex items-center justify-between p-3 rounded-xl transition-all hover:scale-[1.01]"
-                        style={{ background: `${candidate.party_color}11`, border: `1px solid ${candidate.party_color}33` }}>
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-lg flex items-center justify-center text-xs font-black" style={{ background: candidate.party_color + '33', color: candidate.party_color }}>
-                                {candidate.party_abbreviation}
-                            </div>
-                            <div>
-                                <div className="text-sm font-bold" style={{ color: 'var(--vp-text)' }}>{candidate.party_name}</div>
-                                <div className="text-[10px]" style={{ color: 'var(--vp-text-dim)' }}>Ver plancha completa →</div>
-                            </div>
-                        </div>
-                        <span className="text-xl">→</span>
-                    </Link>
-                </div>
+
             </main>
             <SiteFooter />
         </div>
