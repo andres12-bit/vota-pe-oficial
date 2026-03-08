@@ -71,10 +71,16 @@ async function runInitialScoring() {
     // 5. Recalculate party scores
     console.log('\n🏛️ Recalculating party scores...');
     const parties = await pool.query('SELECT id FROM parties');
+    let partySuccessCount = 0;
     for (const party of parties.rows) {
-        await RankingEngine.recalculatePartyScore(party.id);
+        try {
+            await RankingEngine.recalculatePartyScore(party.id);
+            partySuccessCount++;
+        } catch (partyErr) {
+            console.error(`   ⚠️ Party ${party.id} scoring error (non-fatal): ${partyErr.message}`);
+        }
     }
-    console.log(`✅ Recalculated scores for ${parties.rows.length} parties`);
+    console.log(`✅ Recalculated scores for ${partySuccessCount}/${parties.rows.length} parties`);
 
     // 6. Print summary
     console.log('\n' + '═'.repeat(50));
@@ -106,26 +112,30 @@ async function runInitialScoring() {
     console.log('─'.repeat(90));
 
     // Score distribution
-    const dist = await pool.query(`
-        SELECT 
-            COUNT(*) FILTER (WHERE final_score = 0) as score_0,
-            COUNT(*) FILTER (WHERE final_score > 0 AND final_score <= 25) as score_1_25,
-            COUNT(*) FILTER (WHERE final_score > 25 AND final_score <= 50) as score_26_50,
-            COUNT(*) FILTER (WHERE final_score > 50 AND final_score <= 75) as score_51_75,
-            COUNT(*) FILTER (WHERE final_score > 75) as score_76_100,
-            ROUND(AVG(hoja_score)::numeric, 2) as avg_hv,
-            ROUND(AVG(plan_score)::numeric, 2) as avg_plan,
-            ROUND(AVG(final_score)::numeric, 2) as avg_final
-        FROM candidates WHERE is_active = true
-    `);
-    const d = dist.rows[0];
-    console.log(`\n📈 Score Distribution:`);
-    console.log(`   Score = 0:     ${d.score_0} candidates`);
-    console.log(`   Score 1-25:    ${d.score_1_25} candidates`);
-    console.log(`   Score 26-50:   ${d.score_26_50} candidates`);
-    console.log(`   Score 51-75:   ${d.score_51_75} candidates`);
-    console.log(`   Score 76-100:  ${d.score_76_100} candidates`);
-    console.log(`\n📊 Averages: HV=${d.avg_hv} | Plan=${d.avg_plan} | Final=${d.avg_final}`);
+    try {
+        const dist = await pool.query(`
+            SELECT 
+                COUNT(*) FILTER (WHERE final_score = 0) as score_0,
+                COUNT(*) FILTER (WHERE final_score > 0 AND final_score <= 25) as score_1_25,
+                COUNT(*) FILTER (WHERE final_score > 25 AND final_score <= 50) as score_26_50,
+                COUNT(*) FILTER (WHERE final_score > 50 AND final_score <= 75) as score_51_75,
+                COUNT(*) FILTER (WHERE final_score > 75) as score_76_100,
+                ROUND(AVG(hoja_score)::numeric, 2) as avg_hv,
+                ROUND(AVG(plan_score)::numeric, 2) as avg_plan,
+                ROUND(AVG(final_score)::numeric, 2) as avg_final
+            FROM candidates WHERE is_active = true
+        `);
+        const d = dist.rows[0];
+        console.log(`\n📈 Score Distribution:`);
+        console.log(`   Score = 0:     ${d.score_0} candidates`);
+        console.log(`   Score 1-25:    ${d.score_1_25} candidates`);
+        console.log(`   Score 26-50:   ${d.score_26_50} candidates`);
+        console.log(`   Score 51-75:   ${d.score_51_75} candidates`);
+        console.log(`   Score 76-100:  ${d.score_76_100} candidates`);
+        console.log(`\n📊 Averages: HV=${d.avg_hv} | Plan=${d.avg_plan} | Final=${d.avg_final}`);
+    } catch (summaryErr) {
+        console.log(`⚠️ Summary stats failed (non-fatal): ${summaryErr.message}`);
+    }
 
     console.log('\n🎉 Initial scoring complete!');
 }
