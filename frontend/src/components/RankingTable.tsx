@@ -163,14 +163,14 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
                 <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--vp-text-dim)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                     🏷️ Filtrar por sector
                 </div>
-                <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 8, scrollbarWidth: 'thin' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                     {SECTORS.map(s => (
                         <button
                             key={s.id}
                             onClick={() => handleSectorSelect(s.id)}
                             style={{
                                 display: 'flex', alignItems: 'center', gap: 4,
-                                padding: '6px 12px', borderRadius: 20, fontSize: 11, fontWeight: 600,
+                                padding: '5px 10px', borderRadius: 20, fontSize: 11, fontWeight: 600,
                                 whiteSpace: 'nowrap', cursor: 'pointer', transition: 'all 0.2s',
                                 border: sectorFilter === s.id ? '2px solid var(--vp-red)' : '1px solid var(--vp-border)',
                                 background: sectorFilter === s.id ? 'var(--vp-red)' : 'rgba(255,255,255,0.6)',
@@ -231,9 +231,10 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
             </div>
 
             {/* Table Header */}
-            <div style={{ display: 'none', gridTemplateColumns: '40px 1fr 70px 80px 80px 90px', gap: '8px', padding: '8px 24px', fontSize: '10px', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase' as const, color: 'var(--vp-text-dim)', borderBottom: '1px solid var(--vp-border)' }} className="md:!grid">
+            <div style={{ display: 'none', gridTemplateColumns: sectorFilter ? '40px 1fr 60px 70px 80px 80px 90px' : '40px 1fr 70px 80px 80px 90px', gap: '8px', padding: '8px 24px', fontSize: '10px', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase' as const, color: 'var(--vp-text-dim)', borderBottom: '1px solid var(--vp-border)' }} className="md:!grid">
                 <span>#</span>
                 <span>Candidato</span>
+                {sectorFilter && <span className="text-center">Sector %</span>}
                 <span className="text-center">Score</span>
                 <span className="text-center" style={{ lineHeight: '1.2' }}>Plan Gob.<br /><span style={{ fontSize: '8px', opacity: 0.7 }}>(Coherencia)</span></span>
                 <span className="text-center">Sentencias</span>
@@ -247,7 +248,7 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
                     return (
                         <div key={candidate.id}>
                             {/* Desktop */}
-                            <div style={{ display: 'none', gridTemplateColumns: '40px 1fr 70px 80px 80px 90px', gap: '8px', alignItems: 'center', padding: '16px 24px', borderRadius: '8px', borderBottom: '1px solid rgba(255,255,255,0.03)' }} className="md:!grid ranking-row hover:bg-white/5 transition-colors">
+                            <div style={{ display: 'none', gridTemplateColumns: sectorFilter ? '40px 1fr 60px 70px 80px 80px 90px' : '40px 1fr 70px 80px 80px 90px', gap: '8px', alignItems: 'center', padding: '16px 24px', borderRadius: '8px', borderBottom: '1px solid rgba(255,255,255,0.03)' }} className="md:!grid ranking-row hover:bg-white/5 transition-colors">
                                 <span className="text-sm font-bold" style={{ color: globalRank <= 3 ? 'var(--vp-gold)' : 'var(--vp-text-dim)' }}>
                                     {globalRank}
                                 </span>
@@ -281,6 +282,13 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
                                         </div>
                                     </div>
                                 </Link>
+                                {sectorFilter && (
+                                    <div className="text-center">
+                                        <span className="text-xs font-black px-2 py-1 rounded-full" style={{ background: 'rgba(200,30,30,0.1)', color: 'var(--vp-red)', border: '1px solid rgba(200,30,30,0.2)' }}>
+                                            {(candidate as any).sector_percentage || 0}%
+                                        </span>
+                                    </div>
+                                )}
                                 <div className="text-center">
                                     <span className="score-badge">{Number(candidate.final_score).toFixed(1)}</span>
                                 </div>

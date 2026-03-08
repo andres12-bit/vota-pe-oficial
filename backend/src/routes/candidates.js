@@ -119,6 +119,9 @@ router.get('/by-sector', async (req, res) => {
             return { ...c, sector_matches: sectorInfo?.matches || 0, sector_percentage: sectorInfo?.percentage || 0 };
         });
 
+        // Sort by sector percentage (highest first), then by final_score as tiebreaker
+        enriched.sort((a, b) => (b.sector_percentage - a.sector_percentage) || (b.final_score - a.final_score));
+
         res.json({ candidates: enriched, total: enriched.length });
     } catch (err) {
         console.error('Error filtering by sector:', err);
