@@ -148,6 +148,8 @@ function DetailItem({ label, value, icon, color }: { label: string; value: strin
 
 const positionLabels: Record<string, string> = {
     president: 'Candidato(a) a la Presidencia',
+    vice_president_1: 'Primer(a) Vicepresidente(a)',
+    vice_president_2: 'Segundo(a) Vicepresidente(a)',
     senator: 'Candidato(a) al Senado',
     deputy: 'Candidato(a) a la Cámara de Diputados',
     andean: 'Candidato(a) al Parlamento Andino'
@@ -768,21 +770,27 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                                 </div>
                             </div>
                             {/* Vicepresidentes */}
-                            {candidate.vice_presidents.map(vp => (
-                                <div key={vp.id} className="flex items-center gap-3 px-4 py-3 rounded-xl flex-1 min-w-[200px]" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--vp-border)' }}>
-                                    <img
-                                        src={getCandidatePhoto(vp.photo, vp.name, 48, candidate.party_color)}
-                                        onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(vp.name, 48, candidate.party_color); }}
-                                        alt={vp.name} width={48} height={48}
-                                        className="w-12 h-12 rounded-full object-cover shrink-0"
-                                        style={{ border: '2px solid var(--vp-border)' }}
-                                    />
-                                    <div>
-                                        <div className="text-sm font-bold" style={{ color: 'var(--vp-text)' }}>{vp.name}</div>
-                                        <div className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--vp-text-dim)' }}>{vp.position_label}</div>
+                            {candidate.vice_presidents.map(vp => {
+                                const vpContent = (
+                                    <div key={vp.id} className="flex items-center gap-3 px-4 py-3 rounded-xl flex-1 min-w-[200px] cursor-pointer hover:scale-[1.01] transition-all" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--vp-border)' }}>
+                                        <img
+                                            src={getCandidatePhoto(vp.photo, vp.name, 48, candidate.party_color)}
+                                            onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(vp.name, 48, candidate.party_color); }}
+                                            alt={vp.name} width={48} height={48}
+                                            className="w-12 h-12 rounded-full object-cover shrink-0"
+                                            style={{ border: '2px solid var(--vp-border)' }}
+                                        />
+                                        <div>
+                                            <div className="text-sm font-bold" style={{ color: 'var(--vp-text)' }}>{vp.name}</div>
+                                            <div className="text-[10px] uppercase tracking-wider" style={{ color: 'var(--vp-text-dim)' }}>{vp.position_label}</div>
+                                            <div className="text-[9px] font-semibold mt-0.5" style={{ color: 'var(--vp-blue)' }}>Ver perfil →</div>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                                return (vp as any).candidate_profile_id
+                                    ? <Link key={vp.id} href={`/candidate/${(vp as any).candidate_profile_id}`}>{vpContent}</Link>
+                                    : vpContent;
+                            })}
                         </div>
                     </div>
                 )}

@@ -160,6 +160,13 @@ router.get('/:id', async (req, res) => {
         candidate.vice_presidents = await safeQuery(
             'SELECT * FROM candidate_vice_presidents WHERE candidate_id = $1 ORDER BY sort_order ASC', [id]
         );
+        // Enrich each VP with their own candidate profile ID (for linking)
+        for (const vp of candidate.vice_presidents) {
+            const vpCandidate = await safeQuery(
+                "SELECT id FROM candidates WHERE name = $1 AND position IN ('vice_president_1','vice_president_2') LIMIT 1", [vp.name]
+            );
+            vp.candidate_profile_id = vpCandidate.length > 0 ? vpCandidate[0].id : null;
+        }
         candidate.plan_gobierno = await safeQuery(
             'SELECT * FROM candidate_plan_gobierno WHERE candidate_id = $1 ORDER BY sort_order ASC', [id]
         );
