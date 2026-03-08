@@ -87,11 +87,11 @@ CREATE INDEX IF NOT EXISTS idx_votes_fingerprint ON votes(voter_fingerprint);
 CREATE TABLE IF NOT EXISTS candidate_events (
   id SERIAL PRIMARY KEY,
   candidate_id INTEGER REFERENCES candidates(id),
-  title VARCHAR(500) NOT NULL,
+  title TEXT NOT NULL,
   description TEXT,
   event_type VARCHAR(30) DEFAULT 'neutral',
   impact_score NUMERIC(5,2) DEFAULT 0,
-  source VARCHAR(500),
+  source TEXT,
   verified BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -101,7 +101,7 @@ CREATE INDEX IF NOT EXISTS idx_events_candidate ON candidate_events(candidate_id
 CREATE TABLE IF NOT EXISTS candidate_proposals (
   id SERIAL PRIMARY KEY,
   candidate_id INTEGER REFERENCES candidates(id),
-  title VARCHAR(500) NOT NULL,
+  title TEXT NOT NULL,
   description TEXT,
   category VARCHAR(100),
   created_at TIMESTAMPTZ DEFAULT NOW()
@@ -124,7 +124,7 @@ CREATE TABLE IF NOT EXISTS candidate_plan_gobierno (
   id SERIAL PRIMARY KEY,
   candidate_id INTEGER REFERENCES candidates(id),
   dimension VARCHAR(255),
-  problem VARCHAR(500),
+  problem TEXT,
   objective TEXT,
   goals TEXT,
   indicator TEXT,
@@ -175,6 +175,12 @@ CREATE TABLE IF NOT EXISTS users (
   provider_id VARCHAR(255),
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- ==================== ALTER existing VARCHAR(500) to TEXT ====================
+ALTER TABLE candidate_events ALTER COLUMN title TYPE TEXT;
+ALTER TABLE candidate_events ALTER COLUMN source TYPE TEXT;
+ALTER TABLE candidate_proposals ALTER COLUMN title TYPE TEXT;
+ALTER TABLE candidate_plan_gobierno ALTER COLUMN problem TYPE TEXT;
 `;
 
 async function migrate() {
