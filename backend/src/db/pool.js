@@ -980,7 +980,7 @@ function handleSelect(resolved, q, params) {
 
     // Filter by position (only if NOT a single-ID lookup)
     if (!hasSingleIdFilter) {
-      const posParam = params.find(p => ['president', 'senator', 'deputy', 'andean'].includes(p));
+      const posParam = params.find(p => ['president', 'vice_president_1', 'vice_president_2', 'senator', 'deputy', 'andean'].includes(p));
       if (posParam && resolved.includes('position')) {
         items = items.filter(c => c.position === posParam);
       }
@@ -988,8 +988,11 @@ function handleSelect(resolved, q, params) {
 
     // Filter by party_id (only if NOT a single-ID lookup and query explicitly mentions party_id = $N)
     if (!hasSingleIdFilter && resolved.includes('party_id') && resolved.includes('where') && params.length > 0) {
-      const pid = parseInt(params[0]);
-      if (!isNaN(pid) && q.includes('party_id = $')) {
+      // Find which param is the party_id (the one that's a number and corresponds to $N in party_id = $N)
+      const pidIdx = q.match(/party_id\s*=\s*\$(\d+)/);
+      const pidParamIdx = pidIdx ? parseInt(pidIdx[1]) - 1 : 0;
+      const pid = parseInt(params[pidParamIdx]);
+      if (!isNaN(pid)) {
         items = items.filter(c => c.party_id === pid);
       }
     }
