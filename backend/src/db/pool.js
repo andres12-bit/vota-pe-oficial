@@ -318,6 +318,36 @@ function seedVicePresidentsAndPlans(jneData) {
         sort_order: i + 1,
         created_at: new Date().toISOString(),
       });
+
+      // Also add VP as a full candidate entry (for their own profile page)
+      const vpCandId = nextId.candidates++;
+      store.candidates.push({
+        id: vpCandId,
+        name: vp.name,
+        photo: vp.photo_url || null,
+        party_id: cand.party_id,
+        position: vp.position === 'vice_president_1' ? 'vice_president_1' : 'vice_president_2',
+        region: cand.region || 'Nacional',
+        biography: vpBio,
+        intelligence_score: parseFloat((Math.random() * 45 + 30).toFixed(2)),
+        momentum_score: parseFloat((Math.random() * 55 + 5).toFixed(2)),
+        integrity_score: parseFloat((Math.random() * 60 + 25).toFixed(2)),
+        risk_score: parseFloat((Math.random() * 50 + 10).toFixed(2)),
+        stars_rating: parseFloat((Math.random() * 2 + 2).toFixed(1)),
+        final_score: parseFloat((Math.random() * 40 + 25).toFixed(2)),
+        is_active: true,
+        vote_count: Math.floor(Math.random() * 4500 + 500),
+        ranking_position: 0,
+        dni: vp.dni || null,
+        hoja_de_vida: vp.hoja_de_vida ? JSON.stringify(vp.hoja_de_vida) : null,
+        education: vpEdu || null,
+        experience: vpExp || null,
+        created_at: new Date().toISOString(),
+      });
+
+      // Store the mapping so the VP link enrichment can find it
+      store.candidate_vice_presidents[store.candidate_vice_presidents.length - 1].linked_candidate_id = vpCandId;
+
       vpCount++;
     });
   });
