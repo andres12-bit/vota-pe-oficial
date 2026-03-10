@@ -5,8 +5,10 @@ import { Candidate, getCandidate } from '@/lib/api';
 import { getAvatarUrl, getCandidatePhoto } from '@/lib/avatars';
 import Link from 'next/link';
 import { use } from 'react';
+import { useRouter } from 'next/navigation';
 import NavHeader from '@/components/NavHeader';
 import SiteFooter from '@/components/SiteFooter';
+import { useSelection } from '@/lib/selection';
 
 function StarRating({ rating }: { rating: number }) {
     const full = Math.floor(rating);
@@ -68,7 +70,7 @@ function BreakdownBar({ label, value, maxValue = 100, color }: { label: string; 
 
 function MomentumIndicator({ score }: { score: number }) {
     const level = score >= 70 ? { label: 'EN ALZA', icon: '🔥', color: 'var(--vp-red)' }
-        : score >= 40 ? { label: 'ESTABLE', icon: '📊', color: 'var(--vp-gold)' }
+        : score >= 40 ? { label: 'ESTABLE', icon: '📊', color: '#0e7490' }
             : { label: 'EN BAJA', icon: '📉', color: 'var(--vp-text-dim)' };
     return (
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: `${level.color}15`, border: `1px solid ${level.color}33` }}>
@@ -84,10 +86,14 @@ function SubScoreRow({ icon, label, weight, score, explain, detail, color, onCli
 }) {
     const pct = Math.min(100, score);
     return (
-        <div className="flex items-center gap-2 py-1.5 px-2 rounded-lg hover:bg-white/[0.04] transition-colors cursor-pointer group" onClick={onClick}>
-            <span className="text-sm shrink-0">{icon}</span>
+        <div className="flex items-center gap-2 py-1.5 px-2 rounded-lg transition-all duration-200 cursor-pointer group"
+            style={{ border: '1px solid transparent' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = `${color}15`; e.currentTarget.style.borderColor = `${color}33`; e.currentTarget.style.transform = 'scale(1.01)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'transparent'; e.currentTarget.style.transform = 'scale(1)'; }}
+            onClick={onClick}>
+            <span className="text-sm shrink-0 group-hover:scale-125 transition-transform">{icon}</span>
             <div className="w-28 shrink-0">
-                <div className="text-[10px] font-semibold" style={{ color: 'var(--vp-text)' }}>{label}</div>
+                <div className="text-[10px] font-semibold transition-colors" style={{ color: 'var(--vp-text)' }}>{label}</div>
                 <div className="text-[8px]" style={{ color: 'var(--vp-text-dim)' }}>Peso: {weight}%</div>
             </div>
             <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
@@ -101,7 +107,7 @@ function SubScoreRow({ icon, label, weight, score, explain, detail, color, onCli
                     <div className="text-[9px] font-semibold truncate" style={{ color: 'var(--vp-text-dim)' }}>{explain}</div>
                     {detail && <div className="text-[8px] truncate" style={{ color: 'var(--vp-text-dim)', opacity: 0.6 }}>{detail}</div>}
                 </div>
-                <span className="text-[10px] opacity-0 group-hover:opacity-60 transition-opacity shrink-0" style={{ color: 'var(--vp-text-dim)' }}>▶</span>
+                <span className="text-[10px] opacity-0 group-hover:opacity-100 transition-opacity shrink-0" style={{ color }}>▶</span>
             </div>
         </div>
     );
@@ -157,6 +163,8 @@ const positionLabels: Record<string, string> = {
 
 export default function CandidatePage({ params }: { params: Promise<{ id: string }> }) {
     const resolvedParams = use(params);
+    const router = useRouter();
+    const { addCandidate, isInCart, state: selState } = useSelection();
     const [candidate, setCandidate] = useState<Candidate | null>(null);
     const [loading, setLoading] = useState(true);
     const [activeModal, setActiveModal] = useState<string | null>(null);
@@ -326,6 +334,15 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
             <NavHeader />
 
             <main className="internal-page-wrapper space-y-10">
+                {/* ← Back Navigation */}
+                <button onClick={() => router.back()}
+                    className="flex items-center gap-2 text-sm font-semibold px-3 py-1.5 rounded-lg transition-all hover:scale-[1.02] cursor-pointer"
+                    style={{ color: 'var(--vp-text-dim)', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--vp-border)' }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,23,68,0.08)'; e.currentTarget.style.color = 'var(--vp-red)'; e.currentTarget.style.borderColor = 'rgba(255,23,68,0.3)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; e.currentTarget.style.color = 'var(--vp-text-dim)'; e.currentTarget.style.borderColor = 'var(--vp-border)'; }}>
+                    ← Volver
+                </button>
+
                 {/* Party Link — Ver plancha completa */}
                 <div className="panel-glow">
                     <Link href={`/party/${candidate.party_id}`}
@@ -391,11 +408,34 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                                     );
                                 })()}
                             </div>
+                            {/* Intención Ciudadana */}
                             <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-2">
-                                <StarRating rating={starsVal} />
-                                <span className="text-xs font-bold" style={{ color: 'var(--vp-gold)' }}>{starsVal.toFixed(1)}/5.0</span>
+                                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: 'rgba(255,23,68,0.08)', border: '1px solid rgba(255,23,68,0.2)' }}>
+                                    <span>🗳️</span>
+                                    <span className="text-[10px] font-bold tracking-wider" style={{ color: 'var(--vp-red)' }}>INTENCIÓN</span>
+                                    <span className="text-sm font-black" style={{ color: 'var(--vp-red)' }}>{candidate.vote_count?.toLocaleString() || '0'}</span>
+                                </div>
                                 <MomentumIndicator score={momScore} />
                             </div>
+                            <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-2">
+                                <StarRating rating={starsVal} />
+                                <span className="text-xs font-bold" style={{ color: '#0e7490' }}>{starsVal.toFixed(1)}/5.0</span>
+                            </div>
+                            {/* Elegir Candidato Button */}
+                            {candidate && (
+                                <button
+                                    onClick={() => addCandidate(candidate)}
+                                    disabled={isInCart(candidate.id)}
+                                    className="mt-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all hover:scale-[1.03] cursor-pointer"
+                                    style={isInCart(candidate.id)
+                                        ? { background: 'rgba(0,230,118,0.1)', color: 'var(--vp-green)', border: '1px solid rgba(0,230,118,0.3)', cursor: 'default' }
+                                        : { background: 'rgba(255,23,68,0.12)', color: 'var(--vp-red)', border: '1px solid rgba(255,23,68,0.4)' }
+                                    }
+                                    onMouseEnter={(e) => { if (!isInCart(candidate.id)) { e.currentTarget.style.background = 'rgba(255,23,68,0.25)'; } }}
+                                    onMouseLeave={(e) => { if (!isInCart(candidate.id)) { e.currentTarget.style.background = 'rgba(255,23,68,0.12)'; } }}>
+                                    {isInCart(candidate.id) ? '✅ En tu selección' : '➕ Elegir candidato'}
+                                </button>
+                            )}
                             <div className="text-sm" style={{ color: 'var(--vp-text-dim)' }}>📍 {candidate.region}</div>
                             {candidate.biography && (
                                 <p className="text-xs mt-2 leading-relaxed max-w-xl" style={{ color: 'var(--vp-text-dim)' }}>{candidate.biography}</p>
@@ -427,7 +467,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         <div className="flex items-center gap-1">
                             <span className="text-xs font-black px-2 py-0.5 rounded" style={{ background: '#8b5cf611', color: '#8b5cf6', border: '1px solid #8b5cf633' }}>HV {hojaScore.toFixed(0)}</span>
                             <span className="text-xs font-black px-2 py-0.5 rounded" style={{ background: 'rgba(41,121,255,0.06)', color: 'var(--vp-blue)', border: '1px solid rgba(41,121,255,0.2)' }}>Plan {planScore.toFixed(0)}</span>
-                            <span className="text-xs font-black px-2 py-0.5 rounded" style={{ background: 'rgba(245,158,11,0.06)', color: 'var(--vp-gold)', border: '1px solid rgba(245,158,11,0.2)' }}>Exp. {experienceScore.toFixed(0)}</span>
+                            <span className="text-xs font-black px-2 py-0.5 rounded" style={{ background: 'rgba(14,116,144,0.06)', color: '#0e7490', border: '1px solid rgba(14,116,144,0.2)' }}>Exp. {experienceScore.toFixed(0)}</span>
                             <span className="text-xs font-black px-2 py-0.5 rounded" style={{ background: 'rgba(0,230,118,0.06)', color: 'var(--vp-green)', border: '1px solid rgba(0,230,118,0.2)' }}>Integ. {integrScore.toFixed(0)}</span>
                             <span className="text-sm font-black ml-2" style={{ color: 'var(--vp-red)' }}>{finalScore.toFixed(1)}</span>
                         </div>
@@ -436,7 +476,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                     <div className="grid grid-cols-4 gap-x-3 gap-y-0 mb-2">
                         <BreakdownBar label="HV (30%)" value={formulaBreakdown.hojaVida.value} maxValue={30} color="#8b5cf6" />
                         <BreakdownBar label="Plan (30%)" value={formulaBreakdown.planGobierno.value} maxValue={30} color="var(--vp-blue)" />
-                        <BreakdownBar label="Exp. (25%)" value={formulaBreakdown.experiencia.value} maxValue={25} color="var(--vp-gold)" />
+                        <BreakdownBar label="Exp. (25%)" value={formulaBreakdown.experiencia.value} maxValue={25} color="#0e7490" />
                         <BreakdownBar label="Integridad (15%)" value={formulaBreakdown.integrity.value} maxValue={15} color="var(--vp-green)" />
                     </div>
 
@@ -486,10 +526,14 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                     {/* Experiencia + Integridad side by side */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {/* Experiencia Laboral */}
-                        <div className="rounded-xl overflow-hidden cursor-pointer hover:bg-white/[0.02] transition-colors" style={{ border: '1px solid rgba(245,158,11,0.2)' }} onClick={() => setActiveModal('experiencia')}>
-                            <div className="px-3 py-2 flex items-center justify-between" style={{ background: 'rgba(245,158,11,0.06)' }}>
-                                <span className="text-xs font-bold" style={{ color: 'var(--vp-gold)' }}>💼 Experiencia Laboral</span>
-                                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: 'rgba(245,158,11,0.12)', color: 'var(--vp-gold)' }}>{experienceScore.toFixed(0)}/100 → {(experienceScore * 0.25).toFixed(1)}pts</span>
+                        <div className="rounded-xl overflow-hidden cursor-pointer transition-all duration-200"
+                            style={{ border: '1px solid rgba(14,116,144,0.2)' }}
+                            onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(14,116,144,0.5)'; e.currentTarget.style.background = 'rgba(14,116,144,0.04)'; e.currentTarget.style.transform = 'scale(1.01)'; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(14,116,144,0.2)'; e.currentTarget.style.background = 'transparent'; e.currentTarget.style.transform = 'scale(1)'; }}
+                            onClick={() => setActiveModal('experiencia')}>
+                            <div className="px-3 py-2 flex items-center justify-between" style={{ background: 'rgba(14,116,144,0.06)' }}>
+                                <span className="text-xs font-bold" style={{ color: '#0e7490' }}>💼 Experiencia Laboral</span>
+                                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: 'rgba(14,116,144,0.12)', color: '#0e7490' }}>{experienceScore.toFixed(0)}/100 → {(experienceScore * 0.25).toFixed(1)}pts</span>
                             </div>
                             <div className="p-3 flex items-center gap-3">
                                 <div className="flex-1">
@@ -498,14 +542,18 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                                     </div>
                                     <div className="text-[9px] mt-0.5" style={{ color: 'var(--vp-text-dim)' }}>Basado en experiencia laboral y profesional declarada</div>
                                 </div>
-                                <div className="shrink-0 w-12 h-12 rounded-full flex items-center justify-center" style={{ background: 'rgba(245,158,11,0.08)', border: '2px solid rgba(245,158,11,0.25)' }}>
-                                    <span className="text-base font-black" style={{ color: 'var(--vp-gold)' }}>{experienceScore.toFixed(0)}</span>
+                                <div className="shrink-0 w-12 h-12 rounded-full flex items-center justify-center" style={{ background: 'rgba(14,116,144,0.08)', border: '2px solid rgba(14,116,144,0.25)' }}>
+                                    <span className="text-base font-black" style={{ color: '#0e7490' }}>{experienceScore.toFixed(0)}</span>
                                 </div>
                             </div>
                         </div>
 
                         {/* Integridad */}
-                        <div className="rounded-xl overflow-hidden cursor-pointer hover:bg-white/[0.02] transition-colors" style={{ border: '1px solid rgba(0,230,118,0.2)' }} onClick={() => setActiveModal('integridad')}>
+                        <div className="rounded-xl overflow-hidden cursor-pointer transition-all duration-200"
+                            style={{ border: '1px solid rgba(0,230,118,0.2)' }}
+                            onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(0,230,118,0.5)'; e.currentTarget.style.background = 'rgba(0,230,118,0.04)'; e.currentTarget.style.transform = 'scale(1.01)'; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(0,230,118,0.2)'; e.currentTarget.style.background = 'transparent'; e.currentTarget.style.transform = 'scale(1)'; }}
+                            onClick={() => setActiveModal('integridad')}>
                             <div className="px-3 py-2 flex items-center justify-between" style={{ background: 'rgba(0,230,118,0.06)' }}>
                                 <span className="text-xs font-bold" style={{ color: 'var(--vp-green)' }}>🛡️ Integridad</span>
                                 <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: 'rgba(0,230,118,0.12)', color: 'var(--vp-green)' }}>{integrScore.toFixed(0)}/100 → {(integrScore * 0.15).toFixed(1)}pts</span>
