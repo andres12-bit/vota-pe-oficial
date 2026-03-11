@@ -27,8 +27,20 @@ export function getAvatarUrl(name: string, size = 40, color?: string): string {
  * @param color - Party color hex
  */
 export function getCandidatePhoto(photo: string | null | undefined, name: string, size = 40, color?: string): string {
-    if (photo && photo.trim().length > 0) return photo;
+    if (photo && photo.trim().length > 0) return photo.trim();
     return getAvatarUrl(name, size, color);
+}
+
+/**
+ * Get a fallback photo URL by swapping .jpeg↔.jpg extension.
+ * JNE server is inconsistent — some photos only serve .jpeg, others only .jpg.
+ * Use this in onError handlers to try the alternate extension before falling back to initials.
+ */
+export function getPhotoFallback(photoUrl: string): string | null {
+    if (!photoUrl) return null;
+    if (photoUrl.endsWith('.jpeg')) return photoUrl.slice(0, -5) + '.jpg';
+    if (photoUrl.endsWith('.jpg')) return photoUrl.slice(0, -4) + '.jpeg';
+    return null;
 }
 
 /**

@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Candidate, getCandidatesBySector } from '@/lib/api';
-import { getAvatarUrl, getCandidatePhoto } from '@/lib/avatars';
+import { getAvatarUrl, getCandidatePhoto, getPhotoFallback } from '@/lib/avatars';
 import { useSelection } from '@/lib/selection';
 import Link from 'next/link';
 
@@ -150,7 +150,7 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold tracking-wider uppercase">
-                    <span style={{ color: 'var(--vp-text-dim)' }}>Ranking</span>{' '}
+                    <span style={{ color: 'var(--vp-text-dim)' }}>Lista de Candidatos</span>{' '}
                     <span className="text-glow-red" style={{ color: 'var(--vp-red)' }}>{positionLabels[position] || position}</span>
                 </h2>
                 <span className="text-xs px-3 py-1 rounded-full" style={{ background: 'var(--vp-red-dim)', color: 'var(--vp-red)' }}>
@@ -201,15 +201,17 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
                     className="w-full px-4 py-2 rounded-lg text-xs"
                     style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--vp-border)', color: 'var(--vp-text)', outline: 'none' }}
                 />
-                <select
-                    value={regionFilter}
-                    onChange={e => handleFilterChange(setRegionFilter)(e.target.value)}
-                    className="px-4 py-2 rounded-lg text-xs"
-                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--vp-border)', color: 'var(--vp-text)', outline: 'none' }}
-                >
-                    <option value="">Todas las regiones</option>
-                    {uniqueRegions.map(r => <option key={r} value={r}>{r}</option>)}
-                </select>
+                {position !== 'president' && (
+                    <select
+                        value={regionFilter}
+                        onChange={e => handleFilterChange(setRegionFilter)(e.target.value)}
+                        className="px-4 py-2 rounded-lg text-xs"
+                        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--vp-border)', color: 'var(--vp-text)', outline: 'none' }}
+                    >
+                        <option value="">Todas las regiones</option>
+                        {uniqueRegions.map(r => <option key={r} value={r}>{r}</option>)}
+                    </select>
+                )}
                 <select
                     value={partyFilter}
                     onChange={e => handleFilterChange(setPartyFilter)(e.target.value)}
@@ -255,7 +257,7 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
                                 <Link href={`/candidate/${candidate.id}`} className="flex items-center gap-3 pl-1 min-w-0 overflow-hidden">
                                     <img
                                         src={getCandidatePhoto(candidate.photo, candidate.name, 48, candidate.party_color)}
-                                        onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(candidate.name, 48, candidate.party_color); }}
+                                        onError={(e) => { const fb = getPhotoFallback((e.target as HTMLImageElement).src); if (fb && !(e.target as HTMLImageElement).dataset.retried) { (e.target as HTMLImageElement).dataset.retried = '1'; (e.target as HTMLImageElement).src = fb; } else { (e.target as HTMLImageElement).src = getAvatarUrl(candidate.name, 48, candidate.party_color); } }}
                                         alt={candidate.name}
                                         width={48}
                                         height={48}
@@ -325,7 +327,7 @@ export default function RankingTable({ candidates, position, onVote }: Props) {
                                     <Link href={`/candidate/${candidate.id}`} className="flex items-start gap-2.5 flex-1 min-w-0">
                                         <img
                                             src={getCandidatePhoto(candidate.photo, candidate.name, 40, candidate.party_color)}
-                                            onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(candidate.name, 40, candidate.party_color); }}
+                                            onError={(e) => { const fb = getPhotoFallback((e.target as HTMLImageElement).src); if (fb && !(e.target as HTMLImageElement).dataset.retried) { (e.target as HTMLImageElement).dataset.retried = '1'; (e.target as HTMLImageElement).src = fb; } else { (e.target as HTMLImageElement).src = getAvatarUrl(candidate.name, 40, candidate.party_color); } }}
                                             alt={candidate.name}
                                             width={40}
                                             height={40}

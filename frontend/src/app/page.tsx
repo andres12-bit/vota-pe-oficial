@@ -187,200 +187,138 @@ function HomeContent() {
         ) : activeTab === 'votar' ? (
           /* HOME VIEW — Clean centered layout */
           <>
-            <div>
-              {/* ===== HERO BLOCK: Football Field Design ===== */}
-              <section className="hero-centered-block">
-                {/* Draft banner */}
-                {showDraftBanner && (
-                  <div className="draft-recovery-banner">
-                    <span>Tienes una selección en progreso.</span>
-                    <button onClick={dismissDraftBanner}>Continuar editando →</button>
-                  </div>
-                )}
+<div>
+    {/* ===== HERO BLOCK: Two-Column Layout ===== */}
+    <section className="hero-centered-block">
+        {/* Draft banner */}
+        {showDraftBanner && (
+            <div className="draft-recovery-banner">
+                <span>Tienes una selección en progreso.</span>
+                <button onClick={dismissDraftBanner}>Continuar editando →</button>
+            </div>
+        )}
 
-                <h1 className="hero-title"><span className="hero-blue">ELIGE</span> <span className="hero-red">MEJOR.</span> <span className="hero-blue">DECIDE INFORMADO.</span></h1>
-                <p className="hero-subtitle">Elige a tus candidatos y <strong>compón tu equipo</strong> perfecto para las elecciones.</p>
+        {/* Stats bar — real data */}
+        <div className="cancha-stats-bar">
+            <span className="cancha-stat">✅ <strong>{voteStats?.total?.toLocaleString() ?? '0'}</strong> votos ciudadanos</span>
+            <span className="cancha-stat cancha-stat-green">↑ {voteStats?.last_hour ?? 0 > 0 ? ((voteStats?.last_hour ?? 0 / Math.max(1, (voteStats?.total ?? 1))) * 100).toFixed(1) : '0'}% última hora</span>
+            <span className="cancha-stat cancha-stat-live">● 24/7 en vivo</span>
+        </div>
+
+        {/* ═══ TWO-COLUMN HERO ═══ */}
+        <div className="hero-two-col">
+            {/* Left column: Headline + CTA */}
+            <div className="hero-left-col">
+                <h1 className="hero-headline">
+                    <span className="hero-headline-line">Elige <em>Mejor.</em></span>
+                    <span className="hero-headline-line"><em>Decide Informado.</em></span>
+                </h1>
+                <p className="hero-desc">
+                    Elige a tus candidatos y compón tu equipo perfecto<br />para las elecciones.
+                </p>
 
                 {selState === 'empty' && !showDraftBanner && (
-                  <button onClick={activateBuilding} className="genera-seleccion-btn cancha-cta-btn">
-                    GENERAR SELECCIÓN
-                  </button>
+                    <button onClick={activateBuilding} className="hero-cta-btn">
+                        GENERAR SELECCIÓN
+                    </button>
                 )}
 
                 {selState === 'confirmed' && (
-                  <button onClick={editSelection} className="genera-seleccion-btn cancha-cta-btn">
-                    ✏️ EDITAR SELECCIÓN
-                  </button>
+                    <button onClick={editSelection} className="hero-cta-btn">
+                        ✏️ EDITAR SELECCIÓN
+                    </button>
                 )}
 
                 {selState === 'draft' && hasPresident && !showDraftBanner && (
-                  <button onClick={confirmSelection} className="genera-seleccion-btn cancha-cta-btn">
-                    💾 GUARDAR SELECCIÓN
-                  </button>
+                    <button onClick={confirmSelection} className="hero-cta-btn">
+                        💾 GUARDAR SELECCIÓN
+                    </button>
                 )}
+            </div>
 
-                {/* Stats bar — real data */}
-                <div className="cancha-stats-bar">
-                  <span className="cancha-stat">✅ <strong>{voteStats?.total?.toLocaleString() ?? '0'}</strong> votos ciudadanos</span>
-                  <span className="cancha-stat cancha-stat-green">↑ {voteStats?.last_hour ?? 0 > 0 ? ((voteStats?.last_hour ?? 0 / Math.max(1, (voteStats?.total ?? 1))) * 100).toFixed(1) : '0'}% última hora</span>
-                  <span className="cancha-stat cancha-stat-live">● 24/7 en vivo</span>
-                </div>
+            {/* Right column: Category icons in diamond */}
+            <div className="hero-right-col">
+                <div className="hero-diamond">
+                    {/* Connecting lines SVG */}
+                    <svg className="hero-diamond-lines" viewBox="0 0 300 300" fill="none">
+                        <line x1="150" y1="70" x2="60" y2="150" stroke="rgba(200,200,200,0.5)" strokeWidth="1.5" />
+                        <line x1="150" y1="70" x2="240" y2="150" stroke="rgba(200,200,200,0.5)" strokeWidth="1.5" />
+                        <line x1="60" y1="150" x2="150" y2="230" stroke="rgba(200,200,200,0.5)" strokeWidth="1.5" />
+                        <line x1="240" y1="150" x2="150" y2="230" stroke="rgba(200,200,200,0.5)" strokeWidth="1.5" />
+                    </svg>
 
-                {/* ===== CANCHA ELECTORAL — Football Field ===== */}
-                <div className="cancha-field-container">
-                  <div className="cancha-field">
-                    {/* Field markings */}
-                    <div className="cancha-field-line cancha-field-center-line"></div>
-                    <div className="cancha-field-line cancha-field-center-circle"></div>
-                    <div className="cancha-field-line cancha-field-penalty-top"></div>
-                    <div className="cancha-field-line cancha-field-penalty-bottom"></div>
-
-                    <h3 className="cancha-field-title">TU CANCHA ELECTORAL</h3>
-                    <p className="cancha-field-subtitle">Crea tu <strong>voto ideal</strong> con tu equipo perfecto para las elecciones.</p>
-
-                    {/* Formation layout */}
-                    <div className="cancha-formation">
-                      {/* PRESIDENTE — Top */}
-                      <div className="cancha-pos cancha-pos-president" onClick={() => setActiveTab('president')}>
-                        <div className="cancha-pos-avatar-wrap">
-                          {selection.president ? (
-                            <div className="cancha-pos-avatar cancha-pos-avatar-filled" style={{ borderColor: selection.president.party_color || 'var(--vp-red)' }}>
-                              <img src={getCandidatePhoto(selection.president!.photo, selection.president!.name, 64, selection.president!.party_color)} onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(selection.president!.name, 64, selection.president!.party_color); }} alt={selection.president!.name} />
-                            </div>
-                          ) : (
-                            <div className="cancha-pos-avatar cancha-pos-avatar-empty">
-                              <svg width="28" height="28" viewBox="0 0 24 24" fill="#94a3b8"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg>
-                            </div>
-                          )}
+                    {/* Presidente — top */}
+                    <div className="hero-diamond-node hero-diamond-top" onClick={() => setActiveTab('president')}>
+                        <div className={`hero-diamond-circle ${selection.president ? 'hero-diamond-filled' : ''}`} style={selection.president ? { borderColor: selection.president.party_color || '#c62828' } : {}}>
+                            {selection.president ? (
+                                <img src={getCandidatePhoto(selection.president.photo, selection.president.name, 64, selection.president.party_color)} onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(selection.president!.name, 64, selection.president!.party_color); }} alt={selection.president.name} />
+                            ) : (
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="#94a3b8"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" /></svg>
+                            )}
                         </div>
-                        <span className="cancha-pos-name">{selection.president ? selection.president.name.split(' ').slice(-2).join(' ') : ''}</span>
-                        <span className="cancha-pos-label">PRESIDENTE</span>
-                      </div>
-
-                      {/* Connection lines */}
-                      <div className="cancha-lines">
-                        <svg viewBox="0 0 400 60" className="cancha-lines-svg" preserveAspectRatio="none">
-                          <line x1="200" y1="0" x2="80" y2="60" stroke="rgba(148,163,184,0.4)" strokeWidth="1.5" />
-                          <line x1="200" y1="0" x2="200" y2="60" stroke="rgba(148,163,184,0.4)" strokeWidth="1.5" />
-                          <line x1="200" y1="0" x2="320" y2="60" stroke="rgba(148,163,184,0.4)" strokeWidth="1.5" />
-                        </svg>
-                      </div>
-
-                      {/* SENADO row */}
-                      <div className="cancha-pos-row">
-                        {/* SENADO */}
-                        <div className="cancha-pos" onClick={() => setActiveTab('senator')}>
-                          {selection.senators.length > 0 ? (
-                            <div className="cancha-pos-multi">
-                              {selection.senators.map((s, i) => (
-                                <div key={s.id} className="cancha-pos-multi-item">
-                                  <div className="cancha-pos-avatar cancha-pos-avatar-filled cancha-pos-avatar-sm" style={{ borderColor: s.party_color || '#2563eb' }}>
-                                    <img src={getCandidatePhoto(s.photo, s.name, 48, s.party_color)} onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(s.name, 48, s.party_color); }} alt={s.name} />
-                                  </div>
-                                  <span className="cancha-pos-name">{s.name.split(' ').slice(-2).join(' ')}</span>
-                                </div>
-                              ))}
-                            </div>
-                          ) : (
-                            <div className="cancha-pos-avatar-wrap">
-                              <div className="cancha-pos-avatar cancha-pos-avatar-empty cancha-pos-avatar-sm">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="#94a3b8"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg>
-                              </div>
-                            </div>
-                          )}
-                          <span className="cancha-pos-label">SENADO</span>
-                        </div>
-                      </div>
-
-                      {/* DIPUTADOS row */}
-                      <div className="cancha-pos-row">
-                        {/* DIPUTADOS */}
-                        <div className="cancha-pos" onClick={() => setActiveTab('deputy')}>
-                          {selection.deputies.length > 0 ? (
-                            <div className="cancha-pos-multi">
-                              {selection.deputies.map((d, i) => (
-                                <div key={d.id} className="cancha-pos-multi-item">
-                                  <div className="cancha-pos-avatar cancha-pos-avatar-filled cancha-pos-avatar-sm" style={{ borderColor: d.party_color || '#16a34a' }}>
-                                    <img src={getCandidatePhoto(d.photo, d.name, 48, d.party_color)} onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(d.name, 48, d.party_color); }} alt={d.name} />
-                                  </div>
-                                  <span className="cancha-pos-name">{d.name.split(' ').slice(-2).join(' ')}</span>
-                                </div>
-                              ))}
-                            </div>
-                          ) : (
-                            <div className="cancha-pos-avatar-wrap">
-                              <div className="cancha-pos-avatar cancha-pos-avatar-empty cancha-pos-avatar-sm">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="#94a3b8"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg>
-                              </div>
-                            </div>
-                          )}
-                          <span className="cancha-pos-label">DIPUTADOS</span>
-                        </div>
-                      </div>
-
-                      {/* P. ANDINO row */}
-                      <div className="cancha-pos-row">
-                        {/* PARLAMENTO ANDINO */}
-                        <div className="cancha-pos" onClick={() => setActiveTab('andean')}>
-                          {selection.andean.length > 0 ? (
-                            <div className="cancha-pos-multi">
-                              {selection.andean.map((a, i) => (
-                                <div key={a.id} className="cancha-pos-multi-item">
-                                  <div className="cancha-pos-avatar cancha-pos-avatar-filled cancha-pos-avatar-sm" style={{ borderColor: a.party_color || '#7c3aed' }}>
-                                    <img src={getCandidatePhoto(a.photo, a.name, 48, a.party_color)} onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(a.name, 48, a.party_color); }} alt={a.name} />
-                                  </div>
-                                  <span className="cancha-pos-name">{a.name.split(' ').slice(-2).join(' ')}</span>
-                                </div>
-                              ))}
-                            </div>
-                          ) : (
-                            <div className="cancha-pos-avatar-wrap">
-                              <div className="cancha-pos-avatar cancha-pos-avatar-empty cancha-pos-avatar-sm">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="#94a3b8"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg>
-                              </div>
-                            </div>
-                          )}
-                          <span className="cancha-pos-label">P. ANDINO</span>
-                        </div>
-                      </div>
+                        <span className="hero-diamond-label">Presidente</span>
                     </div>
 
-                    {/* Progress bar — at the very bottom of the field */}
-                    {(() => {
-                      const filled = (selection.president ? 1 : 0) + (selection.senators.length > 0 ? 1 : 0) + (selection.deputies.length > 0 ? 1 : 0) + (selection.andean.length > 0 ? 1 : 0);
-                      const pct = Math.round((filled / 4) * 100);
-                      return (
-                        <div className="cancha-progress">
-                          <span className="cancha-progress-label">Progreso de tu voto: <strong>{pct}%</strong></span>
-                          <div className="cancha-progress-bar">
-                            <div className="cancha-progress-fill" style={{ width: `${pct}%` }}></div>
-                          </div>
+                    {/* Senado — left */}
+                    <div className="hero-diamond-node hero-diamond-left" onClick={() => setActiveTab('senator')}>
+                        <div className={`hero-diamond-circle hero-diamond-circle-sm ${selection.senators.length > 0 ? 'hero-diamond-filled' : ''}`} style={selection.senators.length > 0 ? { borderColor: selection.senators[0].party_color || '#2563eb' } : {}}>
+                            {selection.senators.length > 0 ? (
+                                <img src={getCandidatePhoto(selection.senators[0].photo, selection.senators[0].name, 48, selection.senators[0].party_color)} onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(selection.senators[0].name, 48, selection.senators[0].party_color); }} alt={selection.senators[0].name} />
+                            ) : (
+                                <svg width="26" height="26" viewBox="0 0 24 24" fill="#94a3b8"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" /></svg>
+                            )}
                         </div>
-                      );
-                    })()}
-                  </div>
-                </div>
+                        <span className="hero-diamond-label">Senado</span>
+                    </div>
 
-                {/* ── ACTION BAR — Compartir always visible ── */}
-                <div className="cancha-action-bar">
-                  <button onClick={() => setShowShare(true)} className="cancha-action-btn cancha-action-share">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" /><polyline points="16 6 12 2 8 6" /><line x1="12" y1="2" x2="12" y2="15" /></svg>
-                    Compartir
-                  </button>
-                  {(selState === 'confirmed' || (hasPresident && selState !== 'empty')) && (
-                    <>
-                      <button onClick={() => setShowCompare(true)} className="cancha-action-btn cancha-action-compare">
+                    {/* Parl. Andino — right */}
+                    <div className="hero-diamond-node hero-diamond-right" onClick={() => setActiveTab('andean')}>
+                        <div className={`hero-diamond-circle hero-diamond-circle-sm ${selection.andean.length > 0 ? 'hero-diamond-filled' : ''}`} style={selection.andean.length > 0 ? { borderColor: selection.andean[0].party_color || '#7c3aed' } : {}}>
+                            {selection.andean.length > 0 ? (
+                                <img src={getCandidatePhoto(selection.andean[0].photo, selection.andean[0].name, 48, selection.andean[0].party_color)} onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(selection.andean[0].name, 48, selection.andean[0].party_color); }} alt={selection.andean[0].name} />
+                            ) : (
+                                <svg width="26" height="26" viewBox="0 0 24 24" fill="#94a3b8"><path d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-6 8h22L14 6z" /></svg>
+                            )}
+                        </div>
+                        <span className="hero-diamond-label">Parl. Andino</span>
+                    </div>
+
+                    {/* Diputados — bottom */}
+                    <div className="hero-diamond-node hero-diamond-bottom" onClick={() => setActiveTab('deputy')}>
+                        <div className={`hero-diamond-circle hero-diamond-circle-sm ${selection.deputies.length > 0 ? 'hero-diamond-filled' : ''}`} style={selection.deputies.length > 0 ? { borderColor: selection.deputies[0].party_color || '#16a34a' } : {}}>
+                            {selection.deputies.length > 0 ? (
+                                <img src={getCandidatePhoto(selection.deputies[0].photo, selection.deputies[0].name, 48, selection.deputies[0].party_color)} onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(selection.deputies[0].name, 48, selection.deputies[0].party_color); }} alt={selection.deputies[0].name} />
+                            ) : (
+                                <svg width="26" height="26" viewBox="0 0 24 24" fill="#94a3b8"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" /></svg>
+                            )}
+                        </div>
+                        <span className="hero-diamond-label">Diputados</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {/* ── ACTION BAR — Compartir always visible ── */}
+        <div className="cancha-action-bar">
+            <button onClick={() => setShowShare(true)} className="cancha-action-btn cancha-action-share">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" /><polyline points="16 6 12 2 8 6" /><line x1="12" y1="2" x2="12" y2="15" /></svg>
+                Compartir
+            </button>
+            {(selState === 'confirmed' || (hasPresident && selState !== 'empty')) && (
+                <>
+                    <button onClick={() => setShowCompare(true)} className="cancha-action-btn cancha-action-compare">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v18" /><path d="M8 7l-4 4 4 4" /><path d="M16 7l4 4-4 4" /></svg>
                         Comparar
-                      </button>
-                      <button onClick={() => setShowAnalysis(true)} className="cancha-action-btn cancha-action-analysis">
+                    </button>
+                    <button onClick={() => setShowAnalysis(true)} className="cancha-action-btn cancha-action-analysis">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 20V10" /><path d="M12 20V4" /><path d="M6 20v-6" /></svg>
                         Ver análisis
-                      </button>
-                    </>
-                  )}
-                </div>
-              </section>
+                    </button>
+                </>
+            )}
+        </div>
+    </section>
+
 
               {/* ===== DYNAMIC MODULES ===== */}
               <div className="homepage-modules">

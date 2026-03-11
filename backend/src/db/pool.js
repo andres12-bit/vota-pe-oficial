@@ -624,7 +624,15 @@ function initializeData() {
   store.parties.forEach(party => {
     const partyCandidates = store.candidates.filter(c => c.party_id === party.id && c.is_active);
     if (partyCandidates.length > 0) {
-      party.party_full_score = parseFloat((partyCandidates.reduce((s, c) => s + c.final_score, 0) / partyCandidates.length).toFixed(2));
+      // Use plancha formula: (Antecedentes×0.30) + (Plan×0.25) + (HV×0.25) + (ScoreProm.×0.20)
+      const cleanCount = partyCandidates.filter(c => (c.integrity_score || 0) >= 80).length;
+      const antecedentesScore = (cleanCount / partyCandidates.length) * 100;
+      const avgPlan = partyCandidates.reduce((s, c) => s + (c.plan_score || 0), 0) / partyCandidates.length;
+      const avgHV = partyCandidates.reduce((s, c) => s + (c.hoja_score || 0), 0) / partyCandidates.length;
+      const avgScore = partyCandidates.reduce((s, c) => s + (c.final_score || 0), 0) / partyCandidates.length;
+      party.party_full_score = parseFloat(Math.min(100, Math.max(0,
+        (antecedentesScore * 0.30) + (avgPlan * 0.25) + (avgHV * 0.25) + (avgScore * 0.20)
+      )).toFixed(2));
     }
     store.party_scores.push({
       party_id: party.id, party_full_score: party.party_full_score,

@@ -154,6 +154,15 @@ export async function getStats() {
     return apiFetch<{ total_votes: number; total_candidates: number; total_parties: number }>('/api/stats');
 }
 
+// Radar
+export async function getRadarAlerts() {
+    return apiFetch<{ antecedentes: any[]; sinEstudios: any[]; denuncias: any[] }>('/api/radar/alerts');
+}
+
+export async function getRadarMetrics() {
+    return apiFetch<{ global: { total_candidates: number; total_parties: number; avg_score: number; avg_integrity: number } }>('/api/radar/metrics');
+}
+
 // Search
 export async function search(query: string) {
     return apiFetch<{ candidates: Candidate[]; proposals: Proposal[]; events: CandidateEvent[] }>(`/api/search?q=${encodeURIComponent(query)}`);

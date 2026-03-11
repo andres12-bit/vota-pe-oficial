@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { Party, Candidate, getParties, getRanking } from '@/lib/api';
-import { getAvatarUrl, getCandidatePhoto } from '@/lib/avatars';
+import { getAvatarUrl, getCandidatePhoto, getPhotoFallback } from '@/lib/avatars';
 import Link from 'next/link';
 
 interface PlanchaData {
@@ -336,7 +336,10 @@ function PlanchaCard({ plancha, rank }: { plancha: PlanchaData; rank: number }) 
     // Average final score of all candidates
     const avgFinalScore = totalCandidates > 0 ? totalScore / totalCandidates : 0;
 
-    const displayScore = Number(party.party_full_score || 0);
+    // Calculate plancha score using the formula: 
+    // plancha = (Antecedentes×0.30) + (Plan×0.25) + (HV×0.25) + (Score Prom.×0.20)
+    const calculatedPlanchaScore = (antecedentesScore * 0.30) + (avgPlanScore * 0.25) + (avgHojaScore * 0.25) + (avgFinalScore * 0.20);
+    const displayScore = Number(calculatedPlanchaScore || 0);
 
     const byPosition = {
         president: allCandidates.filter(c => c.position === 'president').length,
@@ -352,6 +355,14 @@ function PlanchaCard({ plancha, rank }: { plancha: PlanchaData; rank: number }) 
                 <div className="plancha-rank-badge" style={{ background: rank <= 3 ? 'var(--vp-red)' : '#6b7280', color: '#fff' }}>
                     {rank}
                 </div>
+                {party.logo && (
+                    <img
+                        src={party.logo}
+                        alt={party.name}
+                        style={{ width: 36, height: 36, borderRadius: 6, objectFit: 'contain', background: '#fff', border: '1px solid rgba(0,0,0,0.1)', flexShrink: 0 }}
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    />
+                )}
                 <div className="plancha-party-info">
                     <h3 className="plancha-party-name">{party.name}</h3>
                     <span className="plancha-party-abbr" style={{ color: party.color }}>
@@ -371,7 +382,7 @@ function PlanchaCard({ plancha, rank }: { plancha: PlanchaData; rank: number }) 
                 <Link href={`/candidate/${presidential.id}`} className="plancha-presidential">
                     <img
                         src={getCandidatePhoto(presidential.photo, presidential.name, 40, party.color)}
-                        onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(presidential.name, 40, party.color); }}
+                        onError={(e) => { const fb = getPhotoFallback((e.target as HTMLImageElement).src); if (fb && !(e.target as HTMLImageElement).dataset.retried) { (e.target as HTMLImageElement).dataset.retried = '1'; (e.target as HTMLImageElement).src = fb; } else { (e.target as HTMLImageElement).src = getAvatarUrl(presidential.name, 40, party.color); } }}
                         alt={presidential.name}
                         width={40}
                         height={40}
@@ -432,9 +443,9 @@ function PlanchaCard({ plancha, rank }: { plancha: PlanchaData; rank: number }) 
                     <div className="plancha-brk-item">
                         <span>📄 Hoja de Vida (25%)</span>
                         <div style={{ flex: 1, margin: '0 8px', height: 6, background: '#f3f4f6', borderRadius: 3, overflow: 'hidden' }}>
-                            <div style={{ width: `${avgHojaScore}%`, height: '100%', background: '#8b5cf6', borderRadius: 3 }} />
+                            <div style={{ width: `${avgHojaScore}%`, height: '100%', background: '#312e81', borderRadius: 3 }} />
                         </div>
-                        <span className="plancha-brk-val" style={{ color: '#8b5cf6' }}>{Number(avgHojaScore * 0.25 || 0).toFixed(1)}</span>
+                        <span className="plancha-brk-val" style={{ color: '#312e81' }}>{Number(avgHojaScore * 0.25 || 0).toFixed(1)}</span>
                     </div>
                     <div className="plancha-brk-item">
                         <span>📊 Score Promedio (20%)</span>

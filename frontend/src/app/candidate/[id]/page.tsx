@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Candidate, getCandidate } from '@/lib/api';
-import { getAvatarUrl, getCandidatePhoto } from '@/lib/avatars';
+import { getAvatarUrl, getCandidatePhoto, getPhotoFallback } from '@/lib/avatars';
 import Link from 'next/link';
 import { use } from 'react';
 import { useRouter } from 'next/navigation';
@@ -349,7 +349,16 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         className="flex items-center justify-between p-3 rounded-xl transition-all hover:scale-[1.01]"
                         style={{ background: `${candidate.party_color}11`, border: `1px solid ${candidate.party_color}33` }}>
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-lg flex items-center justify-center text-xs font-black" style={{ background: candidate.party_color + '33', color: candidate.party_color }}>
+                            {candidate.party_logo ? (
+                                <img
+                                    src={candidate.party_logo}
+                                    alt={candidate.party_name}
+                                    className="w-10 h-10 rounded-lg object-contain"
+                                    style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.1)', flexShrink: 0 }}
+                                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).nextElementSibling && ((e.target as HTMLImageElement).nextElementSibling as HTMLElement).style.removeProperty('display'); }}
+                                />
+                            ) : null}
+                            <div className="w-10 h-10 rounded-lg flex items-center justify-center text-xs font-black" style={{ background: candidate.party_color + '33', color: candidate.party_color, display: candidate.party_logo ? 'none' : 'flex' }}>
                                 {candidate.party_abbreviation}
                             </div>
                             <div>
@@ -372,7 +381,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                             style={{ background: `linear-gradient(135deg, ${candidate.party_color}33, ${candidate.party_color}11)`, border: `2px solid ${candidate.party_color}66`, boxShadow: `0 0 40px ${candidate.party_color}22` }}>
                             <img
                                 src={getCandidatePhoto(candidate.photo, candidate.name, 128, candidate.party_color)}
-                                onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(candidate.name, 128, candidate.party_color); }}
+                                onError={(e) => { const fb = getPhotoFallback((e.target as HTMLImageElement).src); if (fb && !(e.target as HTMLImageElement).dataset.retried) { (e.target as HTMLImageElement).dataset.retried = '1'; (e.target as HTMLImageElement).src = fb; } else { (e.target as HTMLImageElement).src = getAvatarUrl(candidate.name, 128, candidate.party_color); } }}
                                 alt={candidate.name}
                                 width={128}
                                 height={128}
@@ -401,7 +410,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                                     const aiPct = me?.ai_analysis?.percentage || 0;
                                     return (
                                         <span className="text-xs font-bold px-2 py-0.5 rounded-lg cursor-pointer hover:scale-105 transition-transform inline-flex items-center gap-1"
-                                            style={{ background: 'rgba(41,121,255,0.1)', color: 'var(--vp-blue)', border: '1px solid rgba(41,121,255,0.3)' }}
+                                            style={{ background: 'rgba(30,58,95,0.1)', color: '#1e3a5f', border: '1px solid rgba(30,58,95,0.3)' }}
                                             onClick={() => setShowAiModal(true)}>
                                             🤖 IA: {aiPct}%
                                         </span>
@@ -465,8 +474,8 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         <p className="text-[9px] mt-1" style={{ color: 'var(--vp-text-dim)' }}>score = (HV×0.30) + (Plan×0.30) + (Experiencia×0.25) + (Integridad×0.15)
                         </p>
                         <div className="flex items-center gap-1">
-                            <span className="text-xs font-black px-2 py-0.5 rounded" style={{ background: '#8b5cf611', color: '#8b5cf6', border: '1px solid #8b5cf633' }}>HV {hojaScore.toFixed(0)}</span>
-                            <span className="text-xs font-black px-2 py-0.5 rounded" style={{ background: 'rgba(41,121,255,0.06)', color: 'var(--vp-blue)', border: '1px solid rgba(41,121,255,0.2)' }}>Plan {planScore.toFixed(0)}</span>
+                            <span className="text-xs font-black px-2 py-0.5 rounded" style={{ background: '#312e8111', color: '#312e81', border: '1px solid #312e8133' }}>HV {hojaScore.toFixed(0)}</span>
+                            <span className="text-xs font-black px-2 py-0.5 rounded" style={{ background: 'rgba(30,58,95,0.06)', color: '#1e3a5f', border: '1px solid rgba(30,58,95,0.2)' }}>Plan {planScore.toFixed(0)}</span>
                             <span className="text-xs font-black px-2 py-0.5 rounded" style={{ background: 'rgba(14,116,144,0.06)', color: '#0e7490', border: '1px solid rgba(14,116,144,0.2)' }}>Exp. {experienceScore.toFixed(0)}</span>
                             <span className="text-xs font-black px-2 py-0.5 rounded" style={{ background: 'rgba(0,230,118,0.06)', color: 'var(--vp-green)', border: '1px solid rgba(0,230,118,0.2)' }}>Integ. {integrScore.toFixed(0)}</span>
                             <span className="text-sm font-black ml-2" style={{ color: 'var(--vp-red)' }}>{finalScore.toFixed(1)}</span>
@@ -474,8 +483,8 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                     </div>
                     {/* Compact formula bars */}
                     <div className="grid grid-cols-4 gap-x-3 gap-y-0 mb-2">
-                        <BreakdownBar label="HV (30%)" value={formulaBreakdown.hojaVida.value} maxValue={30} color="#8b5cf6" />
-                        <BreakdownBar label="Plan (30%)" value={formulaBreakdown.planGobierno.value} maxValue={30} color="var(--vp-blue)" />
+                        <BreakdownBar label="HV (30%)" value={formulaBreakdown.hojaVida.value} maxValue={30} color="#312e81" />
+                        <BreakdownBar label="Plan (30%)" value={formulaBreakdown.planGobierno.value} maxValue={30} color="#1e3a5f" />
                         <BreakdownBar label="Exp. (25%)" value={formulaBreakdown.experiencia.value} maxValue={25} color="#0e7490" />
                         <BreakdownBar label="Integridad (15%)" value={formulaBreakdown.integrity.value} maxValue={15} color="var(--vp-green)" />
                     </div>
@@ -486,36 +495,36 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                     {/* HV + Plan side by side on desktop */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         {/* Hoja de Vida */}
-                        <div className="rounded-xl overflow-hidden" style={{ border: '1px solid #8b5cf633' }}>
-                            <div className="px-3 py-2 flex items-center justify-between" style={{ background: '#8b5cf611' }}>
-                                <span className="text-xs font-bold" style={{ color: '#8b5cf6' }}>📄 Hoja de Vida</span>
-                                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: '#8b5cf622', color: '#8b5cf6' }}>{hojaScore.toFixed(0)}/100 → {(hojaScore * 0.30).toFixed(1)}pts</span>
+                        <div className="rounded-xl overflow-hidden" style={{ border: '1px solid #312e8133' }}>
+                            <div className="px-3 py-2 flex items-center justify-between" style={{ background: '#312e8111' }}>
+                                <span className="text-xs font-bold" style={{ color: '#312e81' }}>📄 Hoja de Vida</span>
+                                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: '#312e8122', color: '#312e81' }}>{hojaScore.toFixed(0)}/100 → {(hojaScore * 0.30).toFixed(1)}pts</span>
                             </div>
                             <div className="p-3 space-y-1">
-                                <SubScoreRow icon="🎓" label="Educación" weight={25} score={hvDetail.education.score} explain={hvDetail.education.explain} detail={hvDetail.education.details} color="#8b5cf6" onClick={() => setActiveModal('hv-education')} />
-                                <SubScoreRow icon="💼" label="Exp. Laboral" weight={20} score={hvDetail.work.score} explain={hvDetail.work.explain} color="#8b5cf6" onClick={() => setActiveModal('hv-work')} />
-                                <SubScoreRow icon="🏛️" label="Exp. Política" weight={15} score={hvDetail.political.score} explain={hvDetail.political.explain} color="#8b5cf6" onClick={() => setActiveModal('hv-political')} />
-                                <SubScoreRow icon="💰" label="Finanzas" weight={10} score={hvDetail.finance.score} explain={hvDetail.finance.explain} color="#8b5cf6" onClick={() => setActiveModal('hv-finance')} />
-                                <SubScoreRow icon="⚖️" label="Judicial" weight={25} score={hvDetail.judicial.score} explain={hvDetail.judicial.explain} color="#8b5cf6" onClick={() => setActiveModal('hv-judicial')} />
+                                <SubScoreRow icon="🎓" label="Educación" weight={25} score={hvDetail.education.score} explain={hvDetail.education.explain} detail={hvDetail.education.details} color="#312e81" onClick={() => setActiveModal('hv-education')} />
+                                <SubScoreRow icon="💼" label="Exp. Laboral" weight={20} score={hvDetail.work.score} explain={hvDetail.work.explain} color="#312e81" onClick={() => setActiveModal('hv-work')} />
+                                <SubScoreRow icon="🏛️" label="Exp. Política" weight={15} score={hvDetail.political.score} explain={hvDetail.political.explain} color="#312e81" onClick={() => setActiveModal('hv-political')} />
+                                <SubScoreRow icon="💰" label="Finanzas" weight={10} score={hvDetail.finance.score} explain={hvDetail.finance.explain} color="#312e81" onClick={() => setActiveModal('hv-finance')} />
+                                <SubScoreRow icon="⚖️" label="Judicial" weight={25} score={hvDetail.judicial.score} explain={hvDetail.judicial.explain} color="#312e81" onClick={() => setActiveModal('hv-judicial')} />
                             </div>
                         </div>
 
                         {/* Plan de Gobierno */}
-                        <div className="rounded-xl overflow-hidden" style={{ border: '1px solid rgba(41,121,255,0.2)' }}>
-                            <div className="px-3 py-2 flex items-center justify-between" style={{ background: 'rgba(41,121,255,0.06)' }}>
-                                <span className="text-xs font-bold" style={{ color: 'var(--vp-blue)' }}>📋 Plan de Gobierno</span>
-                                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: 'rgba(41,121,255,0.12)', color: 'var(--vp-blue)' }}>{planScore.toFixed(0)}/100 → {(planScore * 0.30).toFixed(1)}pts</span>
+                        <div className="rounded-xl overflow-hidden" style={{ border: '1px solid rgba(30,58,95,0.2)' }}>
+                            <div className="px-3 py-2 flex items-center justify-between" style={{ background: 'rgba(30,58,95,0.06)' }}>
+                                <span className="text-xs font-bold" style={{ color: '#1e3a5f' }}>📋 Plan de Gobierno</span>
+                                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: 'rgba(30,58,95,0.12)', color: '#1e3a5f' }}>{planScore.toFixed(0)}/100 → {(planScore * 0.30).toFixed(1)}pts</span>
                             </div>
                             {planDetail ? (
                                 <div className="p-3 space-y-1">
-                                    <div className="text-[9px] mb-1 px-2 py-0.5 rounded" style={{ background: 'rgba(41,121,255,0.04)', color: 'var(--vp-text-dim)' }}>
+                                    <div className="text-[9px] mb-1 px-2 py-0.5 rounded" style={{ background: 'rgba(30,58,95,0.04)', color: 'var(--vp-text-dim)' }}>
                                         {planDetail.totalItems} ítems evaluados
                                     </div>
-                                    <SubScoreRow icon="🌐" label="Cobertura" weight={25} score={planDetail.coverage.score} explain={planDetail.coverage.explain} color="var(--vp-blue)" onClick={() => setActiveModal('plan-coverage')} />
-                                    <SubScoreRow icon="🎯" label="Especificidad" weight={25} score={planDetail.specificity.score} explain={planDetail.specificity.explain} color="var(--vp-blue)" onClick={() => setActiveModal('plan-specificity')} />
-                                    <SubScoreRow icon="📈" label="Metas" weight={20} score={planDetail.measurability.score} explain={planDetail.measurability.explain} color="var(--vp-blue)" onClick={() => setActiveModal('plan-goals')} />
-                                    <SubScoreRow icon="📏" label="Indicadores" weight={15} score={planDetail.indicators.score} explain={planDetail.indicators.explain} color="var(--vp-blue)" onClick={() => setActiveModal('plan-indicators')} />
-                                    <SubScoreRow icon="🔗" label="Coherencia" weight={15} score={planDetail.coherence.score} explain={planDetail.coherence.explain} color="var(--vp-blue)" onClick={() => setActiveModal('plan-coherence')} />
+                                    <SubScoreRow icon="🌐" label="Cobertura" weight={25} score={planDetail.coverage.score} explain={planDetail.coverage.explain} color="#1e3a5f" onClick={() => setActiveModal('plan-coverage')} />
+                                    <SubScoreRow icon="🎯" label="Especificidad" weight={25} score={planDetail.specificity.score} explain={planDetail.specificity.explain} color="#1e3a5f" onClick={() => setActiveModal('plan-specificity')} />
+                                    <SubScoreRow icon="📈" label="Metas" weight={20} score={planDetail.measurability.score} explain={planDetail.measurability.explain} color="#1e3a5f" onClick={() => setActiveModal('plan-goals')} />
+                                    <SubScoreRow icon="📏" label="Indicadores" weight={15} score={planDetail.indicators.score} explain={planDetail.indicators.explain} color="#1e3a5f" onClick={() => setActiveModal('plan-indicators')} />
+                                    <SubScoreRow icon="🔗" label="Coherencia" weight={15} score={planDetail.coherence.score} explain={planDetail.coherence.explain} color="#1e3a5f" onClick={() => setActiveModal('plan-coherence')} />
                                 </div>
                             ) : (
                                 <div className="p-3 text-xs" style={{ color: 'var(--vp-text-dim)' }}>Sin plan registrado en JNE.</div>
@@ -579,8 +588,8 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         const uni = (edu.university || []).filter((u: any) => u && (u.institution || u.degree));
                         const post = (edu.postgraduate || []).filter((p: any) => p && (p.institution || p.specialty));
                         return (
-                            <ScoreDetailModal title="Educación" icon="🎓" score={hvDetail.education.score} color="#8b5cf6" onClose={() => setActiveModal(null)}>
-                                <div className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: '#8b5cf6' }}>Criterio de evaluación</div>
+                            <ScoreDetailModal title="Educación" icon="🎓" score={hvDetail.education.score} color="#312e81" onClose={() => setActiveModal(null)}>
+                                <div className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: '#312e81' }}>Criterio de evaluación</div>
                                 <div className="text-xs mb-4 leading-relaxed" style={{ color: 'var(--vp-text-dim)' }}>Se evalúa el nivel educativo: básica (10pts), técnica (30pts), universitaria (55-70pts), posgrado (85-100pts). Bonus por múltiples títulos.</div>
                                 {edu.basic && <DetailItem icon="📚" label="Educación Básica" value={`Primaria: ${edu.basic.primary_completed ? 'Completada ✅' : 'No completada'} | Secundaria: ${edu.basic.secondary_completed ? 'Completada ✅' : 'No completada'}`} />}
                                 {tech.map((t: any, i: number) => <DetailItem key={`t${i}`} icon="🔧" label={`Técnico ${i + 1}`} value={`${t.specialty || t.degree || 'Sin especificar'} — ${t.institution || 'Sin institución'}${t.completed ? ' ✅' : ''}`} />)}
@@ -596,8 +605,8 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         const allWork = (hv.work_experience || []).filter((w: any) => w && (w.position || w.employer));
                         const pureWork = allWork.filter((w: any) => { const p = ((w.position || '') + ' ' + (w.employer || '')).toLowerCase(); return !POL_KW.some(kw => p.includes(kw)) && !p.includes('municipalidad') && !p.includes('gobierno regional') && !p.includes('congreso'); });
                         return (
-                            <ScoreDetailModal title="Experiencia Laboral" icon="💼" score={hvDetail.work.score} color="#8b5cf6" onClose={() => setActiveModal(null)}>
-                                <div className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: '#8b5cf6' }}>Criterio</div>
+                            <ScoreDetailModal title="Experiencia Laboral" icon="💼" score={hvDetail.work.score} color="#312e81" onClose={() => setActiveModal(null)}>
+                                <div className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: '#312e81' }}>Criterio</div>
                                 <div className="text-xs mb-4 leading-relaxed" style={{ color: 'var(--vp-text-dim)' }}>Cada experiencia no-política = 15pts (máx 100). Bonus +10pts por empleos de 5+ años.</div>
                                 {pureWork.length > 0 ? pureWork.map((w: any, i: number) => <DetailItem key={i} icon="💼" label={w.position || 'Cargo'} value={`${w.employer || ''}${w.period ? ` (${w.period})` : ''}${w.comment ? ` — ${w.comment}` : ''}`} />) : <DetailItem icon="ℹ️" label="Sin experiencia laboral" value="No se encontraron experiencias no-políticas en JNE." />}
                             </ScoreDetailModal>
@@ -608,7 +617,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         const polHist = (hv.political_history || []).filter((p: any) => p && (p.organization || p.position));
                         const elections = hv.elections || [];
                         return (
-                            <ScoreDetailModal title="Experiencia Política" icon="🏛️" score={hvDetail.political.score} color="#8b5cf6" onClose={() => setActiveModal(null)}>
+                            <ScoreDetailModal title="Experiencia Política" icon="🏛️" score={hvDetail.political.score} color="#312e81" onClose={() => setActiveModal(null)}>
                                 <div className="text-xs mb-4 leading-relaxed" style={{ color: 'var(--vp-text-dim)' }}>Cada cargo político = 20pts (máx 100). Bonus +15pts por roles de liderazgo.</div>
                                 {polHist.length > 0 && polHist.map((p: any, i: number) => <DetailItem key={`ph${i}`} icon="🏛️" label={p.position || 'Cargo'} value={`${p.organization || ''} (${p.start_year || '?'} - ${p.end_year || 'Actualidad'})`} />)}
                                 {elections.length > 0 && elections.map((e: any, i: number) => <DetailItem key={`el${i}`} icon="🗳️" label={e.position || 'Cargo'} value={`${e.organization || ''} (${e.period || '?'})${e.comment ? ` — ${e.comment}` : ''}`} />)}
@@ -622,7 +631,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         const props = fin.properties || [];
                         const vehs = fin.vehicles || [];
                         return (
-                            <ScoreDetailModal title="Transparencia Financiera" icon="💰" score={hvDetail.finance.score} color="#8b5cf6" onClose={() => setActiveModal(null)}>
+                            <ScoreDetailModal title="Transparencia Financiera" icon="💰" score={hvDetail.finance.score} color="#312e81" onClose={() => setActiveModal(null)}>
                                 <div className="text-xs mb-4 leading-relaxed" style={{ color: 'var(--vp-text-dim)' }}>Score 100 si declaró información financiera, 0 si no. No se juzga por monto.</div>
                                 {fin.total_income !== undefined && <DetailItem icon="💵" label="Ingreso Total" value={`S/ ${Number(fin.total_income || 0).toLocaleString()}${fin.year ? ` (${fin.year})` : ''}`} />}
                                 {props.map((p: any, i: number) => <DetailItem key={`pr${i}`} icon="🏠" label={`Propiedad ${i + 1}`} value={`${p.type || 'Inmueble'}${p.value ? ` — S/ ${Number(p.value).toLocaleString()}` : ''}`} />)}
@@ -636,7 +645,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         const sentences = hv.sentences || [];
                         const resignations = (hv.resignations || []).filter((r: any) => r && (r.organization || r.year));
                         return (
-                            <ScoreDetailModal title="Limpieza Judicial" icon="⚖️" score={hvDetail.judicial.score} color="#8b5cf6" onClose={() => setActiveModal(null)}>
+                            <ScoreDetailModal title="Limpieza Judicial" icon="⚖️" score={hvDetail.judicial.score} color="#312e81" onClose={() => setActiveModal(null)}>
                                 <div className="text-xs mb-4 leading-relaxed" style={{ color: 'var(--vp-text-dim)' }}>Inicia en 100. Penales restan 20-50pts. Civiles restan 10pts. Sin renuncias: +5pts bonus.</div>
                                 {sentences.length === 0 ? <DetailItem icon="✅" label="Sin sentencias" value="No se registran sentencias judiciales." color="var(--vp-green)" /> : sentences.map((s: any, i: number) => <DetailItem key={i} icon="⚠️" label={`${s.type || 'Sentencia'}: ${s.crime || 'Sin detalle'}`} value={`${s.court ? `Juzgado: ${s.court}` : ''}${s.sentence ? ` — ${s.sentence}` : 'Sin sentencia especificada'}`} color="var(--vp-red)" />)}
                                 {resignations.length > 0 && resignations.map((r: any, i: number) => <DetailItem key={`rn${i}`} icon="🚪" label={`Renuncia ${i + 1}`} value={`${r.organization || ''}${r.year ? ` (${r.year})` : ''}`} />)}
@@ -768,7 +777,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                                     positive: { icon: '✅', color: 'var(--vp-green)', bg: 'rgba(0,230,118,0.05)', label: 'POSITIVO' },
                                     negative: { icon: '⚠️', color: 'var(--vp-gold)', bg: 'rgba(255,193,7,0.05)', label: 'NEGATIVO' },
                                     corruption: { icon: '🔴', color: 'var(--vp-red)', bg: 'rgba(255,23,68,0.05)', label: 'CORRUPCIÓN' },
-                                    achievement: { icon: '🏆', color: 'var(--vp-blue)', bg: 'rgba(41,121,255,0.05)', label: 'LOGRO' },
+                                    achievement: { icon: '🏆', color: 'var(--vp-blue)', bg: 'rgba(30,58,95,0.05)', label: 'LOGRO' },
                                 };
                                 const config = typeConfig[e.event_type] || typeConfig.positive;
                                 const impact = Number(e.impact_score);
@@ -848,13 +857,13 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                     <div className="panel-glow">
                         <div className="flex items-center justify-between mb-3">
                             <h3 className="text-xs font-bold tracking-[2px] uppercase" style={{ color: 'var(--vp-text-dim)' }}>📋 Hoja de Vida</h3>
-                            <div className="text-[9px] px-2 py-1 rounded" style={{ background: 'rgba(41,121,255,0.06)', border: '1px solid rgba(41,121,255,0.15)', color: 'var(--vp-text-dim)' }}>
+                            <div className="text-[9px] px-2 py-1 rounded" style={{ background: 'rgba(30,58,95,0.06)', border: '1px solid rgba(30,58,95,0.15)', color: 'var(--vp-text-dim)' }}>
                                 ℹ️ Fuente: <a href="https://votoinformado.jne.gob.pe" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--vp-blue)', textDecoration: 'underline' }}>JNE</a>
                             </div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             {candidate.education && (
-                                <div className="p-3 rounded-xl" style={{ background: 'rgba(68,138,255,0.05)', border: '1px solid rgba(68,138,255,0.15)' }}>
+                                <div className="p-3 rounded-xl" style={{ background: 'rgba(30,58,95,0.05)', border: '1px solid rgba(30,58,95,0.15)' }}>
                                     <div className="flex items-center gap-2 mb-2">
                                         <span className="text-sm">🎓</span>
                                         <span className="text-xs font-bold tracking-wider uppercase" style={{ color: 'var(--vp-blue)' }}>Formación Académica</span>
@@ -961,7 +970,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                                     </h3>
                                     <div className="flex items-center gap-3">
                                         <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg cursor-pointer hover:scale-105 transition-transform"
-                                            style={{ background: ai.percentage > 0 ? 'rgba(41,121,255,0.1)' : 'rgba(255,255,255,0.03)', border: `1px solid ${ai.percentage > 0 ? 'rgba(41,121,255,0.3)' : 'rgba(255,255,255,0.08)'}` }}
+                                            style={{ background: ai.percentage > 0 ? 'rgba(30,58,95,0.1)' : 'rgba(255,255,255,0.03)', border: `1px solid ${ai.percentage > 0 ? 'rgba(30,58,95,0.3)' : 'rgba(255,255,255,0.08)'}` }}
                                             onClick={() => setShowAiModal(true)}>
                                             <span className="text-sm">🤖</span>
                                             <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: ai.percentage > 0 ? 'var(--vp-blue)' : 'var(--vp-text-dim)' }}>
@@ -1017,7 +1026,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                                             <div className="p-5 space-y-3">
                                                 {items.length > 0 ? items.map((item, idx) => (
                                                     <div key={item.id || idx} className="p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--vp-border)' }}>
-                                                        <div className="text-[9px] font-bold uppercase tracking-wider mb-2 px-2 py-0.5 rounded-full inline-block" style={{ background: 'rgba(41,121,255,0.08)', color: 'var(--vp-blue)' }}>
+                                                        <div className="text-[9px] font-bold uppercase tracking-wider mb-2 px-2 py-0.5 rounded-full inline-block" style={{ background: 'rgba(30,58,95,0.08)', color: 'var(--vp-blue)' }}>
                                                             {item.dimension}
                                                         </div>
                                                         <div className="text-sm font-semibold mb-1" style={{ color: 'var(--vp-text)' }}>📌 {item.problem}</div>
@@ -1147,9 +1156,9 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
 
                     const dimensionColors: Record<string, string> = {
                         'DIMENSIÓN SOCIAL': 'var(--vp-red)',
-                        'DIMENSIÓN ECONÓMICA': 'var(--vp-gold)',
+                        'DIMENSIÓN ECONÓMICA': '#0e7490',
                         'DIMENSIÓN AMBIENTAL': 'var(--vp-green)',
-                        'DIMENSIÓN INSTITUCIONAL': 'var(--vp-blue)',
+                        'DIMENSIÓN INSTITUCIONAL': '#1e3a5f',
                     };
 
                     const dimensionIcons: Record<string, string> = {
@@ -1165,7 +1174,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                                 <h3 className="text-xs font-bold tracking-[2px] uppercase" style={{ color: 'var(--vp-text-dim)' }}>
                                     📜 Resumen de Plan de Gobierno
                                 </h3>
-                                <div className="text-[10px] px-3 py-2 rounded-lg" style={{ background: 'rgba(41,121,255,0.06)', border: '1px solid rgba(41,121,255,0.15)', color: 'var(--vp-text-dim)' }}>
+                                <div className="text-[10px] px-3 py-2 rounded-lg" style={{ background: 'rgba(30,58,95,0.06)', border: '1px solid rgba(30,58,95,0.15)', color: 'var(--vp-text-dim)' }}>
                                     ℹ️ Datos del <a href="https://votoinformado.jne.gob.pe" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--vp-blue)', textDecoration: 'underline' }}>JNE Voto Informado</a>. Presentados con fines informativos y educativos.
                                 </div>
                                 {(candidate.plan_pdf_url || candidate.plan_pdf_local) && (
@@ -1192,9 +1201,9 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                                                 rel="noopener noreferrer"
                                                 className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all hover:scale-105"
                                                 style={{
-                                                    background: 'linear-gradient(135deg, rgba(41,121,255,0.15), rgba(41,121,255,0.05))',
-                                                    border: '1px solid rgba(41,121,255,0.3)',
-                                                    color: 'var(--vp-blue)',
+                                                    background: 'linear-gradient(135deg, rgba(30,58,95,0.15), rgba(30,58,95,0.05))',
+                                                    border: '1px solid rgba(30,58,95,0.3)',
+                                                    color: '#1e3a5f',
                                                 }}
                                             >
                                                 📋 Resumen (PDF)

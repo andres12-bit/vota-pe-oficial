@@ -235,7 +235,7 @@ export default function PartyPage({ params }: { params: Promise<{ id: string }> 
                                 </div>
                                 <ScoreBar label={`Antecedentes (${analytics.cleanCount}/${analytics.totalCandidates})`} value={analytics.antecedentesScore} color="#0ea5e9" />
                                 <ScoreBar label="Plan de Gob." value={analytics.avgPlan} color="#2563eb" />
-                                <ScoreBar label="Hoja de Vida" value={analytics.avgHoja} color="#8b5cf6" />
+                                <ScoreBar label="Hoja de Vida" value={analytics.avgHoja} color="#312e81" />
                                 <ScoreBar label="Score Prom." value={analytics.avgScore} color="#f59e0b" />
                             </div>
 

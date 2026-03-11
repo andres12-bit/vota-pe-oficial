@@ -21,6 +21,7 @@ const encuestaRouter = require('./routes/encuesta');
 const radarRouter = require('./routes/radar');
 
 const app = express();
+app.set('trust proxy', 1); // Trust Nginx reverse proxy (required for express-rate-limit behind proxy)
 const PORT = process.env.PORT || 4000;
 
 // ==================== SECURITY MIDDLEWARE ====================
@@ -150,10 +151,32 @@ app.get('/api/stats', async (req, res) => {
         const totalCandidates = await pool.query('SELECT COUNT(*) as total FROM candidates WHERE is_active = true');
         const totalParties = await pool.query('SELECT COUNT(*) as total FROM parties');
 
+        // Count candidates with antecedentes (sentences in hoja_de_vida) across ALL candidates
+        let totalWithAntecedentes = 0;
+        let totalSeekingReelection = 0;
+        try {
+            const allCands = await pool.query('SELECT hoja_de_vida FROM candidates WHERE is_active = true');
+            for (const row of allCands.rows) {
+                const hv = row.hoja_de_vida || {};
+                // Antecedentes: has penal or civil sentences
+                if (hv.sentences && hv.sentences.length > 0) {
+                    totalWithAntecedentes++;
+                }
+                // Reelection: was elected in a previous election
+                if (hv.elections && hv.elections.some(e => e.elected === true)) {
+                    totalSeekingReelection++;
+                }
+            }
+        } catch (e) {
+            console.error('Stats hv count error:', e.message);
+        }
+
         res.json({
             total_votes: parseInt(totalVotes.rows[0].total),
             total_candidates: parseInt(totalCandidates.rows[0].total),
             total_parties: parseInt(totalParties.rows[0].total),
+            total_with_antecedentes: totalWithAntecedentes,
+            total_seeking_reelection: totalSeekingReelection,
         });
     } catch (err) {
         res.status(500).json({ error: 'Internal server error' });
