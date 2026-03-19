@@ -79,29 +79,33 @@ const HojaDeVidaScorer = {
         // ============ 2. EXPERIENCIA LABORAL (20%) ============
         const workExp = hv.work_experience || [];
         const validWork = workExp.filter(w => w && (w.position || w.employer));
-        // Each valid job = 15 points, max 100
-        let workScore = Math.min(100, validWork.length * 15);
-        // Bonus for longevity: if we can calculate years
+        // Each valid job = 15 points. Bonus +40pts for any job with 20+ continuous years.
+        let workScore = validWork.length * 15;
+        // Check for long-tenure bonus
         validWork.forEach(w => {
-            if (w.start_year && w.end_year) {
-                const years = parseInt(w.end_year) - parseInt(w.start_year);
-                if (years >= 5) workScore = Math.min(100, workScore + 10);
+            let from = parseInt(w.start_year || w.year_from || w.from || 0);
+            let to = parseInt(w.end_year || w.year_to || w.to || 0);
+            // Parse period string like "1990 - 2025"
+            if ((!from || !to) && w.period) {
+                const years = (w.period + '').match(/(\d{4})/g);
+                if (years && years.length >= 1) {
+                    if (!from) from = parseInt(years[0]);
+                    if (!to && years.length >= 2) to = parseInt(years[1]);
+                }
+            }
+            if (!to) to = new Date().getFullYear();
+            if (from > 0 && (to - from) >= 20) {
+                workScore += 40;
             }
         });
+        workScore = Math.min(100, workScore);
 
 
         // ============ 3. EXPERIENCIA POLÍTICA (15%) ============
         const polHistory = hv.political_history || [];
         const validPol = polHistory.filter(p => p && (p.organization || p.position));
-        // Each political role = 20 points, max 100
+        // Each political role = 20 points, max 100. No bonuses — flat and consistent.
         let politicalScore = Math.min(100, validPol.length * 20);
-        // Bonus for leadership roles
-        validPol.forEach(p => {
-            const pos = (p.position || '').toLowerCase();
-            if (pos.includes('presidente') || pos.includes('secretario general') || pos.includes('congresista')) {
-                politicalScore = Math.min(100, politicalScore + 15);
-            }
-        });
 
 
         // ============ 4. TRANSPARENCIA FINANCIERA (10%) ============
@@ -137,14 +141,6 @@ const HojaDeVidaScorer = {
                     judicialScore -= 15; // Other types
                 }
             });
-        }
-
-        // Bonus: no resignations from parties = stability
-        const resignations = hv.resignations || [];
-        if (resignations.length === 0) {
-            judicialScore = Math.min(100, judicialScore + 5);
-        } else if (resignations.length > 3) {
-            judicialScore -= 10; // instability penalty
         }
 
         judicialScore = Math.max(0, Math.min(100, judicialScore));

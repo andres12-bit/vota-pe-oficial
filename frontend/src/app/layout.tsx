@@ -10,27 +10,48 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "PulsoElectoral.pe — Inteligencia Electoral en Tiempo Real",
-  description: "Plataforma de inteligencia electoral del Perú. Analiza candidatos, partidos, rankings, encuestas y planes de gobierno. Datos del JNE. Elecciones 2026.",
-  keywords: "elecciones perú 2026, candidatos, votación, ranking político, encuesta, JNE, intención de voto, partidos políticos perú, pulso electoral",
+  title: "PulsoElectoral.pe — Inteligencia Electoral Perú 2026 | Candidatos, Encuestas y Comparador",
+  description: "Plataforma de inteligencia electoral del Perú 2026. Compara candidatos presidenciales, senadores y diputados. Ranking con datos del JNE, encuestas ciudadanas en vivo, planes de gobierno y análisis de tendencias electorales.",
+  keywords: "elecciones perú 2026, candidatos presidenciales 2026, senadores perú 2026, diputados perú 2026, parlamento andino, comparar candidatos, encuestas presidenciales perú, ranking político, JNE, intención de voto, partidos políticos perú, pulso electoral, keiko fujimori, cesar acuña, rafael lopez aliaga, bicameralidad perú, plan de gobierno, hoja de vida candidatos, declaración jurada",
   metadataBase: new URL('https://pulsoelectoral.pe'),
   alternates: { canonical: '/' },
+  icons: {
+    icon: [
+      { url: '/images/peru-map-icon.png', type: 'image/png', sizes: '64x64' },
+      { url: '/images/peru-map-icon.png', type: 'image/png', sizes: '32x32' },
+    ],
+    apple: [
+      { url: '/apple-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+    shortcut: '/images/peru-map-icon.png',
+  },
   openGraph: {
-    title: "PulsoElectoral.pe — Inteligencia Electoral en Tiempo Real",
-    description: "Plataforma de inteligencia electoral del Perú. Analiza candidatos, partidos y encuestas. Elecciones 2026.",
+    title: "PulsoElectoral.pe — Inteligencia Electoral Perú 2026",
+    description: "Compara candidatos, consulta encuestas en vivo y analiza planes de gobierno. Datos oficiales del JNE. Elecciones Generales 12 de abril 2026.",
     url: 'https://pulsoelectoral.pe',
     siteName: 'PulsoElectoral.pe',
     type: 'website',
     locale: 'es_PE',
+    images: [
+      { url: '/images/og-pulsoelectoral.png', width: 1200, height: 630, alt: 'PulsoElectoral.pe — Elecciones Perú 2026' },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: "PulsoElectoral.pe — Inteligencia Electoral en Tiempo Real",
-    description: "Analiza candidatos, partidos y encuestas electorales del Perú 2026.",
+    title: "PulsoElectoral.pe — Elecciones Perú 2026",
+    description: "Compara candidatos presidenciales, senadores y diputados. Encuestas ciudadanas en vivo y análisis electoral con datos del JNE.",
+    images: ['/images/og-pulsoelectoral.png'],
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
 };
 

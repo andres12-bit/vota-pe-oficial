@@ -1,4 +1,4 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+const API_BASE = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000') + '/api';
 
 export interface Candidate {
     id: number;
@@ -100,44 +100,47 @@ async function apiFetch<T>(path: string): Promise<T> {
 }
 
 // Candidates
-export async function getCandidates(position?: string): Promise<Candidate[]> {
-    const params = position ? `?position=${position}` : '';
-    const data = await apiFetch<{ candidates: Candidate[] }>(`/api/candidates${params}`);
+export async function getCandidates(position?: string, limit?: number): Promise<Candidate[]> {
+    const qp = new URLSearchParams();
+    if (position) qp.set('position', position);
+    if (limit) qp.set('limit', String(limit));
+    const qs = qp.toString();
+    const data = await apiFetch<{ candidates: Candidate[] }>(`/candidates${qs ? '?' + qs : ''}`);
     return data.candidates;
 }
 
 export async function getCandidate(id: number): Promise<Candidate> {
-    return apiFetch<Candidate>(`/api/candidates/${id}`);
+    return apiFetch<Candidate>(`/candidates/${id}`);
 }
 
 // Ranking
 export async function getRanking(position: string): Promise<Candidate[]> {
-    const data = await apiFetch<{ ranking: Candidate[] }>(`/api/ranking/${position}`);
+    const data = await apiFetch<{ ranking: Candidate[] }>(`/ranking/${position}`);
     return data.ranking;
 }
 
 export async function getCandidatesBySector(sector: string, position: string): Promise<Candidate[]> {
-    const data = await apiFetch<{ candidates: Candidate[] }>(`/api/candidates/by-sector?sector=${encodeURIComponent(sector)}&position=${encodeURIComponent(position)}`);
+    const data = await apiFetch<{ candidates: Candidate[] }>(`/candidates/by-sector?sector=${encodeURIComponent(sector)}&position=${encodeURIComponent(position)}`);
     return data.candidates;
 }
 
 export async function getGlobalRankingAndMomentum() {
-    return apiFetch<{ top_momentum: Candidate[]; global_ranking: Candidate[] }>('/api/ranking');
+    return apiFetch<{ top_momentum: Candidate[]; global_ranking: Candidate[] }>('/ranking');
 }
 
 // Parties
 export async function getParties(): Promise<Party[]> {
-    const data = await apiFetch<{ parties: Party[] }>('/api/parties');
+    const data = await apiFetch<{ parties: Party[] }>('/parties');
     return data.parties;
 }
 
 export async function getPartyFullTicket(id: number) {
-    return apiFetch<{ party: Party; ticket: Record<string, Candidate[]>; total_candidates: number }>(`/api/party/${id}/full-ticket`);
+    return apiFetch<{ party: Party; ticket: Record<string, Candidate[]>; total_candidates: number }>(`/party/${id}/full-ticket`);
 }
 
 // Voting
 export async function castVote(candidate_id: number, position_type: string, fingerprint?: string) {
-    const res = await fetch(`${API_BASE}/api/votes`, {
+    const res = await fetch(`${API_BASE}/votes`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ candidate_id, position_type, fingerprint }),
@@ -147,25 +150,25 @@ export async function castVote(candidate_id: number, position_type: string, fing
 
 // Stats
 export async function getVoteStats(): Promise<VoteStats> {
-    return apiFetch<VoteStats>('/api/votes/stats');
+    return apiFetch<VoteStats>('/votes/stats');
 }
 
 export async function getStats() {
-    return apiFetch<{ total_votes: number; total_candidates: number; total_parties: number }>('/api/stats');
+    return apiFetch<{ total_votes: number; total_candidates: number; total_parties: number }>('/stats');
 }
 
 // Radar
 export async function getRadarAlerts() {
-    return apiFetch<{ antecedentes: any[]; sinEstudios: any[]; denuncias: any[] }>('/api/radar/alerts');
+    return apiFetch<{ antecedentes: any[]; sinEstudios: any[]; denuncias: any[] }>('/radar/alerts');
 }
 
 export async function getRadarMetrics() {
-    return apiFetch<{ global: { total_candidates: number; total_parties: number; avg_score: number; avg_integrity: number } }>('/api/radar/metrics');
+    return apiFetch<{ global: { total_candidates: number; total_parties: number; avg_score: number; avg_integrity: number } }>('/radar/metrics');
 }
 
 // Search
 export async function search(query: string) {
-    return apiFetch<{ candidates: Candidate[]; proposals: Proposal[]; events: CandidateEvent[] }>(`/api/search?q=${encodeURIComponent(query)}`);
+    return apiFetch<{ candidates: Candidate[]; proposals: Proposal[]; events: CandidateEvent[] }>(`/search?q=${encodeURIComponent(query)}`);
 }
 
 // Encuesta (Polls)
@@ -181,12 +184,12 @@ export interface EncuestaPoll {
 }
 
 export async function getEncuestas(): Promise<EncuestaPoll[]> {
-    const data = await apiFetch<{ polls: EncuestaPoll[] }>('/api/encuesta');
+    const data = await apiFetch<{ polls: EncuestaPoll[] }>('/encuesta');
     return data.polls;
 }
 
 export async function voteEncuesta(pollId: number, optionIndex: number, fingerprint?: string) {
-    const res = await fetch(`${API_BASE}/api/encuesta/${pollId}/vote`, {
+    const res = await fetch(`${API_BASE}/encuesta/${pollId}/vote`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ option_index: optionIndex, fingerprint }),

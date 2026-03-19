@@ -6,6 +6,7 @@ import { getAvatarUrl, getCandidatePhoto } from '@/lib/avatars';
 import { useWebSocket } from '@/lib/websocket';
 import { useSelection } from '@/lib/selection';
 import LiveMomentum from '@/components/LiveMomentum';
+import PositionInsights from '@/components/PositionInsights';
 import CascadaConsenso from '@/components/CascadaConsenso';
 import RankingTable from '@/components/RankingTable';
 import VoteCounter from '@/components/VoteCounter';
@@ -15,11 +16,14 @@ import NavHeader from '@/components/NavHeader';
 import ExploraCandidatos from '@/components/ExploraCandidatos';
 import EvaluacionPlanchas from '@/components/EvaluacionPlanchas';
 import MetodologiaSection from '@/components/MetodologiaSection';
+import MemoriaElectoral from '@/components/MemoriaElectoral';
+import HomepageSections from '@/components/HomepageSections';
 import SiteFooter from '@/components/SiteFooter';
 import SelectionCart from '@/components/SelectionCart';
 import PostSelectionBar from '@/components/PostSelectionBar';
 import ShareModal from '@/components/ShareModal';
 import AnalisisSeleccion from '@/components/AnalisisSeleccion';
+import CompareCandidates from '@/components/CompareCandidates';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 // Error Boundary to prevent PlanchasPanel crashes from killing the whole page
@@ -52,8 +56,8 @@ class PlanchasErrorBoundary extends Component<{ children: ReactNode }, { hasErro
   }
 }
 
-type TabType = 'votar' | 'encuesta' | 'planchas' | 'president' | 'senator' | 'deputy' | 'andean';
-const VALID_TABS: TabType[] = ['votar', 'encuesta', 'planchas', 'president', 'senator', 'deputy', 'andean'];
+type TabType = 'votar' | 'encuesta' | 'planchas' | 'president' | 'senator' | 'deputy' | 'andean' | 'comparar' | 'memoria';
+const VALID_TABS: TabType[] = ['votar', 'encuesta', 'planchas', 'president', 'senator', 'deputy', 'andean', 'comparar', 'memoria'];
 
 // TABS array is now in NavHeader component
 
@@ -152,203 +156,133 @@ function HomeContent() {
       {/* Shared Navigation Header */}
       <NavHeader activeTab={activeTab} onTabChange={setActiveTab} />
 
-      {/* Search bar — below header, transparent */}
-      <div className="global-search-bar">
-        <form
-          onSubmit={(e) => { e.preventDefault(); const q = (e.currentTarget.elements.namedItem('globalSearch') as HTMLInputElement)?.value?.trim(); if (q) window.location.href = `/search?q=${encodeURIComponent(q)}`; }}
-          className="global-search-form"
-        >
-          <svg className="global-search-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
-          </svg>
-          <input
-            type="text"
-            name="globalSearch"
-            placeholder="Buscar candidatos, partidos..."
-            className="global-search-input"
-          />
-        </form>
+      {/* ═══ SEARCH HERO — integrated on homepage ═══ */}
+      <div className="search-hero">
+        <div className="search-hero-inner">
+          <h2 className="search-hero-title" style={{ fontSize: 30, display: 'flex', alignItems: 'center', gap: 12, justifyContent: 'center' }}>
+            Búsqueda Electoral
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 11, fontWeight: 700, color: '#c62828', background: 'rgba(198,40,40,0.08)', border: '1px solid rgba(198,40,40,0.15)', padding: '4px 10px', borderRadius: 20 }}>
+              <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#c62828', display: 'inline-block', animation: 'pulse 1.5s ease-in-out infinite' }} />
+              EN VIVO
+            </span>
+          </h2>
+          <p className="search-hero-subtitle">
+            Busca candidatos, propuestas y eventos de todas las organizaciones políticas
+          </p>
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const q = (e.currentTarget.elements.namedItem('homeSearch') as HTMLInputElement)?.value?.trim();
+              if (q) window.location.href = `/search?q=${encodeURIComponent(q)}`;
+            }}
+            className="search-form"
+          >
+            <div className="search-input-wrap">
+              <svg className="search-input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
+              </svg>
+              <input
+                type="text"
+                name="homeSearch"
+                placeholder="Buscar candidato, partido, propuesta, denuncia..."
+                className="search-input"
+              />
+              <button type="submit" className="search-submit-btn">
+                Buscar
+              </button>
+            </div>
+          </form>
+
+          <div className="search-tags">
+            {[
+              { label: 'Educación', icon: '📚' },
+              { label: 'Corrupción', icon: '⚖️' },
+              { label: 'Salud', icon: '🏥' },
+              { label: 'Seguridad', icon: '🛡️' },
+              { label: 'Economía', icon: '💰' },
+              { label: 'Infraestructura', icon: '🏗️' },
+            ].map(tag => (
+              <a
+                key={tag.label}
+                href={`/search?q=${encodeURIComponent(tag.label.toLowerCase())}`}
+                className="search-tag"
+              >
+                <span>{tag.icon}</span>
+                {tag.label}
+              </a>
+            ))}
+          </div>
+        </div>
       </div>
-
-
-
       {/* Main Content */}
       <main className="dashboard-wrapper">
         {activeTab === 'encuesta' ? (
-          /* ENCUESTA VIEW */
+          /* ENCUESTA VIEW — Under Construction */
           <div className="w-full px-2">
-            <EncuestaPanel />
+            <div style={{ maxWidth: 700, margin: '60px auto', textAlign: 'center', padding: '60px 24px', borderRadius: 20, background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(12px)', border: '1px solid rgba(188,29,25,0.12)', boxShadow: '0 8px 40px rgba(0,0,0,0.06)' }}>
+              <div style={{ fontSize: 64, marginBottom: 16 }}>🚧</div>
+              <h2 style={{ fontSize: 26, fontWeight: 800, color: '#1f2937', marginBottom: 8, letterSpacing: '-0.5px' }}>Módulo en Construcción</h2>
+              <p style={{ fontSize: 15, color: '#6b7280', lineHeight: 1.7, maxWidth: 460, margin: '0 auto 24px' }}>
+                Estamos trabajando en el módulo de <strong style={{ color: '#bc1d19' }}>Encuestas</strong> para brindarte las últimas tendencias electorales con datos verificados y análisis en tiempo real.
+              </p>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(188,29,25,0.08)', border: '1px solid rgba(188,29,25,0.2)', borderRadius: 12, padding: '10px 20px', fontSize: 13, fontWeight: 700, color: '#bc1d19' }}>
+                ⏳ Próximamente disponible
+              </div>
+              <p style={{ fontSize: 12, color: '#9ca3af', marginTop: 20 }}>Mientras tanto, explora los candidatos y planchas electorales.</p>
+            </div>
+          </div>
+        ) : activeTab === 'comparar' ? (
+          /* COMPARAR CANDIDATOS VIEW */
+          <div className="w-full px-2">
+            <CompareCandidates />
           </div>
         ) : activeTab === 'planchas' ? (
           /* PLANCHAS VIEW */
           <PlanchasErrorBoundary>
             <PlanchasPanel />
           </PlanchasErrorBoundary>
+        ) : activeTab === 'memoria' ? (
+          /* MEMORIA ELECTORAL VIEW */
+          <div className="w-full px-2">
+            <MemoriaElectoral />
+          </div>
         ) : activeTab === 'votar' ? (
-          /* HOME VIEW — Clean centered layout */
+          /* HOME VIEW */
           <>
-<div>
-    {/* ===== HERO BLOCK: Two-Column Layout ===== */}
-    <section className="hero-centered-block">
-        {/* Draft banner */}
-        {showDraftBanner && (
-            <div className="draft-recovery-banner">
-                <span>Tienes una selección en progreso.</span>
-                <button onClick={dismissDraftBanner}>Continuar editando →</button>
-            </div>
-        )}
-
-        {/* Stats bar — real data */}
-        <div className="cancha-stats-bar">
-            <span className="cancha-stat">✅ <strong>{voteStats?.total?.toLocaleString() ?? '0'}</strong> votos ciudadanos</span>
-            <span className="cancha-stat cancha-stat-green">↑ {voteStats?.last_hour ?? 0 > 0 ? ((voteStats?.last_hour ?? 0 / Math.max(1, (voteStats?.total ?? 1))) * 100).toFixed(1) : '0'}% última hora</span>
-            <span className="cancha-stat cancha-stat-live">● 24/7 en vivo</span>
-        </div>
-
-        {/* ═══ TWO-COLUMN HERO ═══ */}
-        <div className="hero-two-col">
-            {/* Left column: Headline + CTA */}
-            <div className="hero-left-col">
-                <h1 className="hero-headline">
-                    <span className="hero-headline-line">Elige <em>Mejor.</em></span>
-                    <span className="hero-headline-line"><em>Decide Informado.</em></span>
-                </h1>
-                <p className="hero-desc">
-                    Elige a tus candidatos y compón tu equipo perfecto<br />para las elecciones.
-                </p>
-
-                {selState === 'empty' && !showDraftBanner && (
-                    <button onClick={activateBuilding} className="hero-cta-btn">
-                        GENERAR SELECCIÓN
-                    </button>
-                )}
-
-                {selState === 'confirmed' && (
-                    <button onClick={editSelection} className="hero-cta-btn">
-                        ✏️ EDITAR SELECCIÓN
-                    </button>
-                )}
-
-                {selState === 'draft' && hasPresident && !showDraftBanner && (
-                    <button onClick={confirmSelection} className="hero-cta-btn">
-                        💾 GUARDAR SELECCIÓN
-                    </button>
-                )}
-            </div>
-
-            {/* Right column: Category icons in diamond */}
-            <div className="hero-right-col">
-                <div className="hero-diamond">
-                    {/* Connecting lines SVG */}
-                    <svg className="hero-diamond-lines" viewBox="0 0 300 300" fill="none">
-                        <line x1="150" y1="70" x2="60" y2="150" stroke="rgba(200,200,200,0.5)" strokeWidth="1.5" />
-                        <line x1="150" y1="70" x2="240" y2="150" stroke="rgba(200,200,200,0.5)" strokeWidth="1.5" />
-                        <line x1="60" y1="150" x2="150" y2="230" stroke="rgba(200,200,200,0.5)" strokeWidth="1.5" />
-                        <line x1="240" y1="150" x2="150" y2="230" stroke="rgba(200,200,200,0.5)" strokeWidth="1.5" />
-                    </svg>
-
-                    {/* Presidente — top */}
-                    <div className="hero-diamond-node hero-diamond-top" onClick={() => setActiveTab('president')}>
-                        <div className={`hero-diamond-circle ${selection.president ? 'hero-diamond-filled' : ''}`} style={selection.president ? { borderColor: selection.president.party_color || '#c62828' } : {}}>
-                            {selection.president ? (
-                                <img src={getCandidatePhoto(selection.president.photo, selection.president.name, 64, selection.president.party_color)} onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(selection.president!.name, 64, selection.president!.party_color); }} alt={selection.president.name} />
-                            ) : (
-                                <svg width="32" height="32" viewBox="0 0 24 24" fill="#94a3b8"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" /></svg>
-                            )}
-                        </div>
-                        <span className="hero-diamond-label">Presidente</span>
-                    </div>
-
-                    {/* Senado — left */}
-                    <div className="hero-diamond-node hero-diamond-left" onClick={() => setActiveTab('senator')}>
-                        <div className={`hero-diamond-circle hero-diamond-circle-sm ${selection.senators.length > 0 ? 'hero-diamond-filled' : ''}`} style={selection.senators.length > 0 ? { borderColor: selection.senators[0].party_color || '#2563eb' } : {}}>
-                            {selection.senators.length > 0 ? (
-                                <img src={getCandidatePhoto(selection.senators[0].photo, selection.senators[0].name, 48, selection.senators[0].party_color)} onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(selection.senators[0].name, 48, selection.senators[0].party_color); }} alt={selection.senators[0].name} />
-                            ) : (
-                                <svg width="26" height="26" viewBox="0 0 24 24" fill="#94a3b8"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" /></svg>
-                            )}
-                        </div>
-                        <span className="hero-diamond-label">Senado</span>
-                    </div>
-
-                    {/* Parl. Andino — right */}
-                    <div className="hero-diamond-node hero-diamond-right" onClick={() => setActiveTab('andean')}>
-                        <div className={`hero-diamond-circle hero-diamond-circle-sm ${selection.andean.length > 0 ? 'hero-diamond-filled' : ''}`} style={selection.andean.length > 0 ? { borderColor: selection.andean[0].party_color || '#7c3aed' } : {}}>
-                            {selection.andean.length > 0 ? (
-                                <img src={getCandidatePhoto(selection.andean[0].photo, selection.andean[0].name, 48, selection.andean[0].party_color)} onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(selection.andean[0].name, 48, selection.andean[0].party_color); }} alt={selection.andean[0].name} />
-                            ) : (
-                                <svg width="26" height="26" viewBox="0 0 24 24" fill="#94a3b8"><path d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-6 8h22L14 6z" /></svg>
-                            )}
-                        </div>
-                        <span className="hero-diamond-label">Parl. Andino</span>
-                    </div>
-
-                    {/* Diputados — bottom */}
-                    <div className="hero-diamond-node hero-diamond-bottom" onClick={() => setActiveTab('deputy')}>
-                        <div className={`hero-diamond-circle hero-diamond-circle-sm ${selection.deputies.length > 0 ? 'hero-diamond-filled' : ''}`} style={selection.deputies.length > 0 ? { borderColor: selection.deputies[0].party_color || '#16a34a' } : {}}>
-                            {selection.deputies.length > 0 ? (
-                                <img src={getCandidatePhoto(selection.deputies[0].photo, selection.deputies[0].name, 48, selection.deputies[0].party_color)} onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(selection.deputies[0].name, 48, selection.deputies[0].party_color); }} alt={selection.deputies[0].name} />
-                            ) : (
-                                <svg width="26" height="26" viewBox="0 0 24 24" fill="#94a3b8"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" /></svg>
-                            )}
-                        </div>
-                        <span className="hero-diamond-label">Diputados</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {/* ── ACTION BAR — Compartir always visible ── */}
-        <div className="cancha-action-bar">
-            <button onClick={() => setShowShare(true)} className="cancha-action-btn cancha-action-share">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" /><polyline points="16 6 12 2 8 6" /><line x1="12" y1="2" x2="12" y2="15" /></svg>
-                Compartir
-            </button>
-            {(selState === 'confirmed' || (hasPresident && selState !== 'empty')) && (
-                <>
-                    <button onClick={() => setShowCompare(true)} className="cancha-action-btn cancha-action-compare">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v18" /><path d="M8 7l-4 4 4 4" /><path d="M16 7l4 4-4 4" /></svg>
-                        Comparar
-                    </button>
-                    <button onClick={() => setShowAnalysis(true)} className="cancha-action-btn cancha-action-analysis">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 20V10" /><path d="M12 20V4" /><path d="M6 20v-6" /></svg>
-                        Ver análisis
-                    </button>
-                </>
-            )}
-        </div>
-    </section>
-
-
-              {/* ===== DYNAMIC MODULES ===== */}
-              <div className="homepage-modules">
-                <div className="modules-row modules-row-2col">
-                  <LiveMomentum candidates={momentumList} />
-                  <CascadaConsenso onNavigateEncuesta={() => setActiveTab('encuesta')} />
-                </div>
-              </div>
-
-              {/* ===== FULL-WIDTH SECTIONS ===== */}
-              <div className="homepage-sections">
-                <ExploraCandidatos onNavigate={setActiveTab} />
-                <EvaluacionPlanchas onNavigate={setActiveTab} />
-                <MetodologiaSection />
-              </div>
+            <div>
+              {/* ===== PREMIUM HOMEPAGE SECTIONS ===== */}
+              <HomepageSections
+                candidates={candidates.map(c => ({
+                  id: c.id,
+                  name: c.name,
+                  party: c.party_name,
+                  photo: c.photo,
+                  score: c.final_score || 0,
+                  party_color: c.party_color,
+                  party_abbreviation: c.party_abbreviation,
+                  integrity_score: c.integrity_score,
+                  experience_score: c.experience_score,
+                  plan_score: c.plan_score,
+                  region: c.region,
+                }))}
+                onNavigate={(tab: string) => setActiveTab(tab as any)}
+              />
             </div>
           </>
         ) : (
-          /* RANKING TABLE VIEW */
-          <div className="ranking-layout">
-            <aside className="desktop-only sidebar-card ranking-sidebar">
-              <LiveMomentum candidates={momentumList} />
-            </aside>
-            <div className="ranking-main">
-              <RankingTable
-                candidates={candidates}
-                position={activeTab}
-                onVote={handleVote}
-              />
-            </div>
+          /* RANKING TABLE VIEW — Two column: Insights sidebar + Table */
+          <div style={{ maxWidth: 1400, margin: '0 auto', padding: '1rem', display: 'flex', gap: '1rem', alignItems: 'flex-start', overflow: 'hidden' }}>
+              <aside className="desktop-only" style={{ width: 300, flexShrink: 0, position: 'sticky', top: '1rem' }}>
+                <PositionInsights candidates={candidates} position={activeTab} />
+              </aside>
+              <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
+                <RankingTable
+                  candidates={candidates}
+                  position={activeTab}
+                  onVote={handleVote}
+                />
+              </div>
           </div>
         )}
       </main>

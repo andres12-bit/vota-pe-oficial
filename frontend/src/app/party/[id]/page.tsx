@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { Candidate, Party, getPartyFullTicket } from '@/lib/api';
-import { getAvatarUrl, getCandidatePhoto } from '@/lib/avatars';
+import { getAvatarUrl, getCandidatePhoto, getPhotoFallback } from '@/lib/avatars';
 import Link from 'next/link';
 import { use } from 'react';
 import NavHeader from '@/components/NavHeader';
@@ -133,13 +133,21 @@ export default function PartyPage({ params }: { params: Promise<{ id: string }> 
         const cleanCount = cleanCandidates.length;
         const antecedentesScore = allCandidates.length > 0 ? (cleanCount / allCandidates.length) * 100 : 0;
 
+        const avgH = avg(hojaScores);
+        const avgE = avg(experienceScores);
+        const avgI = avg(integrity);
+        const avgP = avg(planScores);
+        // Plancha formula: (HV×0.30) + (Exp×0.25) + (Int×0.35) + (Plan×0.10)
+        const planchaScore = parseFloat(((avgH * 0.30) + (avgE * 0.25) + (avgI * 0.35) + (avgP * 0.10)).toFixed(1));
+
         return {
             totalCandidates: allCandidates.length,
             avgScore: avg(scores),
-            avgHoja: avg(hojaScores),
-            avgPlan: avg(planScores),
-            avgExperiencia: avg(experienceScores),
-            avgIntegrity: avg(integrity),
+            avgHoja: avgH,
+            avgPlan: avgP,
+            avgExperiencia: avgE,
+            avgIntegrity: avgI,
+            planchaScore,
             antecedentesScore,
             cleanCount,
             topScore: Math.max(...scores),
@@ -175,189 +183,178 @@ export default function PartyPage({ params }: { params: Promise<{ id: string }> 
         <div className="min-h-screen" style={{ background: 'transparent' }}>
             <NavHeader />
 
-            <main className="internal-page-wrapper">
-                {/* Party Header */}
-                <div className="panel-glow mb-6">
-                    <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 rounded-xl flex items-center justify-center text-xl font-black"
-                            style={{ background: party.color || 'var(--vp-red)', boxShadow: `0 0 20px ${party.color}44`, color: '#fff' }}>
-                            {party.abbreviation?.slice(0, 3)}
+            {/* ═══ FULL-WIDTH PARTY HERO BANNER ═══ */}
+            <div className="cp-hero-banner" style={{ paddingBottom: president ? '48px' : '36px' }}>
+                <div className="cp-hero-inner">
+                    <button onClick={() => window.history.back()} className="cp-back-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
+                        Volver
+                    </button>
+                    <div className="cp-hero-content">
+                        {/* Party Logo / Abbreviation */}
+                        <div className="pp-hero-logo" style={{ background: party.color || 'var(--vp-red)' }}>
+                            {party.logo ? (
+                                <img src={party.logo} alt={party.name} className="pp-hero-logo-img"
+                                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                            ) : null}
+                            <span className="pp-hero-logo-text" style={{ display: party.logo ? 'none' : 'flex' }}>
+                                {party.abbreviation?.slice(0, 3)}
+                            </span>
                         </div>
-                        <div className="flex-1">
-                            <h1 className="text-xl font-black" style={{ color: 'var(--vp-text)' }}>{party.name}</h1>
-                            <div className="text-xs" style={{ color: 'var(--vp-text-dim)' }}>
-                                Ranking #{party.ranking_position || '-'} · {analytics?.totalCandidates || 0} candidatos
+
+                        {/* Info */}
+                        <div className="cp-hero-info">
+                            <h1 className="cp-hero-name">{party.name}</h1>
+                            <div className="cp-hero-badges">
+                                <span className="cp-badge-position" style={{ background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.8)' }}>
+                                    Ranking #{party.ranking_position || '-'}
+                                </span>
+                                <span className="cp-badge-ai" style={{ cursor: 'default' }}>
+                                    {analytics?.totalCandidates || 0} candidatos
+                                </span>
                             </div>
-                        </div>
-                        <div className="text-center">
-                            <div className="text-3xl font-black text-glow-red" style={{ color: 'var(--vp-red)' }}>
-                                {Number(party.party_full_score || 0).toFixed(1)}
-                            </div>
-                            <div className="text-[10px] font-bold tracking-[2px] uppercase" style={{ color: 'var(--vp-text-dim)' }}>SCORE</div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* ===== UNIFIED ANALYSIS PANEL ===== */}
-                {analytics && (
-                    <div className="panel-glow mb-6">
-                        <h3 className="text-sm font-bold tracking-wider uppercase mb-3 flex items-center gap-2" style={{ color: 'var(--vp-text)' }}>
-                            📊 Análisis de la Plancha
-                        </h3>
-
-                        {/* Row 1: Key Stats + Presidential Candidate side by side */}
-                        <div className="flex flex-col lg:flex-row gap-4 mb-4">
-                            {/* Left: Stats + Bars */}
-                            <div className="flex-1">
-                                {/* Compact Stats Row */}
-                                <div className="grid grid-cols-4 gap-2 mb-3">
-                                    <div className="text-center p-2 rounded-lg" style={{ background: 'rgba(0,0,0,0.03)' }}>
-                                        <div className="text-lg font-black" style={{ color: 'var(--vp-red)' }}>{analytics.avgScore.toFixed(1)}</div>
-                                        <div className="text-[8px] font-bold tracking-wider uppercase" style={{ color: 'var(--vp-text-dim)' }}>Score Prom.</div>
+                            {analytics && (
+                                <div className="pp-hero-stats">
+                                    <div className="pp-stat">
+                                        <span className="pp-stat-val" style={{ color: '#ff6b6b' }}>{analytics.avgScore.toFixed(1)}</span>
+                                        <span className="pp-stat-lbl">Score Prom.</span>
                                     </div>
-                                    <div className="text-center p-2 rounded-lg" style={{ background: 'rgba(0,0,0,0.03)' }}>
-                                        <div className="text-lg font-black" style={{ color: 'var(--vp-green)' }}>{analytics.totalVotes.toLocaleString('es-PE')}</div>
-                                        <div className="text-[8px] font-bold tracking-wider uppercase" style={{ color: 'var(--vp-text-dim)' }}>Votos</div>
+                                    <div className="pp-stat">
+                                        <span className="pp-stat-val" style={{ color: '#4ade80' }}>{analytics.totalVotes.toLocaleString('es-PE')}</span>
+                                        <span className="pp-stat-lbl">Votos</span>
                                     </div>
-                                    <div className="text-center p-2 rounded-lg" style={{ background: 'rgba(0,0,0,0.03)' }}>
-                                        <div className="text-lg font-black" style={{ color: 'var(--vp-gold)' }}>{analytics.topScore.toFixed(1)}</div>
-                                        <div className="text-[8px] font-bold tracking-wider uppercase" style={{ color: 'var(--vp-text-dim)' }}>Top Score</div>
+                                    <div className="pp-stat">
+                                        <span className="pp-stat-val" style={{ color: '#fbbf24' }}>{analytics.topScore.toFixed(1)}</span>
+                                        <span className="pp-stat-lbl">Top Score</span>
                                     </div>
-                                    <div className="text-center p-2 rounded-lg" style={{ background: 'rgba(0,0,0,0.03)' }}>
-                                        <div className="text-lg font-black truncate" style={{ color: 'var(--vp-blue)', fontSize: analytics.topRegion.length > 8 ? '0.75rem' : undefined }}>{analytics.topRegion}</div>
-                                        <div className="text-[8px] font-bold tracking-wider uppercase" style={{ color: 'var(--vp-text-dim)' }}>Más Cand.</div>
+                                    <div className="pp-stat">
+                                        <span className="pp-stat-val" style={{ color: '#93c5fd' }}>{analytics.topRegion}</span>
+                                        <span className="pp-stat-lbl">Más Cand.</span>
                                     </div>
-                                </div>
-
-                                {/* Score Bars — Plancha Formula */}
-                                <div className="text-[9px] font-bold tracking-wider uppercase mb-1.5" style={{ color: 'var(--vp-text-dim)' }}>
-                                    Fórmula de Plancha
-                                </div>
-                                <ScoreBar label={`Antecedentes (${analytics.cleanCount}/${analytics.totalCandidates})`} value={analytics.antecedentesScore} color="#0ea5e9" />
-                                <ScoreBar label="Plan de Gob." value={analytics.avgPlan} color="#2563eb" />
-                                <ScoreBar label="Hoja de Vida" value={analytics.avgHoja} color="#312e81" />
-                                <ScoreBar label="Score Prom." value={analytics.avgScore} color="#f59e0b" />
-                            </div>
-
-                            {/* Right: Presidential Candidate compact */}
-                            {president && (
-                                <div className="lg:w-[280px] shrink-0 p-3 rounded-xl" style={{ background: `${party.color}08`, border: `1px solid ${party.color}22` }}>
-                                    <div className="text-[9px] font-bold tracking-wider uppercase mb-2" style={{ color: party.color }}>🏛️ Candidato Presidencial</div>
-                                    <Link href={`/candidate/${president.id}`} className="flex items-center gap-2.5 mb-2.5">
-                                        <img
-                                            src={getCandidatePhoto(president.photo, president.name, 56, party.color)}
-                                            onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(president.name, 56, party.color); }}
-                                            alt={president.name}
-                                            width={56}
-                                            height={56}
-                                            className="w-14 h-14 rounded-full object-cover shrink-0"
-                                            style={{ border: `2px solid ${party.color}` }}
-                                        />
-                                        <div className="flex-1 min-w-0">
-                                            <div className="text-sm font-black truncate" style={{ color: 'var(--vp-text)' }}>{president.name}</div>
-                                            <StarRating rating={Number(president.stars_rating)} />
-                                        </div>
-                                    </Link>
-                                    <div className="grid grid-cols-3 gap-1.5 mb-2.5">
-                                        <div className="text-center p-1.5 rounded-lg" style={{ background: 'rgba(255,255,255,0.7)' }}>
-                                            <div className="text-base font-black" style={{ color: 'var(--vp-red)' }}>{Number(president.final_score).toFixed(1)}</div>
-                                            <div className="text-[7px] font-bold uppercase" style={{ color: 'var(--vp-text-dim)' }}>Score</div>
-                                        </div>
-                                        <div className="text-center p-1.5 rounded-lg" style={{ background: 'rgba(255,255,255,0.7)' }}>
-                                            <div className="text-base font-black" style={{ color: 'var(--vp-green)' }}>{Number(president.integrity_score || 0).toFixed(0)}</div>
-                                            <div className="text-[7px] font-bold uppercase" style={{ color: 'var(--vp-text-dim)' }}>Integridad</div>
-                                        </div>
-                                        <div className="text-center p-1.5 rounded-lg" style={{ background: 'rgba(255,255,255,0.7)' }}>
-                                            <div className="text-base font-black" style={{ color: 'var(--vp-blue)' }}>{Number(president.vote_count || 0).toLocaleString('es-PE')}</div>
-                                            <div className="text-[7px] font-bold uppercase" style={{ color: 'var(--vp-text-dim)' }}>Votos</div>
-                                        </div>
-                                    </div>
-                                    {/* VP row */}
-                                    {(() => {
-                                        const candidateVPs = vicePresidents[String(president.id)] || [];
-                                        return candidateVPs.length > 0 && (
-                                            <div className="flex gap-2 mt-1">
-                                                {candidateVPs.map(vp => (
-                                                    <div key={vp.id} className="flex items-center gap-1.5 flex-1 min-w-0">
-                                                        <img
-                                                            src={getCandidatePhoto(vp.photo, vp.name, 28, party.color)}
-                                                            onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(vp.name, 28, party.color); }}
-                                                            alt={vp.name}
-                                                            width={28}
-                                                            height={28}
-                                                            className="w-7 h-7 rounded-full shrink-0 object-cover"
-                                                            style={{ border: '1.5px solid var(--vp-border)' }}
-                                                        />
-                                                        <div className="min-w-0">
-                                                            <div className="text-[9px] font-semibold truncate" style={{ color: 'var(--vp-text)' }}>{vp.name}</div>
-                                                            <div className="text-[7px]" style={{ color: 'var(--vp-text-dim)' }}>{vp.position_label}</div>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        );
-                                    })()}
-                                    <Link href={`/candidate/${president.id}`} className="block mt-2.5">
-                                        <div className="text-center py-1.5 rounded-lg text-[10px] font-bold transition-all hover:scale-[1.02]"
-                                            style={{ background: party.color, color: '#fff' }}>
-                                            Ver perfil completo →
-                                        </div>
-                                    </Link>
                                 </div>
                             )}
                         </div>
 
-                        {/* Row 2: Judicial summary + Position counts */}
-                        <div className="pt-3" style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-                            {/* Judicial summary - improved */}
-                            <div className="flex items-center gap-3 mb-3 p-2.5 rounded-xl" style={{ background: 'rgba(0,0,0,0.02)' }}>
-                                <div className="text-base">⚖️</div>
-                                <div className="flex-1">
-                                    <div className="text-[9px] font-bold tracking-wider uppercase mb-1.5" style={{ color: 'var(--vp-text-dim)' }}>Situación Judicial</div>
-                                    <div className="flex items-center gap-1.5">
-                                        {/* Proportional bar */}
-                                        <div className="flex-1 h-3 rounded-full overflow-hidden flex" style={{ background: '#e5e7eb' }}>
-                                            <div className="h-full transition-all" style={{ width: `${(analytics.candidatesClean / analytics.totalCandidates) * 100}%`, background: '#16a34a' }} />
-                                            {analytics.candidatesWithSentences > 0 && (
-                                                <div className="h-full transition-all" style={{ width: `${(analytics.candidatesWithSentences / analytics.totalCandidates) * 100}%`, background: '#dc2626' }} />
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-3 mt-1.5">
-                                        <div className="flex items-center gap-1">
-                                            <div className="w-2 h-2 rounded-full" style={{ background: '#16a34a' }} />
-                                            <span className="text-[10px] font-bold" style={{ color: '#16a34a' }}>{analytics.candidatesClean} limpios</span>
-                                        </div>
-                                        {analytics.candidatesWithSentences > 0 && (
-                                            <div className="flex items-center gap-1">
-                                                <div className="w-2 h-2 rounded-full" style={{ background: '#dc2626' }} />
-                                                <span className="text-[10px] font-bold" style={{ color: '#dc2626' }}>{analytics.candidatesWithSentences} con sentencia{analytics.candidatesWithSentences > 1 ? 's' : ''}</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={() => setShowJudicialModal(true)}
-                                    className="text-[9px] font-bold px-3 py-1.5 rounded-lg transition-all hover:scale-105"
-                                    style={{ background: 'var(--vp-red)', color: '#fff', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}
-                                >
-                                    Ver detalle →
-                                </button>
+                        {/* Score Circle */}
+                        <div className="cp-hero-score-wrap">
+                            <div className="cp-hero-score-circle">
+                                <svg viewBox="0 0 120 120" className="cp-hero-score-svg">
+                                    <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="8" />
+                                    <circle cx="60" cy="60" r="52" fill="none" stroke={party.color || '#fff'} strokeWidth="8"
+                                        strokeDasharray={`${((analytics?.planchaScore ?? Number(party.party_full_score || 0)) / 100) * 327} 327`} strokeLinecap="round"
+                                        style={{ transform: 'rotate(-90deg)', transformOrigin: 'center', transition: 'stroke-dasharray 1.5s ease-out' }} />
+                                </svg>
+                                <div className="cp-hero-score-value">{(analytics?.planchaScore ?? Number(party.party_full_score || 0)).toFixed(1)}</div>
                             </div>
-                            {/* Position counts */}
-                            <div className="grid grid-cols-4 gap-2">
-                                {Object.entries(ticket).map(([pos, cands]) => (
-                                    <div key={pos} className="text-center py-1">
-                                        <span className="text-base font-black" style={{ color: party.color }}>{cands.length}</span>
-                                        <span className="text-[9px] font-bold tracking-wider uppercase ml-1.5" style={{ color: 'var(--vp-text-dim)' }}>
-                                            {positionLabels[pos === 'president' ? 'president' : pos]?.replace(/^[^\s]+\s/, '') || pos}
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
+                            <div className="cp-hero-score-label">SCORE PLANCHA</div>
                         </div>
                     </div>
-                )}
+                </div>
+            </div>
+
+            {/* ═══ PRESIDENTIAL CANDIDATE + JUDICIAL SUMMARY CARDS ═══ */}
+            {analytics && (
+                <div className="cp-score-cards" style={{ gridTemplateColumns: president ? '1fr 1fr' : '1fr' }}>
+                    {/* Presidential Candidate Card */}
+                    {president && (
+                        <div className="pp-president-card" style={{ borderTopColor: party.color || '#c62828' }}>
+                            <div className="pp-pres-header">
+                                <span>🏛️</span>
+                                <span style={{ color: party.color }}>Candidato Presidencial</span>
+                            </div>
+                            <Link href={`/candidate/${president.id}`} className="pp-pres-profile">
+                                <img
+                                    src={getCandidatePhoto(president.photo, president.name, 64, party.color)}
+                                    onError={(e) => { const fb = getPhotoFallback((e.target as HTMLImageElement).src); if (fb && !(e.target as HTMLImageElement).dataset.retried) { (e.target as HTMLImageElement).dataset.retried = '1'; (e.target as HTMLImageElement).src = fb; } else { (e.target as HTMLImageElement).src = getAvatarUrl(president.name, 64, party.color); } }}
+                                    alt={president.name} width={64} height={64}
+                                    className="pp-pres-photo"
+                                    style={{ borderColor: party.color }}
+                                />
+                                <div className="pp-pres-info">
+                                    <div className="pp-pres-name">{president.name}</div>
+                                    <StarRating rating={Number(president.stars_rating)} />
+                                    <div className="pp-pres-stats">
+                                        <span className="pp-pres-score" style={{ color: 'var(--vp-red)' }}>{Number(president.final_score).toFixed(1)}</span>
+                                        <span className="pp-pres-score" style={{ color: 'var(--vp-green)' }}>Int: {Number(president.integrity_score || 0).toFixed(0)}</span>
+                                        <span className="pp-pres-score" style={{ color: 'var(--vp-blue)' }}>🗳️ {Number(president.vote_count || 0).toLocaleString('es-PE')}</span>
+                                    </div>
+                                </div>
+                            </Link>
+                            {/* VP row */}
+                            {(() => {
+                                const candidateVPs = vicePresidents[String(president.id)] || [];
+                                return candidateVPs.length > 0 && (
+                                    <div className="pp-vp-row">
+                                        {candidateVPs.map(vp => (
+                                            <div key={vp.id} className="pp-vp-item">
+                                                <img
+                                                    src={getCandidatePhoto(vp.photo, vp.name, 28, party.color)}
+                                                    onError={(e) => { const fb = getPhotoFallback((e.target as HTMLImageElement).src); if (fb && !(e.target as HTMLImageElement).dataset.retried) { (e.target as HTMLImageElement).dataset.retried = '1'; (e.target as HTMLImageElement).src = fb; } else { (e.target as HTMLImageElement).src = getAvatarUrl(vp.name, 28, party.color); } }}
+                                                    alt={vp.name} width={28} height={28}
+                                                    className="pp-vp-photo"
+                                                />
+                                                <div className="pp-vp-info">
+                                                    <div className="pp-vp-name">{vp.name}</div>
+                                                    <div className="pp-vp-role">{vp.position_label}</div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                );
+                            })()}
+                            <Link href={`/candidate/${president.id}`} className="pp-pres-btn" style={{ background: party.color }}>
+                                Ver perfil completo →
+                            </Link>
+                        </div>
+                    )}
+
+                    {/* Judicial / Score Summary Card */}
+                    <div className="pp-judicial-card" style={{ borderTopColor: '#1e3a5f' }}>
+                        <div className="pp-pres-header">
+                            <span>⚖️</span>
+                            <span style={{ color: '#1e3a5f' }}>Situación Judicial</span>
+                        </div>
+                        <div className="pp-judicial-bar-wrap">
+                            <div className="pp-judicial-bar">
+                                <div style={{ width: `${(analytics.candidatesClean / analytics.totalCandidates) * 100}%`, background: '#16a34a' }} />
+                                {analytics.candidatesWithSentences > 0 && (
+                                    <div style={{ width: `${(analytics.candidatesWithSentences / analytics.totalCandidates) * 100}%`, background: '#dc2626' }} />
+                                )}
+                            </div>
+                            <div className="pp-judicial-legend">
+                                <span style={{ color: '#16a34a' }}>✅ {analytics.candidatesClean} limpios</span>
+                                {analytics.candidatesWithSentences > 0 && (
+                                    <span style={{ color: '#dc2626' }}>⚠️ {analytics.candidatesWithSentences} con sentencia{analytics.candidatesWithSentences > 1 ? 's' : ''}</span>
+                                )}
+                            </div>
+                        </div>
+                        {/* Formula Bars */}
+                        <div className="pp-formula-section">
+                            <div className="pp-formula-title">Fórmula de Plancha</div>
+                            <ScoreBar label="Hoja de Vida (30%)" value={analytics.avgHoja} color="#312e81" />
+                            <ScoreBar label="Experiencia (25%)" value={analytics.avgExperiencia} color="#f59e0b" />
+                            <ScoreBar label="Integridad (35%)" value={analytics.avgIntegrity} color="#0ea5e9" />
+                            <ScoreBar label="Plan de Gob. (10%)" value={analytics.avgPlan} color="#2563eb" />
+                        </div>
+                        <button onClick={() => setShowJudicialModal(true)} className="pp-judicial-btn">
+                            Ver detalle judicial →
+                        </button>
+                        {/* Position counts */}
+                        <div className="pp-position-counts">
+                            {Object.entries(ticket).map(([pos, cands]) => (
+                                <div key={pos} className="pp-pos-item">
+                                    <span className="pp-pos-count" style={{ color: party.color }}>{cands.length}</span>
+                                    <span className="pp-pos-label">
+                                        {positionLabels[pos === 'president' ? 'president' : pos]?.replace(/^[^\s]+\s/, '') || pos}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            <main className="internal-page-wrapper">
 
                 {/* ===== TOP CANDIDATES PER POSITION — SINGLE PANEL, 3 COLUMNS ===== */}
                 {analytics && Object.keys(analytics.topByPosition).length > 0 && (
@@ -384,7 +381,7 @@ export default function PartyPage({ params }: { params: Promise<{ id: string }> 
                                                         </span>
                                                         <img
                                                             src={getCandidatePhoto(candidate.photo, candidate.name, 32, party.color)}
-                                                            onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(candidate.name, 32, party.color); }}
+                                                            onError={(e) => { const fb = getPhotoFallback((e.target as HTMLImageElement).src); if (fb && !(e.target as HTMLImageElement).dataset.retried) { (e.target as HTMLImageElement).dataset.retried = '1'; (e.target as HTMLImageElement).src = fb; } else { (e.target as HTMLImageElement).src = getAvatarUrl(candidate.name, 32, party.color); } }}
                                                             alt={candidate.name}
                                                             width={32}
                                                             height={32}
@@ -424,7 +421,7 @@ export default function PartyPage({ params }: { params: Promise<{ id: string }> 
                                             <div className="flex items-center gap-3 mb-3">
                                                 <img
                                                     src={getCandidatePhoto(candidate.photo, candidate.name, 48, party.color)}
-                                                    onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(candidate.name, 48, party.color); }}
+                                                    onError={(e) => { const fb = getPhotoFallback((e.target as HTMLImageElement).src); if (fb && !(e.target as HTMLImageElement).dataset.retried) { (e.target as HTMLImageElement).dataset.retried = '1'; (e.target as HTMLImageElement).src = fb; } else { (e.target as HTMLImageElement).src = getAvatarUrl(candidate.name, 48, party.color); } }}
                                                     alt={candidate.name}
                                                     width={48}
                                                     height={48}
@@ -526,7 +523,7 @@ export default function PartyPage({ params }: { params: Promise<{ id: string }> 
                                                 >
                                                     <img
                                                         src={getCandidatePhoto(c.photo, c.name, 40, party?.color || '#666')}
-                                                        onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(c.name, 40, party?.color || '#666'); }}
+                                                        onError={(e) => { const fb = getPhotoFallback((e.target as HTMLImageElement).src); if (fb && !(e.target as HTMLImageElement).dataset.retried) { (e.target as HTMLImageElement).dataset.retried = '1'; (e.target as HTMLImageElement).src = fb; } else { (e.target as HTMLImageElement).src = getAvatarUrl(c.name, 40, party?.color || '#666'); } }}
                                                         alt={c.name}
                                                         width={40} height={40}
                                                         className="w-10 h-10 rounded-full shrink-0 object-cover"
@@ -574,7 +571,7 @@ export default function PartyPage({ params }: { params: Promise<{ id: string }> 
                                         >
                                             <img
                                                 src={getCandidatePhoto(c.photo, c.name, 28, party?.color || '#666')}
-                                                onError={(e) => { (e.target as HTMLImageElement).src = getAvatarUrl(c.name, 28, party?.color || '#666'); }}
+                                                onError={(e) => { const fb = getPhotoFallback((e.target as HTMLImageElement).src); if (fb && !(e.target as HTMLImageElement).dataset.retried) { (e.target as HTMLImageElement).dataset.retried = '1'; (e.target as HTMLImageElement).src = fb; } else { (e.target as HTMLImageElement).src = getAvatarUrl(c.name, 28, party?.color || '#666'); } }}
                                                 alt={c.name}
                                                 width={28} height={28}
                                                 className="w-7 h-7 rounded-full shrink-0 object-cover"

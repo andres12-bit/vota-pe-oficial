@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+const API = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000') + '/api';
 
 interface SystemStatus {
     status: string;
@@ -79,10 +79,10 @@ export default function AdminPage() {
         setLoading(true);
         try {
             const [status, cands, events, fraud] = await Promise.all([
-                adminFetch<SystemStatus>('/api/admin/system/status'),
-                adminFetch<{ candidates: AdminCandidate[] }>('/api/admin/candidates'),
-                adminFetch<{ events: AdminEvent[] }>('/api/admin/events/pending'),
-                adminFetch<FraudStats>('/api/admin/fraud/stats'),
+                adminFetch<SystemStatus>('/admin/system/status'),
+                adminFetch<{ candidates: AdminCandidate[] }>('/admin/candidates'),
+                adminFetch<{ events: AdminEvent[] }>('/admin/events/pending'),
+                adminFetch<FraudStats>('/admin/fraud/stats'),
             ]);
             setSystemStatus(status);
             setCandidates(cands.candidates || []);
@@ -98,45 +98,45 @@ export default function AdminPage() {
 
     // Actions
     const toggleCandidate = async (id: number) => {
-        await adminFetch(`/api/admin/candidates/${id}/toggle`, { method: 'POST' });
+        await adminFetch(`/admin/candidates/${id}/toggle`, { method: 'POST' });
         showMsg('Candidato actualizado');
         loadData();
     };
 
     const validateEvent = async (id: number) => {
-        await adminFetch(`/api/events/${id}/validate`, { method: 'POST' });
+        await adminFetch(`/events/${id}/validate`, { method: 'POST' });
         showMsg('Evento validado — scores recalculados');
         loadData();
     };
 
     const rejectEvent = async (id: number) => {
-        await adminFetch(`/api/events/${id}/reject`, { method: 'POST' });
+        await adminFetch(`/events/${id}/reject`, { method: 'POST' });
         showMsg('Evento rechazado');
         loadData();
     };
 
     const recalculateAll = async () => {
         showMsg('Recalculando...');
-        await adminFetch('/api/admin/recalculate/all', { method: 'POST' });
+        await adminFetch('/admin/recalculate/all', { method: 'POST' });
         showMsg('Recálculo completo');
         loadData();
     };
 
     const blockIp = async (ip: string) => {
-        await adminFetch('/api/admin/fraud/block-ip', { method: 'POST', body: JSON.stringify({ ip }) });
+        await adminFetch('/admin/fraud/block-ip', { method: 'POST', body: JSON.stringify({ ip }) });
         showMsg(`IP ${ip} bloqueada`);
         loadData();
     };
 
     const deleteCandidate = async (id: number) => {
         if (!confirm('¿Eliminar candidato permanentemente?')) return;
-        await adminFetch(`/api/admin/candidates/${id}`, { method: 'DELETE' });
+        await adminFetch(`/admin/candidates/${id}`, { method: 'DELETE' });
         showMsg('Candidato eliminado');
         loadData();
     };
 
     const toggleMaintenance = async (enabled: boolean) => {
-        await adminFetch('/api/admin/system/maintenance', { method: 'POST', body: JSON.stringify({ enabled }) });
+        await adminFetch('/admin/system/maintenance', { method: 'POST', body: JSON.stringify({ enabled }) });
         showMsg(`Mantenimiento ${enabled ? 'activado' : 'desactivado'}`);
     };
 

@@ -118,9 +118,12 @@ const PlanGobiernoScorer = {
         let goalsCount = 0;
         items.forEach(item => {
             const goals = (item.goals || '').trim();
-            // Fallback: long problem descriptions may contain implicit goals
-            if (goals.length > 10) {
+            const objective = (item.objective || '').trim();
+            if (goals.length > 3) {
                 goalsCount++;
+            } else if (objective.length > 50) {
+                // Objectives that are detailed often contain implicit measurable goals
+                goalsCount += 0.5;
             } else if ((item.problem || '').length > 100) {
                 goalsCount += 0.3; // partial credit for detailed problem with implicit action
             }
@@ -192,15 +195,6 @@ const PlanGobiernoScorer = {
             (indicatorScore * 0.15) +
             (coherenceScore * 0.15)
         ).toFixed(2));
-
-        // Bonus for having a PDF uploaded (+5, max 100)
-        if (hasPdf) {
-            finalScore = Math.min(100, finalScore + 5);
-        }
-
-        // Bonus for volume of items (more detailed plan)
-        if (items.length >= 20) finalScore = Math.min(100, finalScore + 5);
-        if (items.length >= 40) finalScore = Math.min(100, finalScore + 5);
 
         const scoreData = {
             candidate_id: candidateId,

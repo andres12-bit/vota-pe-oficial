@@ -3,7 +3,7 @@
  */
 import type { Metadata } from 'next';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+const API_BASE = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000') + '/api';
 const SITE_URL = 'https://pulsoelectoral.pe';
 
 const positionLabels: Record<string, string> = {
@@ -16,7 +16,7 @@ const positionLabels: Record<string, string> = {
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
     const { id } = await params;
     try {
-        const res = await fetch(`${API_BASE}/api/candidates/${id}`, { next: { revalidate: 300 } });
+        const res = await fetch(`${API_BASE}/candidates/${id}`, { next: { revalidate: 300 } });
         if (!res.ok) throw new Error('Not found');
         const candidate = await res.json();
 

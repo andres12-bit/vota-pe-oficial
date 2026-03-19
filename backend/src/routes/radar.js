@@ -70,7 +70,7 @@ async function getPlanchaIndex() {
         const avgInt = avg('integrity_score');
         const avgPlan = avg('plan_score');
         const avgFinal = avg('final_score');
-        const qualityIndex = r1((avgHoja * 0.25 + avgExp * 0.25 + avgInt * 0.25 + avgPlan * 0.25));
+        const qualityIndex = r1((avgHoja * 0.30 + avgExp * 0.25 + avgInt * 0.35 + avgPlan * 0.10));
 
         const pres = g.presidents.sort((a, b) => (b.final_score || 0) - (a.final_score || 0))[0];
 

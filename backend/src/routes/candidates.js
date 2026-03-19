@@ -1,8 +1,38 @@
 const express = require('express');
 const pool = require('../db/pool');
 const RankingEngine = require('../engines/rankingEngine');
+const { getCongressInfo } = require('../data/congressMembers');
 
 const router = express.Router();
+
+// Compute final_score on-the-fly from component scores (overrides stale DB value)
+function computeFinalScore(c) {
+    const hoja = parseFloat(c.hoja_score) || 0;
+    const plan = parseFloat(c.plan_score) || 0;
+    const exp = parseFloat(c.experience_score) || 0;
+    const integ = parseFloat(c.integrity_score) || 0;
+    if (c.position === 'president') {
+        c.final_score = parseFloat(((hoja * 0.30) + (plan * 0.30) + (exp * 0.25) + (integ * 0.15)).toFixed(2));
+    } else {
+        c.final_score = parseFloat(((hoja * 0.40) + (exp * 0.35) + (integ * 0.25)).toFixed(2));
+    }
+    return c;
+}
+
+// Enrich candidate with congress member info
+function enrichCandidate(c) {
+    computeFinalScore(c);
+    const info = getCongressInfo(c.id);
+    c.is_current_congressman = !!info;
+    c.congress_bancada = info ? info.bancada : null;
+    c.congress_proyectos = info ? info.proyectos : null;
+    c.congress_asistencia = info ? info.asistencia : null;
+    c.congress_comisiones = info ? info.comisiones : null;
+    c.congress_cambio_bancada = info ? info.cambio_bancada : null;
+    c.congress_bancada_original = info ? (info.bancada_original || null) : null;
+    c.congress_destacado = info ? (info.destacado || null) : null;
+    return c;
+}
 
 // GET /api/candidates - list all candidates
 router.get('/', async (req, res) => {
@@ -33,7 +63,10 @@ router.get('/', async (req, res) => {
         query += ` ORDER BY c.final_score DESC LIMIT $${params.length}`;
 
         const result = await pool.query(query, params);
-        res.json({ candidates: result.rows, total: result.rows.length });
+        const candidates = result.rows.map(enrichCandidate);
+        // Re-sort by computed final_score
+        candidates.sort((a, b) => b.final_score - a.final_score);
+        res.json({ candidates, total: candidates.length });
     } catch (err) {
         console.error('Error fetching candidates:', err);
         res.status(500).json({ error: 'Internal server error' });
@@ -114,6 +147,7 @@ router.get('/by-sector', async (req, res) => {
 
         // Add sector match info to each candidate
         const enriched = result.rows.map(c => {
+            computeFinalScore(c);
             const jneId = Object.entries(jnePartyMap).find(([, name]) => name === c.party_name)?.[0];
             const sectorInfo = jneId ? partyMatches[jneId] : null;
             return { ...c, sector_matches: sectorInfo?.matches || 0, sector_percentage: sectorInfo?.percentage || 0 };
@@ -145,6 +179,16 @@ router.get('/:id', async (req, res) => {
         }
 
         const candidate = candidateResult.rows[0];
+        computeFinalScore(candidate);
+        const congressInfo = getCongressInfo(candidate.id);
+        candidate.is_current_congressman = !!congressInfo;
+        candidate.congress_bancada = congressInfo ? congressInfo.bancada : null;
+        candidate.congress_proyectos = congressInfo ? congressInfo.proyectos : null;
+        candidate.congress_asistencia = congressInfo ? congressInfo.asistencia : null;
+        candidate.congress_comisiones = congressInfo ? congressInfo.comisiones : null;
+        candidate.congress_cambio_bancada = congressInfo ? congressInfo.cambio_bancada : null;
+        candidate.congress_bancada_original = congressInfo ? (congressInfo.bancada_original || null) : null;
+        candidate.congress_destacado = congressInfo ? (congressInfo.destacado || null) : null;
 
         // Each secondary query wrapped in try/catch so missing tables don't crash the endpoint
         const safeQuery = async (sql, params) => {

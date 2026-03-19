@@ -99,7 +99,11 @@ export default function SiteFooter() {
                         {/* Brand */}
                         <div className="premium-footer-brand">
                             <div className="premium-footer-logo">
-                                <img src="/images/logo-pulsoelectoral-transparent.png" alt="PulsoElectoral.pe" style={{ height: '56px', objectFit: 'contain' }} />
+                                <div style={{ display: 'flex', alignItems: 'baseline' }}>
+                                    <span style={{ fontSize: '24px', fontWeight: 900, color: '#fff', letterSpacing: '-0.5px' }}>Pulso</span>
+                                    <span style={{ fontSize: '24px', fontWeight: 900, color: '#f87171', letterSpacing: '-0.5px' }}>Electoral</span>
+                                    <span style={{ fontSize: '14px', fontWeight: 800, color: '#f87171', marginLeft: '1px' }}>.pe</span>
+                                </div>
                             </div>
                             <p className="premium-footer-tagline">
                                 Plataforma ciudadana de evaluación electoral

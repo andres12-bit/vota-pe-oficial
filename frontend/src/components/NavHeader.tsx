@@ -6,7 +6,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useWebSocket } from '@/lib/websocket';
 import { useAuth } from '@/lib/auth';
 
-type TabType = 'votar' | 'encuesta' | 'planchas' | 'president' | 'senator' | 'deputy' | 'andean';
+type TabType = 'votar' | 'encuesta' | 'planchas' | 'president' | 'senator' | 'deputy' | 'andean' | 'comparar' | 'memoria';
 
 const EXPLORAR_ITEMS: { id: TabType; label: string }[] = [
     { id: 'president', label: 'Presidente' },
@@ -38,7 +38,8 @@ export default function NavHeader({ activeTab, onTabChange }: NavHeaderProps) {
     const [showExplorar, setShowExplorar] = useState(false);
     const [showMobileMenu, setShowMobileMenu] = useState(false);
     const [showMobileSearch, setShowMobileSearch] = useState(false);
-    const [countdown, setCountdown] = useState({ months: 0, days: 0, hours: 0, minutes: 0 });
+    const [showMobileExplorar, setShowMobileExplorar] = useState(false);
+    const [countdown, setCountdown] = useState({ months: 0, days: 0, hours: 0, minutes: 0, seconds: 0 });
     const explorarRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
 
@@ -50,10 +51,11 @@ export default function NavHeader({ activeTab, onTabChange }: NavHeaderProps) {
             const days = Math.floor(diff / (1000 * 60 * 60 * 24));
             const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            setCountdown({ months: 0, days, hours, minutes });
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            setCountdown({ months: 0, days, hours, minutes, seconds });
         }
         updateCountdown();
-        const timer = setInterval(updateCountdown, 60000);
+        const timer = setInterval(updateCountdown, 1000);
         return () => clearInterval(timer);
     }, []);
 
@@ -63,7 +65,7 @@ export default function NavHeader({ activeTab, onTabChange }: NavHeaderProps) {
         if (onTabChange) {
             onTabChange(tabId);
             const url = tabId === 'votar' ? '/' : `/?tab=${tabId}`;
-            window.history.replaceState(null, '', url);
+            router.replace(url, { scroll: false });
         } else {
             router.push(`/?tab=${tabId}`);
         }
@@ -102,11 +104,15 @@ export default function NavHeader({ activeTab, onTabChange }: NavHeaderProps) {
                         </div>
                         <div className="mobile-cd-box">
                             <span className="mobile-cd-num">{String(countdown.hours).padStart(2, '0')}</span>
-                            <span className="mobile-cd-unit">Horas</span>
+                            <span className="mobile-cd-unit">Hrs</span>
                         </div>
                         <div className="mobile-cd-box">
                             <span className="mobile-cd-num">{String(countdown.minutes).padStart(2, '0')}</span>
-                            <span className="mobile-cd-unit">Minutos</span>
+                            <span className="mobile-cd-unit">Min</span>
+                        </div>
+                        <div className="mobile-cd-box">
+                            <span className="mobile-cd-num">{String(countdown.seconds).padStart(2, '0')}</span>
+                            <span className="mobile-cd-unit">Seg</span>
                         </div>
                     </div>
                 </div>
@@ -124,7 +130,7 @@ export default function NavHeader({ activeTab, onTabChange }: NavHeaderProps) {
                                         <span style={{ fontSize: '16px', fontWeight: 800, color: '#c62828', marginLeft: '1px' }}>.pe</span>
                                     </div>
                                     <div style={{ fontSize: '12px', fontWeight: 700, color: '#c62828', marginTop: '2px' }}>
-                                        12 de abril de 2026
+                                        {new Date().toLocaleDateString('es-PE', { day: 'numeric', month: 'long', year: 'numeric' })}
                                     </div>
                                 </div>
                             </div>
@@ -155,7 +161,11 @@ export default function NavHeader({ activeTab, onTabChange }: NavHeaderProps) {
                             </div>
                             <div className="navbar-cd-box">
                                 <span className="navbar-cd-num">{String(countdown.minutes).padStart(2, '0')}</span>
-                                <span className="navbar-cd-unit">MINUTOS</span>
+                                <span className="navbar-cd-unit">MIN</span>
+                            </div>
+                            <div className="navbar-cd-box">
+                                <span className="navbar-cd-num">{String(countdown.seconds).padStart(2, '0')}</span>
+                                <span className="navbar-cd-unit">SEG</span>
                             </div>
                         </div>
                     </div>
@@ -207,7 +217,7 @@ export default function NavHeader({ activeTab, onTabChange }: NavHeaderProps) {
                             )}
                         </div>
 
-                        {/* ENCUESTA — yellow underline when active */}
+                        {/* ENCUESTA */}
                         <button
                             onClick={() => handleTabClick('encuesta')}
                             className={`navbar-nav-link ${activeTab === 'encuesta' ? 'navbar-nav-link-active' : ''}`}
@@ -223,6 +233,22 @@ export default function NavHeader({ activeTab, onTabChange }: NavHeaderProps) {
                             Planchas
                         </button>
 
+                        {/* COMPARAR */}
+                        <button
+                            onClick={() => handleTabClick('comparar')}
+                            className={`navbar-nav-link ${activeTab === 'comparar' ? 'navbar-nav-link-active' : ''}`}
+                        >
+                            Comparar Candidatos
+                        </button>
+
+                        {/* SIMULAR ELECCIÓN */}
+                        <button
+                            onClick={() => router.push('/simular')}
+                            className="navbar-nav-link"
+                        >
+                            Simular Elección
+                        </button>
+
                         {/* RADAR */}
                         <button
                             onClick={() => router.push('/radar')}
@@ -231,39 +257,24 @@ export default function NavHeader({ activeTab, onTabChange }: NavHeaderProps) {
                             Radar Electoral
                         </button>
 
+                        {/* MEMORIA ELECTORAL */}
+                        <button
+                            onClick={() => handleTabClick('memoria')}
+                            className={`navbar-nav-link ${activeTab === 'memoria' ? 'navbar-nav-link-active' : ''}`}
+                        >
+                            Memoria Electoral
+                        </button>
+
+                        {/* BLOG */}
+                        <button
+                            onClick={() => router.push('/blog')}
+                            className="navbar-nav-link"
+                        >
+                            Blog Electoral
+                        </button>
+
                         {/* Right side */}
                         <div className="navbar-nav-right">
-                            {isLoggedIn && user ? (
-                                <div className="relative">
-                                    <button onClick={() => setShowUserMenu(!showUserMenu)} className="navbar-mi-cuenta-btn">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#1B2A4A"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" /></svg>
-                                        MI CUENTA
-                                    </button>
-                                    {showUserMenu && (
-                                        <div className="absolute right-0 top-full mt-2 w-48 rounded-xl py-1 z-50 animate-fade-in"
-                                            style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.1)', boxShadow: '0 8px 32px rgba(0,0,0,0.12)' }}>
-                                            <div className="px-3 py-2" style={{ borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
-                                                <div className="text-xs font-bold" style={{ color: '#1a1a2e' }}>{user.name}</div>
-                                                <div className="text-[10px]" style={{ color: 'rgba(0,0,0,0.5)' }}>{user.email || user.phone || user.alias}</div>
-                                            </div>
-                                            <button onClick={() => { logout(); setShowUserMenu(false); }} className="w-full text-left px-3 py-2 text-xs font-semibold" style={{ color: '#ef5350' }}>
-                                                🚪 Cerrar sesión
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
-                            ) : (
-                                <button onClick={() => setShowLogin(true)} className="navbar-mi-cuenta-btn">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="#1B2A4A"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" /></svg>
-                                    MI CUENTA
-                                </button>
-                            )}
-
-                            {/* EN VIVO — yellow text with blinking green dot */}
-                            <div className="navbar-envivo">
-                                <div className={`navbar-envivo-dot ${isConnected ? 'navbar-envivo-dot-active' : ''}`} />
-                                <span>EN VIVO</span>
-                            </div>
                         </div>
                     </div>
                 </nav>
@@ -319,52 +330,57 @@ export default function NavHeader({ activeTab, onTabChange }: NavHeaderProps) {
 
                     {/* Menu items */}
                     <div className="mobile-menu-items">
-                        <button
-                            onClick={() => { setShowExplorar(!showExplorar); }}
-                            className="mobile-menu-explorar"
-                        >
+                        <div className="mobile-menu-explorar" style={{ cursor: 'pointer' }} onClick={() => setShowMobileExplorar(!showMobileExplorar)}>
                             Explorar Candidatos
-                            <span style={{ transform: showExplorar ? 'rotate(180deg)' : 'none', display: 'inline-block', marginLeft: 6, fontSize: 10, transition: '0.2s' }}>▾</span>
-                        </button>
+                            <span style={{ marginLeft: 8, fontSize: 10, transition: 'transform 0.2s', display: 'inline-block', transform: showMobileExplorar ? 'rotate(180deg)' : 'none' }}>▾</span>
+                        </div>
 
-                        {showExplorar && (
-                            <div className="mobile-menu-sub">
+                        {showMobileExplorar && (
+                            <div className="mobile-menu-sub" style={{ display: 'flex' }}>
                                 {EXPLORAR_ITEMS.map(item => (
-                                    <button
+                                    <div
                                         key={item.id}
-                                        onClick={() => handleTabClick(item.id)}
+                                        onClick={() => { window.location.href = `/?tab=${item.id}`; }}
                                         className={`mobile-menu-sub-item ${activeTab === item.id ? 'active' : ''}`}
+                                        role="link"
+                                        style={{ cursor: 'pointer' }}
                                     >
                                         {item.label}
-                                    </button>
+                                    </div>
                                 ))}
                             </div>
                         )}
 
-                        <button onClick={() => handleTabClick('encuesta')} className={`mobile-menu-link ${activeTab === 'encuesta' ? 'mobile-menu-link-active' : ''}`}>
+                        <div onClick={() => { window.location.href = '/?tab=encuesta'; }} className={`mobile-menu-link ${activeTab === 'encuesta' ? 'mobile-menu-link-active' : ''}`} role="link" style={{ cursor: 'pointer' }}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 20V10" /><path d="M12 20V4" /><path d="M6 20v-6" /></svg>
                             Encuestas
-                        </button>
-                        <button onClick={() => handleTabClick('planchas')} className={`mobile-menu-link ${activeTab === 'planchas' ? 'mobile-menu-link-active' : ''}`}>
+                        </div>
+                        <div onClick={() => { window.location.href = '/?tab=planchas'; }} className={`mobile-menu-link ${activeTab === 'planchas' ? 'mobile-menu-link-active' : ''}`} role="link" style={{ cursor: 'pointer' }}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /></svg>
                             Planchas
-                        </button>
-                        <button onClick={() => { router.push('/radar'); setShowMobileMenu(false); }} className="mobile-menu-link">
+                        </div>
+                        <div onClick={() => { window.location.href = '/?tab=comparar'; }} className={`mobile-menu-link ${activeTab === 'comparar' ? 'mobile-menu-link-active' : ''}`} role="link" style={{ cursor: 'pointer' }}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 3h5v5M8 21H3v-5M21 3l-7 7M3 21l7-7" /></svg>
+                            Comparar Candidatos
+                        </div>
+                        <div onClick={() => { window.location.href = '/simular'; }} className="mobile-menu-link" role="link" style={{ cursor: 'pointer' }}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 17H5a2 2 0 0 0-2 2 2 2 0 0 0 2 2h2a2 2 0 0 0 2-2zm12-2h-4a2 2 0 0 0-2 2 2 2 0 0 0 2 2h2a2 2 0 0 0 2-2z"/><circle cx="7.5" cy="15.5" r="5.5"/><circle cx="18.5" cy="15.5" r="5.5"/></svg>
+                            Simular Elección
+                        </div>
+                        <div onClick={() => { window.location.href = '/radar'; }} className="mobile-menu-link" role="link" style={{ cursor: 'pointer' }}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 2a10 10 0 0 1 7 7"/></svg>
                             Radar Electoral
-                        </button>
+                        </div>
+                        <div onClick={() => { window.location.href = '/blog'; }} className="mobile-menu-link" role="link" style={{ cursor: 'pointer' }}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                            Blog Electoral
+                        </div>
+                        <div onClick={() => { window.location.href = '/?tab=memoria'; }} className={`mobile-menu-link ${activeTab === 'memoria' ? 'mobile-menu-link-active' : ''}`} role="link" style={{ cursor: 'pointer' }}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21h18M3 7v1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7H3l2-4h14l2 4M5 21V10.5M19 21V10.5" /></svg>
+                            Memoria Electoral
+                        </div>
 
-                        <div className="mobile-menu-divider" />
 
-                        {isLoggedIn && user ? (
-                            <>
-                                <div className="mobile-menu-link" style={{ cursor: 'default', fontWeight: 700 }}>{user.name}</div>
-                                <button onClick={() => { logout(); setShowMobileMenu(false); }} className="mobile-menu-link" style={{ color: '#c62828' }}>
-                                    Cerrar sesión
-                                </button>
-                            </>
-                        ) : (
-                            <button onClick={() => { setShowLogin(true); setShowMobileMenu(false); }} className="mobile-menu-link" style={{ fontWeight: 700 }}>
-                                MI CUENTA
-                            </button>
-                        )}
                     </div>
                 </div>
             )}

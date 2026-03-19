@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /api/
 
-Sitemap: https://votape-web.onrender.com/sitemap.xml
+Sitemap: https://pulsoelectoral.pe/sitemap.xml

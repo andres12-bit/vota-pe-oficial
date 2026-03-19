@@ -32,11 +32,22 @@ class RankingEngine {
         const experienceScore = parseFloat(candidate.experience_score) || 0;
         const integrityScore = parseFloat(candidate.integrity_score) || 100;
 
-        const finalScore =
-            (hojaScore * 0.30) +
-            (planScore * 0.30) +
-            (experienceScore * 0.25) +
-            (integrityScore * 0.15);
+        let finalScore;
+        if (candidate.position === 'president') {
+            // Presidential: (HdV × 0.30) + (Plan × 0.30) + (Exp × 0.25) + (Integ × 0.15)
+            finalScore =
+                (hojaScore * 0.30) +
+                (planScore * 0.30) +
+                (experienceScore * 0.25) +
+                (integrityScore * 0.15);
+        } else {
+            // Senators, Deputies, Andean: (HdV × 0.40) + (Exp × 0.35) + (Integ × 0.25)
+            // Plan de Gobierno removed — redistributed +10% to each
+            finalScore =
+                (hojaScore * 0.40) +
+                (experienceScore * 0.35) +
+                (integrityScore * 0.25);
+        }
 
         return Math.min(100, Math.max(0, parseFloat(finalScore.toFixed(2))));
     }
@@ -177,13 +188,13 @@ class RankingEngine {
 
     /**
  * Recalculate party score using PLANCHA-SPECIFIC formula:
- *   plancha_score = (Antecedentes × 0.30) + (Plan × 0.25) + (HV × 0.25) + (Score Prom. × 0.20)
+ *   plancha_score = (HV × 0.30) + (Experiencia × 0.25) + (Integridad × 0.35) + (Plan × 0.10)
  *
  * Components:
- *   - Antecedentes (30%): % of candidates with clean judicial records (integrity_score >= 80)
- *   - Plan de Gobierno (25%): Average plan_score across all candidates
- *   - Hoja de Vida (25%): Average hoja_score across all candidates
- *   - Score Promedio (20%): Average final_score across all candidates
+ *   - Hoja de Vida (30%): Average hoja_score across all candidates
+ *   - Experiencia (25%): Average experience_score across all candidates
+ *   - Integridad (35%): Average integrity_score across all candidates
+ *   - Plan de Gobierno (10%): Average plan_score across all candidates
  */
     static async recalculatePartyScore(partyId) {
         // Get all scoring data for this party's candidates
@@ -202,30 +213,21 @@ class RankingEngine {
             [partyId]
         );
 
-        // Count candidates with clean judicial records (no sentences in hoja_de_vida)
-        const cleanResult = await pool.query(
-            `SELECT COUNT(*) as clean_count
-         FROM candidates
-         WHERE party_id = $1 AND is_active = true AND integrity_score >= 80`,
-            [partyId]
-        );
-
         const stats = result.rows[0];
         const totalCandidates = parseInt(stats.total_candidates) || 0;
-        const cleanCount = parseInt(cleanResult.rows[0]?.clean_count) || 0;
 
         // Calculate each component (0-100 scale)
-        const antecedentesScore = totalCandidates > 0 ? (cleanCount / totalCandidates) * 100 : 0;
-        const avgPlan = parseFloat(stats.avg_plan) || 0;
         const avgHV = parseFloat(stats.avg_hoja) || 0;
-        const avgScore = parseFloat(stats.avg_score) || 0;
+        const avgExp = parseFloat(stats.avg_experience) || 0;
+        const avgInt = parseFloat(stats.avg_integrity) || 0;
+        const avgPlan = parseFloat(stats.avg_plan) || 0;
 
-        // Apply plancha formula
+        // Apply plancha formula: (HV×0.30) + (Exp×0.25) + (Int×0.35) + (Plan×0.10)
         const partyFullScore = Math.min(100, Math.max(0, parseFloat((
-            (antecedentesScore * 0.30) +
-            (avgPlan * 0.25) +
-            (avgHV * 0.25) +
-            (avgScore * 0.20)
+            (avgHV * 0.30) +
+            (avgExp * 0.25) +
+            (avgInt * 0.35) +
+            (avgPlan * 0.10)
         ).toFixed(2))));
 
         // Upsert party_scores table

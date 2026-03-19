@@ -42,7 +42,7 @@ function ScoreGauge({ label, value, color, subtitle }: { label: string; value: n
                         style={{ transition: 'stroke-dasharray 1.5s ease-out', filter: `drop-shadow(0 0 6px ${color}55)` }} />
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-base font-black" style={{ color }}>{value.toFixed(0)}</span>
+                    <span className="text-base font-black" style={{ color }}>{value.toFixed(1)}</span>
                 </div>
             </div>
             <div className="text-[10px] font-bold tracking-[1.5px] uppercase" style={{ color: 'var(--vp-text-dim)' }}>{label}</div>
@@ -76,38 +76,51 @@ function MomentumIndicator({ score }: { score: number }) {
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: `${level.color}15`, border: `1px solid ${level.color}33` }}>
             <span>{level.icon}</span>
             <span className="text-[10px] font-bold tracking-wider" style={{ color: level.color }}>{level.label}</span>
-            <span className="text-xs font-black" style={{ color: level.color }}>{score.toFixed(0)}</span>
+            <span className="text-xs font-black" style={{ color: level.color }}>{score.toFixed(1)}</span>
         </div>
     );
 }
 
+/* ── Professional SVG Icons ── */
+const SvgIcon = {
+    graduation: (color = 'currentColor', size = 16) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"/></svg>,
+    briefcase: (color = 'currentColor', size = 16) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 13h20"/></svg>,
+    building: (color = 'currentColor', size = 16) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-4h6v4"/><path d="M9 10h1M14 10h1M9 14h1M14 14h1"/></svg>,
+    coins: (color = 'currentColor', size = 16) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="9" r="7"/><path d="M15.35 9.35A7 7 0 1 0 9.35 15.35"/><path d="M9 7v4l2 1"/></svg>,
+    scale: (color = 'currentColor', size = 16) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v18"/><path d="M5 6l7-3 7 3"/><path d="M2 14l3-8 3 8a5 5 0 0 1-6 0z"/><path d="M16 14l3-8 3 8a5 5 0 0 1-6 0z"/></svg>,
+    globe: (color = 'currentColor', size = 16) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>,
+    target: (color = 'currentColor', size = 16) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>,
+    trendUp: (color = 'currentColor', size = 16) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>,
+    ruler: (color = 'currentColor', size = 16) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0z"/><path d="m14.5 12.5 2-2M11.5 9.5l2-2M8.5 6.5l2-2"/></svg>,
+    link: (color = 'currentColor', size = 16) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>,
+    shield: (color = 'currentColor', size = 16) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>,
+    fileText: (color = 'currentColor', size = 16) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>,
+    clipboard: (color = 'currentColor', size = 16) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 14h6M9 18h6M9 10h6"/></svg>,
+    barChart: (color = 'currentColor', size = 16) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>,
+    search: (color = 'currentColor', size = 16) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>,
+};
+
 function SubScoreRow({ icon, label, weight, score, explain, detail, color, onClick }: {
-    icon: string; label: string; weight: number; score: number; explain: string; detail?: string; color: string; onClick?: () => void;
+    icon: React.ReactNode; label: string; weight: number; score: number; explain: string; detail?: string; color: string; onClick?: () => void;
 }) {
     const pct = Math.min(100, score);
     return (
-        <div className="flex items-center gap-2 py-1.5 px-2 rounded-lg transition-all duration-200 cursor-pointer group"
-            style={{ border: '1px solid transparent' }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = `${color}15`; e.currentTarget.style.borderColor = `${color}33`; e.currentTarget.style.transform = 'scale(1.01)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'transparent'; e.currentTarget.style.transform = 'scale(1)'; }}
-            onClick={onClick}>
-            <span className="text-sm shrink-0 group-hover:scale-125 transition-transform">{icon}</span>
-            <div className="w-28 shrink-0">
-                <div className="text-[10px] font-semibold transition-colors" style={{ color: 'var(--vp-text)' }}>{label}</div>
-                <div className="text-[8px]" style={{ color: 'var(--vp-text-dim)' }}>Peso: {weight}%</div>
+        <div className="cp-subscore-row" onClick={onClick}
+            onMouseEnter={(e) => { e.currentTarget.style.background = `${color}0d`; e.currentTarget.style.borderColor = `${color}22`; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'transparent'; }}>
+            <span className="cp-subscore-icon">{icon}</span>
+            <div className="cp-subscore-label">
+                <div className="cp-subscore-name">{label}</div>
+                <div className="cp-subscore-weight">Peso: {weight}%</div>
             </div>
-            <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
-                <div className="h-full rounded-full transition-all duration-700" style={{
-                    width: `${pct}%`, background: color, boxShadow: `0 0 6px ${color}44`
-                }} />
+            <div className="cp-subscore-bar-track">
+                <div className="cp-subscore-bar-fill" style={{ width: `${pct}%`, background: `linear-gradient(90deg, ${color}, ${color}cc)`, boxShadow: `0 0 8px ${color}33` }} />
             </div>
-            <div className="w-10 text-right text-xs font-black shrink-0" style={{ color }}>{score}</div>
-            <div className="w-36 shrink-0 flex items-center gap-1">
-                <div className="flex-1 min-w-0">
-                    <div className="text-[9px] font-semibold truncate" style={{ color: 'var(--vp-text-dim)' }}>{explain}</div>
-                    {detail && <div className="text-[8px] truncate" style={{ color: 'var(--vp-text-dim)', opacity: 0.6 }}>{detail}</div>}
-                </div>
-                <span className="text-[10px] opacity-0 group-hover:opacity-100 transition-opacity shrink-0" style={{ color }}>▶</span>
+            <div className="cp-subscore-value" style={{ color }}>{score}</div>
+            <div className="cp-subscore-explain">
+                <div className="cp-subscore-explain-text">{explain}</div>
+                {detail && <div className="cp-subscore-explain-detail">{detail}</div>}
+                <svg className="cp-subscore-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
             </div>
         </div>
     );
@@ -216,20 +229,28 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
     const momScore = Number(candidate.momentum_score);
     const integrScore = Number(candidate.integrity_score);
     const riskScore = Number(candidate.risk_score);
-    const finalScore = Number(candidate.final_score);
+    const finalScoreDB = Number(candidate.final_score);
     const starsVal = Number(candidate.stars_rating);
 
-    // Score formula breakdown — NEW formula
+    // Score formula breakdown — position-aware
     const hojaScore = Number((candidate as any).hoja_score) || 0;
     const planScore = Number((candidate as any).plan_score) || 0;
     const experienceScore = Number((candidate as any).experience_score) || 0;
     const intencionScore = Math.min(100, (candidate.vote_count / 5000) * 100); // display-only indicator
-    const formulaBreakdown = {
+    const isPresident = candidate.position === 'president';
+    const formulaBreakdown = isPresident ? {
         hojaVida: { value: hojaScore * 0.30, weight: 30, raw: hojaScore },
         planGobierno: { value: planScore * 0.30, weight: 30, raw: planScore },
         experiencia: { value: experienceScore * 0.25, weight: 25, raw: experienceScore },
         integrity: { value: integrScore * 0.15, weight: 15, raw: integrScore },
+    } : {
+        hojaVida: { value: hojaScore * 0.40, weight: 40, raw: hojaScore },
+        planGobierno: { value: 0, weight: 0, raw: 0 },
+        experiencia: { value: experienceScore * 0.35, weight: 35, raw: experienceScore },
+        integrity: { value: integrScore * 0.25, weight: 25, raw: integrScore },
     };
+    // Compute final score from the formula breakdown (not from DB)
+    const finalScore = parseFloat((formulaBreakdown.hojaVida.value + formulaBreakdown.planGobierno.value + formulaBreakdown.experiencia.value + formulaBreakdown.integrity.value).toFixed(1));
 
     // ======== DETAILED SUB-BREAKDOWNS ========
     const hv = (candidate as any).hoja_de_vida || {};
@@ -265,15 +286,27 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
         const politicalFromWork = allWorkExp.filter(isPoliticalRole);
         const pureWorkExp = allWorkExp.filter((w: any) => !isPoliticalRole(w));
 
-        // Work (20%) — only non-political jobs
-        let workScore = Math.min(100, pureWorkExp.length * 15);
-        pureWorkExp.forEach((w: any) => { if (w.start_year && w.end_year && (parseInt(w.end_year) - parseInt(w.start_year)) >= 5) workScore = Math.min(100, workScore + 10); });
+        // Work (20%) — only non-political jobs. 15pts each + 40pts bonus for 20+ year jobs, max 100.
+        let workScore = pureWorkExp.length * 15;
+        pureWorkExp.forEach((w: any) => {
+            let from = parseInt(w.start_year || w.year_from || w.from || 0);
+            let to = parseInt(w.end_year || w.year_to || w.to || 0);
+            if ((!from || !to) && w.period) {
+                const years = (w.period + '').match(/(\d{4})/g);
+                if (years && years.length >= 1) {
+                    if (!from) from = parseInt(years[0]);
+                    if (!to && years.length >= 2) to = parseInt(years[1]);
+                }
+            }
+            if (!to) to = new Date().getFullYear();
+            if (from > 0 && (to - from) >= 20) workScore += 40;
+        });
+        workScore = Math.min(100, workScore);
 
-        // Political (15%) — from political_history + political roles in work_experience
+        // Political (15%) — from political_history + political roles in work_experience. Flat: 20pts each, max 100.
         const polHistory = (hv.political_history || []).filter((p: any) => p && (p.organization || p.position));
         const allPolitical = [...polHistory, ...politicalFromWork];
         let politicalScore = Math.min(100, allPolitical.length * 20);
-        allPolitical.forEach((p: any) => { const pos = ((p.position || '') + ' ' + (p.employer || '')).toLowerCase(); if (pos.includes('alcalde') || pos.includes('presidente') || pos.includes('secretario general') || pos.includes('congresista') || pos.includes('gobernador') || pos.includes('ministro')) politicalScore = Math.min(100, politicalScore + 15); });
 
 
         // Finance (10%)
@@ -287,9 +320,6 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
         const sentences = hv.sentences || [];
         let judicialScore = 100;
         sentences.forEach((s: any) => { const type = (s.type || '').toLowerCase(); const verdict = (s.verdict || '').toLowerCase(); if (type.includes('penal')) { if (verdict.includes('condena') || verdict.includes('culpable')) judicialScore -= 50; else if (verdict.includes('suspendid')) judicialScore -= 30; else judicialScore -= 20; } else if (type.includes('civil')) judicialScore -= 10; else judicialScore -= 15; });
-        const resignations = hv.resignations || [];
-        if (resignations.length === 0) judicialScore = Math.min(100, judicialScore + 5);
-        else if (resignations.length > 3) judicialScore -= 10;
         judicialScore = Math.max(0, Math.min(100, judicialScore));
 
         return {
@@ -311,19 +341,19 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
         const coverageScore = Math.min(100, (dims.size / JNE_DIMS.length) * 100);
         let specTotal = 0; items.forEach(item => { const o = (item.objective || '').trim(); specTotal += o.length === 0 ? 0 : o.length < 30 ? 20 : o.length < 80 ? 50 : o.length < 150 ? 75 : 100; });
         const specificityScore = items.length > 0 ? specTotal / items.length : 0;
-        const goalsCount = items.filter(item => (item.goals || '').trim().length > 10).length;
-        const measurabilityScore = items.length > 0 ? (goalsCount / items.length) * 100 : 0;
+        let goalsCount = 0; items.forEach(item => { const g = (item.goals || '').trim(); const o = (item.objective || '').trim(); if (g.length > 3) goalsCount++; else if (o.length > 50) goalsCount += 0.5; else if ((item.problem || '').length > 100) goalsCount += 0.3; });
+        const measurabilityScore = items.length > 0 ? Math.min(100, (goalsCount / items.length) * 100) : 0;
         const indicatorsCount = items.filter(item => (item.indicator || '').trim().length > 5).length;
         const indicatorScore = items.length > 0 ? (indicatorsCount / items.length) * 100 : 0;
         let cohTotal = 0; items.forEach(item => { const prob = (item.problem || '').toLowerCase(); const obj = (item.objective || '').toLowerCase(); if (prob.length < 5 || obj.length < 5) return; const words = prob.split(/\s+/).filter(w => w.length > 4); if (words.length === 0) { cohTotal += 30; return; } const m = words.filter(w => obj.includes(w)).length / words.length; cohTotal += m >= 0.3 ? 100 : m >= 0.15 ? 70 : m > 0 ? 40 : 15; });
         const coherenceScore = items.length > 0 ? cohTotal / items.length : 0;
 
         return {
-            coverage: { score: Math.round(coverageScore), weight: 25, explain: `${dims.size} de ${JNE_DIMS.length} dimensiones cubiertas` },
-            specificity: { score: Math.round(specificityScore), weight: 25, explain: specificityScore >= 75 ? 'Objetivos detallados' : specificityScore >= 50 ? 'Objetivos moderados' : 'Objetivos vagos' },
-            measurability: { score: Math.round(measurabilityScore), weight: 20, explain: `${goalsCount} de ${items.length} ítems con metas concretas` },
-            indicators: { score: Math.round(indicatorScore), weight: 15, explain: `${indicatorsCount} de ${items.length} ítems con indicadores` },
-            coherence: { score: Math.round(coherenceScore), weight: 15, explain: coherenceScore >= 70 ? 'Buena coherencia problema-objetivo' : coherenceScore >= 40 ? 'Coherencia moderada' : 'Coherencia débil' },
+            coverage: { score: parseFloat(coverageScore.toFixed(1)), weight: 25, explain: `${dims.size} de ${JNE_DIMS.length} dimensiones cubiertas` },
+            specificity: { score: parseFloat(specificityScore.toFixed(1)), weight: 25, explain: specificityScore >= 75 ? 'Objetivos detallados' : specificityScore >= 50 ? 'Objetivos moderados' : 'Objetivos vagos' },
+            measurability: { score: parseFloat(measurabilityScore.toFixed(1)), weight: 20, explain: `${goalsCount} de ${items.length} ítems con metas concretas` },
+            indicators: { score: parseFloat(indicatorScore.toFixed(1)), weight: 15, explain: `${indicatorsCount} de ${items.length} ítems con indicadores` },
+            coherence: { score: parseFloat(coherenceScore.toFixed(1)), weight: 15, explain: coherenceScore >= 70 ? 'Buena coherencia problema-objetivo' : coherenceScore >= 40 ? 'Coherencia moderada' : 'Coherencia débil' },
             totalItems: items.length,
         };
     })();
@@ -392,6 +422,18 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         {/* Info */}
                         <div className="flex-1 text-center md:text-left">
                             <h1 className="text-2xl md:text-3xl font-black mb-1 leading-tight" style={{ color: 'var(--vp-text)' }}>{candidate.name}</h1>
+                            {(candidate as any).is_current_congressman && (
+                                <div style={{
+                                    display: 'inline-flex', alignItems: 'center', gap: 4,
+                                    fontSize: 11, fontWeight: 700, marginBottom: 8,
+                                    padding: '4px 12px', borderRadius: 6,
+                                    background: 'linear-gradient(135deg, #f9a825, #ff8f00)',
+                                    color: '#fff', letterSpacing: '0.03em',
+                                    boxShadow: '0 2px 8px rgba(249,168,37,0.35)',
+                                }}>
+                                    🏛️ CONGRESISTA ACTUAL {(candidate as any).congress_bancada ? `· ${(candidate as any).congress_bancada}` : ''}
+                                </div>
+                            )}
                             <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-3">
                                 <Link href={`/party/${candidate.party_id}`}
                                     className="text-sm font-bold px-3 py-1 rounded-lg hover:opacity-80 transition-opacity"
@@ -466,120 +508,266 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                     </div>
                 </div>
 
-                {/* ════════ UNIFIED SCORE PANEL ════════ */}
-                <div className="panel-glow">
-                    {/* Compact header with inline scores */}
-                    <div className="flex items-center justify-between mb-3">
-                        <h3 className="text-[10px] font-bold tracking-[2px] uppercase" style={{ color: 'var(--vp-text-dim)' }}>📊 Análisis del Score</h3>
-                        <p className="text-[9px] mt-1" style={{ color: 'var(--vp-text-dim)' }}>score = (HV×0.30) + (Plan×0.30) + (Experiencia×0.25) + (Integridad×0.15)
-                        </p>
-                        <div className="flex items-center gap-1">
-                            <span className="text-xs font-black px-2 py-0.5 rounded" style={{ background: '#312e8111', color: '#312e81', border: '1px solid #312e8133' }}>HV {hojaScore.toFixed(0)}</span>
-                            <span className="text-xs font-black px-2 py-0.5 rounded" style={{ background: 'rgba(30,58,95,0.06)', color: '#1e3a5f', border: '1px solid rgba(30,58,95,0.2)' }}>Plan {planScore.toFixed(0)}</span>
-                            <span className="text-xs font-black px-2 py-0.5 rounded" style={{ background: 'rgba(14,116,144,0.06)', color: '#0e7490', border: '1px solid rgba(14,116,144,0.2)' }}>Exp. {experienceScore.toFixed(0)}</span>
-                            <span className="text-xs font-black px-2 py-0.5 rounded" style={{ background: 'rgba(0,230,118,0.06)', color: 'var(--vp-green)', border: '1px solid rgba(0,230,118,0.2)' }}>Integ. {integrScore.toFixed(0)}</span>
-                            <span className="text-sm font-black ml-2" style={{ color: 'var(--vp-red)' }}>{finalScore.toFixed(1)}</span>
+                {/* ═══ UNIFIED SCORE PANEL ═══ */}
+                <div className="cp-score-panel">
+                    {/* ── Gradient accent bar ── */}
+                    <div className="cp-score-panel-accent" />
+
+                    {/* ── Header: Score gauges row ── */}
+                    <div className="cp-score-gauges" style={!isPresident ? { justifyContent: 'space-around' } : undefined}>
+                        {[
+                            { label: 'Hoja de Vida', score: hojaScore, weight: isPresident ? 30 : 40, accent: '#6366f1', icon: SvgIcon.fileText('#6366f1', 18) },
+                            ...(isPresident ? [{ label: 'Plan de Gobierno', score: planScore, weight: 30, accent: '#0ea5e9', icon: SvgIcon.clipboard('#0ea5e9', 18) }] : []),
+                            { label: 'Experiencia', score: experienceScore, weight: isPresident ? 25 : 35, accent: '#f59e0b', icon: SvgIcon.briefcase('#f59e0b', 18) },
+                            { label: 'Integridad', score: integrScore, weight: isPresident ? 15 : 25, accent: '#10b981', icon: SvgIcon.shield('#10b981', 18) },
+                        ].map((g, idx) => (
+                            <div key={idx} className="cp-gauge-item">
+                                <div className="cp-gauge-ring">
+                                    <svg viewBox="0 0 48 48">
+                                        <circle cx="24" cy="24" r="20" fill="none" stroke="rgba(0,0,0,0.06)" strokeWidth="3" />
+                                        <circle cx="24" cy="24" r="20" fill="none" stroke={g.accent} strokeWidth="3"
+                                            strokeDasharray={`${(g.score / 100) * 125.7} 125.7`} strokeLinecap="round"
+                                            style={{ transform: 'rotate(-90deg)', transformOrigin: 'center', filter: `drop-shadow(0 0 6px ${g.accent}40)` }} />
+                                    </svg>
+                                    <span className="cp-gauge-val" style={{ color: g.accent }}>{g.score.toFixed(1)}</span>
+                                </div>
+                                <div className="cp-gauge-meta">
+                                    <span className="cp-gauge-label">{g.label}</span>
+                                    <span className="cp-gauge-weight">{g.weight}% del score</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* ── Formula bar ── */}
+                    <div className="cp-formula-bar">
+                        <div className="cp-formula-bar-header">
+                            <div className="cp-formula-bar-title">
+                                {SvgIcon.barChart('#64748b', 14)}
+                                <span>Análisis del Score</span>
+                            </div>
+                            <div className="cp-formula-equation">
+                                {isPresident ? 'score = (HV×0.30) + (Plan×0.30) + (Exp×0.25) + (Integ×0.15)' : 'score = (HV×0.40) + (Exp×0.35) + (Integ×0.25)'}
+                            </div>
+                            <div className="cp-formula-result">
+                                <span className="cp-formula-result-val">{finalScore.toFixed(1)}</span>
+                            </div>
+                        </div>
+                        <div className="cp-formula-bars">
+                            {[
+                                { key: 'hv', label: 'Hoja de Vida', value: formulaBreakdown.hojaVida.value, raw: formulaBreakdown.hojaVida.raw, weight: isPresident ? 30 : 40, bg: 'linear-gradient(90deg, #6366f1, #818cf8)', color: '#6366f1',
+                                  explain: `Score HV: ${formulaBreakdown.hojaVida.raw.toFixed(1)}/100. Evalúa educación (25%), experiencia laboral (20%), experiencia política (15%), transparencia financiera (10%) y limpieza judicial (25%).` },
+                                ...(isPresident ? [{ key: 'plan', label: 'Plan de Gobierno', value: formulaBreakdown.planGobierno.value, raw: formulaBreakdown.planGobierno.raw, weight: 30, bg: 'linear-gradient(90deg, #0ea5e9, #38bdf8)', color: '#0ea5e9',
+                                  explain: `Score Plan: ${formulaBreakdown.planGobierno.raw.toFixed(1)}/100. Evalúa cobertura dimensional (25%), especificidad (25%), metas (20%), indicadores (15%) y coherencia (15%).` }] : []),
+                                { key: 'exp', label: 'Experiencia', value: formulaBreakdown.experiencia.value, raw: formulaBreakdown.experiencia.raw, weight: isPresident ? 25 : 35, bg: 'linear-gradient(90deg, #f59e0b, #fbbf24)', color: '#f59e0b',
+                                  explain: `Score Exp: ${formulaBreakdown.experiencia.raw.toFixed(1)}/100. Cada experiencia = 15pts + bonus 40pts por 20+ años (máx 100).` },
+                                { key: 'integ', label: 'Integridad', value: formulaBreakdown.integrity.value, raw: formulaBreakdown.integrity.raw, weight: isPresident ? 15 : 25, bg: 'linear-gradient(90deg, #10b981, #34d399)', color: '#10b981',
+                                  explain: `Score Integ: ${formulaBreakdown.integrity.raw.toFixed(1)}/100. Basado únicamente en sentencias judiciales. 100 = sin sentencias. -25 pts por cada sentencia.` },
+                            ].map((seg) => (
+                                <div key={seg.key} className="cp-formula-segment-wrap" style={{ flex: Math.max(seg.value, 0.5) }}>
+                                    <div className="cp-formula-segment-bar"
+                                        style={{ background: seg.bg, cursor: 'pointer' }}
+                                        onClick={() => setActiveModal(activeModal === `formula-${seg.key}` ? null : `formula-${seg.key}`)}
+                                        onMouseEnter={(e) => { e.currentTarget.style.filter = 'brightness(1.15)'; e.currentTarget.style.transform = 'scaleY(1.15)'; }}
+                                        onMouseLeave={(e) => { e.currentTarget.style.filter = 'none'; e.currentTarget.style.transform = 'scaleY(1)'; }}>
+                                        <span>{seg.value.toFixed(1)}</span>
+                                    </div>
+                                    <div className="cp-formula-segment-label">{seg.label} ({seg.weight}%)</div>
+                                    {activeModal === `formula-${seg.key}` && (
+                                        <div className="cp-formula-popover" style={{ borderColor: `${seg.color}33` }}>
+                                            <div className="cp-formula-popover-header" style={{ color: seg.color }}>
+                                                {seg.label}: {seg.raw.toFixed(0)}/100 × {seg.weight}% = {seg.value.toFixed(1)} pts
+                                            </div>
+                                            <div className="cp-formula-popover-body">{seg.explain}</div>
+                                            <div className="cp-formula-popover-close" onClick={(e) => { e.stopPropagation(); setActiveModal(null); }}>✕</div>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
                         </div>
                     </div>
-                    {/* Compact formula bars */}
-                    <div className="grid grid-cols-4 gap-x-3 gap-y-0 mb-2">
-                        <BreakdownBar label="HV (30%)" value={formulaBreakdown.hojaVida.value} maxValue={30} color="#312e81" />
-                        <BreakdownBar label="Plan (30%)" value={formulaBreakdown.planGobierno.value} maxValue={30} color="#1e3a5f" />
-                        <BreakdownBar label="Exp. (25%)" value={formulaBreakdown.experiencia.value} maxValue={25} color="#0e7490" />
-                        <BreakdownBar label="Integridad (15%)" value={formulaBreakdown.integrity.value} maxValue={15} color="var(--vp-green)" />
+
+                    {/* ── Detail header ── */}
+                    <div className="cp-detail-header">
+                        {SvgIcon.search('#64748b', 14)}
+                        <span>¿Por qué este Score?</span>
                     </div>
 
-                    {/* ── Detailed Sub-breakdowns ── */}
-                    <div className="text-[10px] font-bold tracking-[2px] uppercase mb-3" style={{ color: 'var(--vp-text-dim)' }}>🔍 ¿Por qué este Score?</div>
-
-                    {/* HV + Plan side by side on desktop */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    {/* ── HV + Plan side by side (presidential) or HV full-width (others) ── */}
+                    <div className="cp-detail-grid" style={!isPresident ? { gridTemplateColumns: '1fr' } : undefined}>
                         {/* Hoja de Vida */}
-                        <div className="rounded-xl overflow-hidden" style={{ border: '1px solid #312e8133' }}>
-                            <div className="px-3 py-2 flex items-center justify-between" style={{ background: '#312e8111' }}>
-                                <span className="text-xs font-bold" style={{ color: '#312e81' }}>📄 Hoja de Vida</span>
-                                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: '#312e8122', color: '#312e81' }}>{hojaScore.toFixed(0)}/100 → {(hojaScore * 0.30).toFixed(1)}pts</span>
+                        <div className="cp-detail-card" style={{ borderColor: '#6366f122' }}>
+                            <div className="cp-detail-card-header" style={{ background: 'linear-gradient(135deg, #6366f10d, #6366f104)' }}>
+                                <div className="cp-detail-card-title">
+                                    {SvgIcon.fileText('#6366f1', 16)}
+                                    <span style={{ color: '#6366f1' }}>Hoja de Vida</span>
+                                </div>
+                                <span className="cp-detail-card-badge" style={{ background: '#6366f115', color: '#6366f1' }}>{hojaScore.toFixed(1)}/100 → {(hojaScore * (isPresident ? 0.30 : 0.40)).toFixed(1)}pts</span>
                             </div>
-                            <div className="p-3 space-y-1">
-                                <SubScoreRow icon="🎓" label="Educación" weight={25} score={hvDetail.education.score} explain={hvDetail.education.explain} detail={hvDetail.education.details} color="#312e81" onClick={() => setActiveModal('hv-education')} />
-                                <SubScoreRow icon="💼" label="Exp. Laboral" weight={20} score={hvDetail.work.score} explain={hvDetail.work.explain} color="#312e81" onClick={() => setActiveModal('hv-work')} />
-                                <SubScoreRow icon="🏛️" label="Exp. Política" weight={15} score={hvDetail.political.score} explain={hvDetail.political.explain} color="#312e81" onClick={() => setActiveModal('hv-political')} />
-                                <SubScoreRow icon="💰" label="Finanzas" weight={10} score={hvDetail.finance.score} explain={hvDetail.finance.explain} color="#312e81" onClick={() => setActiveModal('hv-finance')} />
-                                <SubScoreRow icon="⚖️" label="Judicial" weight={25} score={hvDetail.judicial.score} explain={hvDetail.judicial.explain} color="#312e81" onClick={() => setActiveModal('hv-judicial')} />
+                            <div className="cp-detail-card-body" style={!isPresident ? { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 24px' } : undefined}>
+                                <SubScoreRow icon={SvgIcon.graduation('#6366f1')} label="Educación" weight={25} score={hvDetail.education.score} explain={hvDetail.education.explain} detail={hvDetail.education.details} color="#6366f1" onClick={() => setActiveModal('hv-education')} />
+                                <SubScoreRow icon={SvgIcon.briefcase('#6366f1')} label="Exp. Laboral" weight={20} score={hvDetail.work.score} explain={hvDetail.work.explain} color="#6366f1" onClick={() => setActiveModal('hv-work')} />
+                                <SubScoreRow icon={SvgIcon.building('#6366f1')} label="Exp. Política" weight={15} score={hvDetail.political.score} explain={hvDetail.political.explain} color="#6366f1" onClick={() => setActiveModal('hv-political')} />
+                                <SubScoreRow icon={SvgIcon.coins('#6366f1')} label="Finanzas" weight={10} score={hvDetail.finance.score} explain={hvDetail.finance.explain} color="#6366f1" onClick={() => setActiveModal('hv-finance')} />
+                                <SubScoreRow icon={SvgIcon.scale('#6366f1')} label="Judicial" weight={25} score={hvDetail.judicial.score} explain={hvDetail.judicial.explain} color="#6366f1" onClick={() => setActiveModal('hv-judicial')} />
                             </div>
                         </div>
 
-                        {/* Plan de Gobierno */}
-                        <div className="rounded-xl overflow-hidden" style={{ border: '1px solid rgba(30,58,95,0.2)' }}>
-                            <div className="px-3 py-2 flex items-center justify-between" style={{ background: 'rgba(30,58,95,0.06)' }}>
-                                <span className="text-xs font-bold" style={{ color: '#1e3a5f' }}>📋 Plan de Gobierno</span>
-                                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: 'rgba(30,58,95,0.12)', color: '#1e3a5f' }}>{planScore.toFixed(0)}/100 → {(planScore * 0.30).toFixed(1)}pts</span>
+                        {/* Plan de Gobierno — only for presidential candidates */}
+                        {isPresident && (
+                        <div className="cp-detail-card" style={{ borderColor: '#0ea5e922' }}>
+                            <div className="cp-detail-card-header" style={{ background: 'linear-gradient(135deg, #0ea5e90d, #0ea5e904)' }}>
+                                <div className="cp-detail-card-title">
+                                    {SvgIcon.clipboard('#0ea5e9', 16)}
+                                    <span style={{ color: '#0ea5e9' }}>Plan de Gobierno</span>
+                                </div>
+                                <span className="cp-detail-card-badge" style={{ background: '#0ea5e915', color: '#0ea5e9' }}>{planScore.toFixed(1)}/100 → {(planScore * 0.30).toFixed(1)}pts</span>
                             </div>
                             {planDetail ? (
-                                <div className="p-3 space-y-1">
-                                    <div className="text-[9px] mb-1 px-2 py-0.5 rounded" style={{ background: 'rgba(30,58,95,0.04)', color: 'var(--vp-text-dim)' }}>
-                                        {planDetail.totalItems} ítems evaluados
-                                    </div>
-                                    <SubScoreRow icon="🌐" label="Cobertura" weight={25} score={planDetail.coverage.score} explain={planDetail.coverage.explain} color="#1e3a5f" onClick={() => setActiveModal('plan-coverage')} />
-                                    <SubScoreRow icon="🎯" label="Especificidad" weight={25} score={planDetail.specificity.score} explain={planDetail.specificity.explain} color="#1e3a5f" onClick={() => setActiveModal('plan-specificity')} />
-                                    <SubScoreRow icon="📈" label="Metas" weight={20} score={planDetail.measurability.score} explain={planDetail.measurability.explain} color="#1e3a5f" onClick={() => setActiveModal('plan-goals')} />
-                                    <SubScoreRow icon="📏" label="Indicadores" weight={15} score={planDetail.indicators.score} explain={planDetail.indicators.explain} color="#1e3a5f" onClick={() => setActiveModal('plan-indicators')} />
-                                    <SubScoreRow icon="🔗" label="Coherencia" weight={15} score={planDetail.coherence.score} explain={planDetail.coherence.explain} color="#1e3a5f" onClick={() => setActiveModal('plan-coherence')} />
+                                <div className="cp-detail-card-body">
+                                    <div className="cp-detail-items-count">{planDetail.totalItems} ítems evaluados</div>
+                                    <SubScoreRow icon={SvgIcon.globe('#0ea5e9')} label="Cobertura" weight={25} score={planDetail.coverage.score} explain={planDetail.coverage.explain} color="#0ea5e9" onClick={() => setActiveModal('plan-coverage')} />
+                                    <SubScoreRow icon={SvgIcon.target('#0ea5e9')} label="Especificidad" weight={25} score={planDetail.specificity.score} explain={planDetail.specificity.explain} color="#0ea5e9" onClick={() => setActiveModal('plan-specificity')} />
+                                    <SubScoreRow icon={SvgIcon.trendUp('#0ea5e9')} label="Metas" weight={20} score={planDetail.measurability.score} explain={planDetail.measurability.explain} color="#0ea5e9" onClick={() => setActiveModal('plan-goals')} />
+                                    <SubScoreRow icon={SvgIcon.ruler('#0ea5e9')} label="Indicadores" weight={15} score={planDetail.indicators.score} explain={planDetail.indicators.explain} color="#0ea5e9" onClick={() => setActiveModal('plan-indicators')} />
+                                    <SubScoreRow icon={SvgIcon.link('#0ea5e9')} label="Coherencia" weight={15} score={planDetail.coherence.score} explain={planDetail.coherence.explain} color="#0ea5e9" onClick={() => setActiveModal('plan-coherence')} />
                                 </div>
                             ) : (
-                                <div className="p-3 text-xs" style={{ color: 'var(--vp-text-dim)' }}>Sin plan registrado en JNE.</div>
+                                <div className="cp-detail-card-body cp-detail-empty">Sin plan registrado en JNE.</div>
                             )}
                         </div>
+                        )}
                     </div>
 
-                    {/* Experiencia + Integridad side by side */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* Experiencia Laboral */}
-                        <div className="rounded-xl overflow-hidden cursor-pointer transition-all duration-200"
-                            style={{ border: '1px solid rgba(14,116,144,0.2)' }}
-                            onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(14,116,144,0.5)'; e.currentTarget.style.background = 'rgba(14,116,144,0.04)'; e.currentTarget.style.transform = 'scale(1.01)'; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(14,116,144,0.2)'; e.currentTarget.style.background = 'transparent'; e.currentTarget.style.transform = 'scale(1)'; }}
-                            onClick={() => setActiveModal('experiencia')}>
-                            <div className="px-3 py-2 flex items-center justify-between" style={{ background: 'rgba(14,116,144,0.06)' }}>
-                                <span className="text-xs font-bold" style={{ color: '#0e7490' }}>💼 Experiencia Laboral</span>
-                                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: 'rgba(14,116,144,0.12)', color: '#0e7490' }}>{experienceScore.toFixed(0)}/100 → {(experienceScore * 0.25).toFixed(1)}pts</span>
-                            </div>
-                            <div className="p-3 flex items-center gap-3">
-                                <div className="flex-1">
-                                    <div className="text-sm font-semibold" style={{ color: 'var(--vp-text)' }}>
-                                        {experienceScore >= 80 ? '✅ Amplia experiencia' : experienceScore >= 50 ? '📋 Experiencia moderada' : experienceScore >= 20 ? '⚠️ Experiencia limitada' : '🔴 Sin experiencia registrada'}
-                                    </div>
-                                    <div className="text-[9px] mt-0.5" style={{ color: 'var(--vp-text-dim)' }}>Basado en experiencia laboral y profesional declarada</div>
+                    {/* ── Experiencia + Integridad ── */}
+                    <div className="cp-detail-grid">
+                        {/* Experiencia */}
+                        <div className="cp-detail-card cp-detail-card-compact" style={{ borderColor: '#f59e0b22', cursor: 'pointer' }}
+                            onClick={() => setActiveModal('experiencia')}
+                            onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#f59e0b55'; e.currentTarget.style.background = '#f59e0b06'; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#f59e0b22'; e.currentTarget.style.background = 'transparent'; }}>
+                            <div className="cp-detail-card-header" style={{ background: 'linear-gradient(135deg, #f59e0b0d, #f59e0b04)' }}>
+                                <div className="cp-detail-card-title">
+                                    {SvgIcon.briefcase('#f59e0b', 16)}
+                                    <span style={{ color: '#f59e0b' }}>Experiencia Laboral</span>
                                 </div>
-                                <div className="shrink-0 w-12 h-12 rounded-full flex items-center justify-center" style={{ background: 'rgba(14,116,144,0.08)', border: '2px solid rgba(14,116,144,0.25)' }}>
-                                    <span className="text-base font-black" style={{ color: '#0e7490' }}>{experienceScore.toFixed(0)}</span>
+                                <span className="cp-detail-card-badge" style={{ background: '#f59e0b15', color: '#f59e0b' }}>{experienceScore.toFixed(1)}/100 → {(experienceScore * 0.25).toFixed(1)}pts</span>
+                            </div>
+                            <div className="cp-detail-compact-body">
+                                <div className="cp-detail-compact-info">
+                                    <div className="cp-detail-compact-status" style={{ color: 'var(--vp-text)' }}>
+                                        {experienceScore >= 80 ? 'Amplia experiencia' : experienceScore >= 50 ? 'Experiencia moderada' : experienceScore >= 20 ? 'Experiencia limitada' : 'Sin experiencia registrada'}
+                                    </div>
+                                    <div className="cp-detail-compact-sub">Basado en experiencia laboral y profesional declarada</div>
+                                </div>
+                                <div className="cp-detail-compact-score" style={{ borderColor: '#f59e0b33' }}>
+                                    <span style={{ color: '#f59e0b' }}>{experienceScore.toFixed(1)}</span>
                                 </div>
                             </div>
                         </div>
 
                         {/* Integridad */}
-                        <div className="rounded-xl overflow-hidden cursor-pointer transition-all duration-200"
-                            style={{ border: '1px solid rgba(0,230,118,0.2)' }}
-                            onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(0,230,118,0.5)'; e.currentTarget.style.background = 'rgba(0,230,118,0.04)'; e.currentTarget.style.transform = 'scale(1.01)'; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(0,230,118,0.2)'; e.currentTarget.style.background = 'transparent'; e.currentTarget.style.transform = 'scale(1)'; }}
-                            onClick={() => setActiveModal('integridad')}>
-                            <div className="px-3 py-2 flex items-center justify-between" style={{ background: 'rgba(0,230,118,0.06)' }}>
-                                <span className="text-xs font-bold" style={{ color: 'var(--vp-green)' }}>🛡️ Integridad</span>
-                                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: 'rgba(0,230,118,0.12)', color: 'var(--vp-green)' }}>{integrScore.toFixed(0)}/100 → {(integrScore * 0.15).toFixed(1)}pts</span>
-                            </div>
-                            <div className="p-3 flex items-center gap-3">
-                                <div className="flex-1">
-                                    <div className="text-sm font-semibold" style={{ color: 'var(--vp-text)' }}>
-                                        {integrScore >= 90 ? '✅ Historial limpio' : integrScore >= 70 ? '⚠️ Observaciones menores' : integrScore >= 50 ? '🟡 Alertas moderadas' : '🔴 Alertas significativas'}
-                                    </div>
-                                    <div className="text-[9px] mt-0.5" style={{ color: 'var(--vp-text-dim)' }}>Sentencias, transparencia, historial partidario</div>
+                        <div className="cp-detail-card cp-detail-card-compact" style={{ borderColor: '#10b98122', cursor: 'pointer' }}
+                            onClick={() => setActiveModal('integridad')}
+                            onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#10b98155'; e.currentTarget.style.background = '#10b98106'; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#10b98122'; e.currentTarget.style.background = 'transparent'; }}>
+                            <div className="cp-detail-card-header" style={{ background: 'linear-gradient(135deg, #10b9810d, #10b98104)' }}>
+                                <div className="cp-detail-card-title">
+                                    {SvgIcon.shield('#10b981', 16)}
+                                    <span style={{ color: '#10b981' }}>Integridad</span>
                                 </div>
-                                <div className="shrink-0 w-12 h-12 rounded-full flex items-center justify-center" style={{ background: 'rgba(0,230,118,0.08)', border: `2px solid ${integrScore >= 70 ? 'rgba(0,230,118,0.25)' : 'rgba(255,23,68,0.25)'}` }}>
-                                    <span className="text-base font-black" style={{ color: integrScore >= 70 ? 'var(--vp-green)' : 'var(--vp-red)' }}>{integrScore.toFixed(0)}</span>
+                                <span className="cp-detail-card-badge" style={{ background: '#10b98115', color: '#10b981' }}>{integrScore.toFixed(1)}/100 → {(integrScore * 0.15).toFixed(1)}pts</span>
+                            </div>
+                            <div className="cp-detail-compact-body">
+                                <div className="cp-detail-compact-info">
+                                    <div className="cp-detail-compact-status" style={{ color: 'var(--vp-text)' }}>
+                                        {integrScore >= 90 ? 'Historial limpio' : integrScore >= 70 ? 'Observaciones menores' : integrScore >= 50 ? 'Alertas moderadas' : 'Alertas significativas'}
+                                    </div>
+                                    <div className="cp-detail-compact-sub">Basado en sentencias judiciales declaradas (-25 pts c/u)</div>
+                                </div>
+                                <div className="cp-detail-compact-score" style={{ borderColor: `${integrScore >= 70 ? '#10b981' : 'var(--vp-red)'}33` }}>
+                                    <span style={{ color: integrScore >= 70 ? '#10b981' : 'var(--vp-red)' }}>{integrScore.toFixed(1)}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    {/* ── Desempeño Congresal (only for congress members) ── */}
+                    {(candidate as any).is_current_congressman && (candidate as any).congress_proyectos && (
+                        <div style={{
+                            marginTop: 16, borderRadius: 14, overflow: 'hidden',
+                            border: '1px solid rgba(249,168,37,0.2)',
+                            background: '#fff',
+                        }}>
+                            <div style={{
+                                background: 'linear-gradient(135deg, #1B2A4A, #2c3e6b)',
+                                padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 10,
+                            }}>
+                                <span style={{ fontSize: 20 }}>🏛️</span>
+                                <div>
+                                    <div style={{ fontSize: 13, fontWeight: 800, color: '#fff' }}>Desempeño Congresal 2021-2026</div>
+                                    <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)', fontWeight: 500 }}>
+                                        Bancada: {(candidate as any).congress_bancada}
+                                        {(candidate as any).congress_bancada_original && (
+                                            <span style={{ color: '#f9a825' }}> (antes: {(candidate as any).congress_bancada_original})</span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Stats row */}
+                            <div style={{ display: 'flex', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                                <div style={{ flex: 1, padding: '16px 12px', textAlign: 'center', borderRight: '1px solid rgba(0,0,0,0.05)' }}>
+                                    <div style={{ fontSize: 9, fontWeight: 700, color: '#90a4ae', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Proyectos de Ley</div>
+                                    <div style={{
+                                        fontSize: 28, fontWeight: 900,
+                                        color: (candidate as any).congress_proyectos >= 40 ? '#2e7d32' : (candidate as any).congress_proyectos >= 20 ? '#e65100' : '#c62828',
+                                    }}>
+                                        {(candidate as any).congress_proyectos}
+                                    </div>
+                                    <div style={{ fontSize: 9, color: '#b0bec5', marginTop: 2 }}>presentados</div>
+                                </div>
+                                <div style={{ flex: 1, padding: '16px 12px', textAlign: 'center', borderRight: '1px solid rgba(0,0,0,0.05)' }}>
+                                    <div style={{ fontSize: 9, fontWeight: 700, color: '#90a4ae', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Asistencia al Pleno</div>
+                                    <div style={{
+                                        fontSize: 28, fontWeight: 900,
+                                        color: (candidate as any).congress_asistencia >= 85 ? '#2e7d32' : (candidate as any).congress_asistencia >= 75 ? '#e65100' : '#c62828',
+                                    }}>
+                                        {(candidate as any).congress_asistencia}%
+                                    </div>
+                                    <div style={{ fontSize: 9, color: '#b0bec5', marginTop: 2 }}>de sesiones</div>
+                                </div>
+                                <div style={{ flex: 1, padding: '16px 12px', textAlign: 'center' }}>
+                                    <div style={{ fontSize: 9, fontWeight: 700, color: '#90a4ae', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Cambio de Bancada</div>
+                                    <div style={{
+                                        fontSize: 28, fontWeight: 900,
+                                        color: (candidate as any).congress_cambio_bancada ? '#c62828' : '#2e7d32',
+                                    }}>
+                                        {(candidate as any).congress_cambio_bancada ? 'SÍ' : 'NO'}
+                                    </div>
+                                    <div style={{ fontSize: 9, color: '#b0bec5', marginTop: 2 }}>tránsfuga</div>
+                                </div>
+                            </div>
+
+                            {/* Committees */}
+                            {(candidate as any).congress_comisiones?.length > 0 && (
+                                <div style={{ padding: '12px 20px', borderBottom: '1px solid rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                                    <span style={{ fontSize: 10, fontWeight: 700, color: '#607d8b' }}>Comisiones:</span>
+                                    {((candidate as any).congress_comisiones as string[]).map((c: string) => (
+                                        <span key={c} style={{ fontSize: 10, fontWeight: 600, padding: '2px 8px', borderRadius: 6, background: '#f0f4f8', color: '#455a64' }}>{c}</span>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Highlight */}
+                            {(candidate as any).congress_destacado && (
+                                <div style={{ padding: '12px 20px', fontSize: 12, color: '#455a64', lineHeight: 1.5, display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+                                    <span>💡</span>
+                                    <span>{(candidate as any).congress_destacado}</span>
+                                </div>
+                            )}
+                        </div>
+                    )}
 
                     {/* ══ SCORE DETAIL MODALS ══ */}
                     {activeModal === 'hv-education' && (() => {
@@ -588,8 +776,8 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         const uni = (edu.university || []).filter((u: any) => u && (u.institution || u.degree));
                         const post = (edu.postgraduate || []).filter((p: any) => p && (p.institution || p.specialty));
                         return (
-                            <ScoreDetailModal title="Educación" icon="🎓" score={hvDetail.education.score} color="#312e81" onClose={() => setActiveModal(null)}>
-                                <div className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: '#312e81' }}>Criterio de evaluación</div>
+                            <ScoreDetailModal title="Educación" icon="🎓" score={hvDetail.education.score} color="#6366f1" onClose={() => setActiveModal(null)}>
+                                <div className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: '#6366f1' }}>Criterio de evaluación</div>
                                 <div className="text-xs mb-4 leading-relaxed" style={{ color: 'var(--vp-text-dim)' }}>Se evalúa el nivel educativo: básica (10pts), técnica (30pts), universitaria (55-70pts), posgrado (85-100pts). Bonus por múltiples títulos.</div>
                                 {edu.basic && <DetailItem icon="📚" label="Educación Básica" value={`Primaria: ${edu.basic.primary_completed ? 'Completada ✅' : 'No completada'} | Secundaria: ${edu.basic.secondary_completed ? 'Completada ✅' : 'No completada'}`} />}
                                 {tech.map((t: any, i: number) => <DetailItem key={`t${i}`} icon="🔧" label={`Técnico ${i + 1}`} value={`${t.specialty || t.degree || 'Sin especificar'} — ${t.institution || 'Sin institución'}${t.completed ? ' ✅' : ''}`} />)}
@@ -605,9 +793,9 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         const allWork = (hv.work_experience || []).filter((w: any) => w && (w.position || w.employer));
                         const pureWork = allWork.filter((w: any) => { const p = ((w.position || '') + ' ' + (w.employer || '')).toLowerCase(); return !POL_KW.some(kw => p.includes(kw)) && !p.includes('municipalidad') && !p.includes('gobierno regional') && !p.includes('congreso'); });
                         return (
-                            <ScoreDetailModal title="Experiencia Laboral" icon="💼" score={hvDetail.work.score} color="#312e81" onClose={() => setActiveModal(null)}>
-                                <div className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: '#312e81' }}>Criterio</div>
-                                <div className="text-xs mb-4 leading-relaxed" style={{ color: 'var(--vp-text-dim)' }}>Cada experiencia no-política = 15pts (máx 100). Bonus +10pts por empleos de 5+ años.</div>
+                            <ScoreDetailModal title="Experiencia Laboral" icon="💼" score={hvDetail.work.score} color="#6366f1" onClose={() => setActiveModal(null)}>
+                                <div className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: '#6366f1' }}>Criterio</div>
+                                <div className="text-xs mb-4 leading-relaxed" style={{ color: 'var(--vp-text-dim)' }}>Cada experiencia no-política = 15pts (máx 100). Bonus +40pts por empleos de 20+ años.</div>
                                 {pureWork.length > 0 ? pureWork.map((w: any, i: number) => <DetailItem key={i} icon="💼" label={w.position || 'Cargo'} value={`${w.employer || ''}${w.period ? ` (${w.period})` : ''}${w.comment ? ` — ${w.comment}` : ''}`} />) : <DetailItem icon="ℹ️" label="Sin experiencia laboral" value="No se encontraron experiencias no-políticas en JNE." />}
                             </ScoreDetailModal>
                         );
@@ -617,7 +805,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         const polHist = (hv.political_history || []).filter((p: any) => p && (p.organization || p.position));
                         const elections = hv.elections || [];
                         return (
-                            <ScoreDetailModal title="Experiencia Política" icon="🏛️" score={hvDetail.political.score} color="#312e81" onClose={() => setActiveModal(null)}>
+                            <ScoreDetailModal title="Experiencia Política" icon="🏛️" score={hvDetail.political.score} color="#6366f1" onClose={() => setActiveModal(null)}>
                                 <div className="text-xs mb-4 leading-relaxed" style={{ color: 'var(--vp-text-dim)' }}>Cada cargo político = 20pts (máx 100). Bonus +15pts por roles de liderazgo.</div>
                                 {polHist.length > 0 && polHist.map((p: any, i: number) => <DetailItem key={`ph${i}`} icon="🏛️" label={p.position || 'Cargo'} value={`${p.organization || ''} (${p.start_year || '?'} - ${p.end_year || 'Actualidad'})`} />)}
                                 {elections.length > 0 && elections.map((e: any, i: number) => <DetailItem key={`el${i}`} icon="🗳️" label={e.position || 'Cargo'} value={`${e.organization || ''} (${e.period || '?'})${e.comment ? ` — ${e.comment}` : ''}`} />)}
@@ -631,7 +819,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         const props = fin.properties || [];
                         const vehs = fin.vehicles || [];
                         return (
-                            <ScoreDetailModal title="Transparencia Financiera" icon="💰" score={hvDetail.finance.score} color="#312e81" onClose={() => setActiveModal(null)}>
+                            <ScoreDetailModal title="Transparencia Financiera" icon="💰" score={hvDetail.finance.score} color="#6366f1" onClose={() => setActiveModal(null)}>
                                 <div className="text-xs mb-4 leading-relaxed" style={{ color: 'var(--vp-text-dim)' }}>Score 100 si declaró información financiera, 0 si no. No se juzga por monto.</div>
                                 {fin.total_income !== undefined && <DetailItem icon="💵" label="Ingreso Total" value={`S/ ${Number(fin.total_income || 0).toLocaleString()}${fin.year ? ` (${fin.year})` : ''}`} />}
                                 {props.map((p: any, i: number) => <DetailItem key={`pr${i}`} icon="🏠" label={`Propiedad ${i + 1}`} value={`${p.type || 'Inmueble'}${p.value ? ` — S/ ${Number(p.value).toLocaleString()}` : ''}`} />)}
@@ -645,7 +833,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         const sentences = hv.sentences || [];
                         const resignations = (hv.resignations || []).filter((r: any) => r && (r.organization || r.year));
                         return (
-                            <ScoreDetailModal title="Limpieza Judicial" icon="⚖️" score={hvDetail.judicial.score} color="#312e81" onClose={() => setActiveModal(null)}>
+                            <ScoreDetailModal title="Limpieza Judicial" icon="⚖️" score={hvDetail.judicial.score} color="#6366f1" onClose={() => setActiveModal(null)}>
                                 <div className="text-xs mb-4 leading-relaxed" style={{ color: 'var(--vp-text-dim)' }}>Inicia en 100. Penales restan 20-50pts. Civiles restan 10pts. Sin renuncias: +5pts bonus.</div>
                                 {sentences.length === 0 ? <DetailItem icon="✅" label="Sin sentencias" value="No se registran sentencias judiciales." color="var(--vp-green)" /> : sentences.map((s: any, i: number) => <DetailItem key={i} icon="⚠️" label={`${s.type || 'Sentencia'}: ${s.crime || 'Sin detalle'}`} value={`${s.court ? `Juzgado: ${s.court}` : ''}${s.sentence ? ` — ${s.sentence}` : 'Sin sentencia especificada'}`} color="var(--vp-red)" />)}
                                 {resignations.length > 0 && resignations.map((r: any, i: number) => <DetailItem key={`rn${i}`} icon="🚪" label={`Renuncia ${i + 1}`} value={`${r.organization || ''}${r.year ? ` (${r.year})` : ''}`} />)}
@@ -659,7 +847,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                         const covered = new Set<string>();
                         items.forEach(item => { const d = (item.dimension || '').toLowerCase(); JNE_DIMS.forEach(j => { if (d.includes(j.toLowerCase().substring(0, 5))) covered.add(j); }); });
                         return (
-                            <ScoreDetailModal title="Cobertura Dimensional" icon="🌐" score={planDetail.coverage.score} color="var(--vp-blue)" onClose={() => setActiveModal(null)}>
+                            <ScoreDetailModal title="Cobertura Dimensional" icon="🌐" score={planDetail.coverage.score} color="#0ea5e9" onClose={() => setActiveModal(null)}>
                                 <div className="text-xs mb-4" style={{ color: 'var(--vp-text-dim)' }}>JNE exige 6 dimensiones. Score = (cubiertas / 6) x 100.</div>
                                 {JNE_DIMS.map((d, i) => <DetailItem key={i} icon={covered.has(d) ? '✅' : '❌'} label={d} value={covered.has(d) ? 'Cubierta' : 'No cubierta'} color={covered.has(d) ? 'var(--vp-green)' : 'var(--vp-red)'} />)}
                             </ScoreDetailModal>
@@ -669,7 +857,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                     {activeModal === 'plan-specificity' && planDetail && (() => {
                         const items = candidate.plan_gobierno || [];
                         return (
-                            <ScoreDetailModal title="Especificidad" icon="🎯" score={planDetail.specificity.score} color="var(--vp-blue)" onClose={() => setActiveModal(null)}>
+                            <ScoreDetailModal title="Especificidad" icon="🎯" score={planDetail.specificity.score} color="#0ea5e9" onClose={() => setActiveModal(null)}>
                                 <div className="text-xs mb-4" style={{ color: 'var(--vp-text-dim)' }}>Evalúa detalle de objetivos. Corto = 20pts, moderado = 50pts, detallado = 100pts.</div>
                                 {items.map((item, i) => { const len = (item.objective || '').length; const lvl = len < 30 ? 'Vago' : len < 80 ? 'Moderado' : 'Detallado'; return <DetailItem key={i} icon={len >= 80 ? '✅' : '⚠️'} label={item.problem || `Ítem ${i + 1}`} value={`"${item.objective || 'Sin objetivo'}" (${len} chars — ${lvl})`} />; })}
                             </ScoreDetailModal>
@@ -679,9 +867,9 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                     {activeModal === 'plan-goals' && planDetail && (() => {
                         const items = candidate.plan_gobierno || [];
                         return (
-                            <ScoreDetailModal title="Metas Concretas" icon="📈" score={planDetail.measurability.score} color="var(--vp-blue)" onClose={() => setActiveModal(null)}>
-                                <div className="text-xs mb-4" style={{ color: 'var(--vp-text-dim)' }}>Evalúa si cada ítem tiene metas medibles (+10 caracteres).</div>
-                                {items.map((item, i) => { const ok = (item.goals || '').trim().length > 10; return <DetailItem key={i} icon={ok ? '✅' : '❌'} label={item.problem || `Ítem ${i + 1}`} value={ok ? item.goals! : 'Sin meta concreta'} color={ok ? 'var(--vp-green)' : 'var(--vp-red)'} />; })}
+                            <ScoreDetailModal title="Metas Concretas" icon="📈" score={planDetail.measurability.score} color="#0ea5e9" onClose={() => setActiveModal(null)}>
+                                <div className="text-xs mb-4" style={{ color: 'var(--vp-text-dim)' }}>Evalúa si cada ítem tiene metas medibles.</div>
+                                {items.map((item, i) => { const ok = (item.goals || '').trim().length > 3 || (item.objective || '').trim().length > 50; return <DetailItem key={i} icon={ok ? '✅' : '❌'} label={item.problem || `Ítem ${i + 1}`} value={ok ? (item.goals || item.objective || 'Meta implícita') : 'Sin meta concreta'} color={ok ? 'var(--vp-green)' : 'var(--vp-red)'} />; })}
                             </ScoreDetailModal>
                         );
                     })()}
@@ -689,7 +877,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                     {activeModal === 'plan-indicators' && planDetail && (() => {
                         const items = candidate.plan_gobierno || [];
                         return (
-                            <ScoreDetailModal title="Indicadores" icon="📏" score={planDetail.indicators.score} color="var(--vp-blue)" onClose={() => setActiveModal(null)}>
+                            <ScoreDetailModal title="Indicadores" icon="📏" score={planDetail.indicators.score} color="#0ea5e9" onClose={() => setActiveModal(null)}>
                                 <div className="text-xs mb-4" style={{ color: 'var(--vp-text-dim)' }}>Evalúa si cada ítem tiene indicadores de medición (+5 chars).</div>
                                 {items.map((item, i) => { const ok = (item.indicator || '').trim().length > 5; return <DetailItem key={i} icon={ok ? '✅' : '❌'} label={item.problem || `Ítem ${i + 1}`} value={ok ? item.indicator! : 'Sin indicador'} color={ok ? 'var(--vp-green)' : 'var(--vp-red)'} />; })}
                             </ScoreDetailModal>
@@ -699,46 +887,39 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                     {activeModal === 'plan-coherence' && planDetail && (() => {
                         const items = candidate.plan_gobierno || [];
                         return (
-                            <ScoreDetailModal title="Coherencia" icon="🔗" score={planDetail.coherence.score} color="var(--vp-blue)" onClose={() => setActiveModal(null)}>
+                            <ScoreDetailModal title="Coherencia" icon="🔗" score={planDetail.coherence.score} color="#0ea5e9" onClose={() => setActiveModal(null)}>
                                 <div className="text-xs mb-4" style={{ color: 'var(--vp-text-dim)' }}>Evalúa coincidencia entre problema y objetivo planteado.</div>
                                 {items.map((item, i) => <DetailItem key={i} icon="🔗" label={item.problem || `Ítem ${i + 1}`} value={`Objetivo: "${item.objective || 'Sin objetivo'}"`} />)}
                             </ScoreDetailModal>
                         );
                     })()}
 
-
                     {activeModal === 'experiencia' && (
-                        <ScoreDetailModal title="Experiencia Laboral" icon="💼" score={Math.round(experienceScore)} color="var(--vp-gold)" onClose={() => setActiveModal(null)}>
-                            <div className="text-xs mb-4" style={{ color: 'var(--vp-text-dim)' }}>Evalúa la experiencia laboral y profesional declarada ante el JNE. Cada trabajo valido = 15pts, bonus por longevidad (+5 años).</div>
+                        <ScoreDetailModal title="Experiencia Laboral" icon="💼" score={parseFloat(experienceScore.toFixed(1))} color="#f59e0b" onClose={() => setActiveModal(null)}>
+                            <div className="text-xs mb-4" style={{ color: 'var(--vp-text-dim)' }}>Evalúa la experiencia laboral y profesional declarada ante el JNE. Cada trabajo válido = 15pts, bonus +40pts por 20+ años continuos.</div>
                             <DetailItem icon="💼" label="Trabajos registrados" value={`${(hv.work_experience || []).filter((w: any) => w && (w.position || w.employer)).length} experiencia(s) laboral(es) declarada(s)`} />
-                            <DetailItem icon="📊" label="Score" value={`${experienceScore.toFixed(0)}/100 → Contribuye ${(experienceScore * 0.25).toFixed(1)} pts al score final (25%)`} />
-                            <DetailItem icon="ℹ️" label="Nota" value="Este score se extrae de la Hoja de Vida (sección Exp. Laboral) como componente independiente de la fórmula." color="var(--vp-gold)" />
+                            <DetailItem icon="📊" label="Score" value={`${experienceScore.toFixed(1)}/100 → Contribuye ${(experienceScore * 0.25).toFixed(1)} pts al score final (25%)`} />
+                            <DetailItem icon="ℹ️" label="Nota" value="Este score se extrae de la Hoja de Vida (sección Exp. Laboral) como componente independiente de la fórmula." color="#f59e0b" />
                         </ScoreDetailModal>
                     )}
 
-
                     {activeModal === 'integridad' && (() => {
                         const sentences = hv.sentences || [];
-                        const resignations = (hv.resignations || []).filter((r: any) => r && (r.organization || r.year));
-                        const polHistory = (hv.political_history || []).filter((p: any) => p && p.organization);
-                        const parties = new Set(polHistory.map((p: any) => p.organization));
-                        const fin = hv.finances || {};
                         return (
-                            <ScoreDetailModal title="Integridad" icon="🛡️" score={Math.round(integrScore)} color="var(--vp-green)" onClose={() => setActiveModal(null)}>
-                                <div className="text-xs mb-4" style={{ color: 'var(--vp-text-dim)' }}>Evalúa: Judicial (40%), Estabilidad (20%), Transparencia (20%), Coherencia (20%).</div>
-                                <div className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--vp-text-dim)' }}>⚖️ Limpieza Judicial (40%)</div>
-                                {sentences.length === 0 ? <DetailItem icon="✅" label="Sin sentencias" value="Historial limpio." color="var(--vp-green)" /> : sentences.map((s: any, i: number) => <DetailItem key={i} icon="🔴" label={`${s.type}: ${s.crime || ''}`} value={s.sentence || 'Sin especificar'} color="var(--vp-red)" />)}
-                                <div className="text-[10px] font-bold uppercase tracking-wider mt-3 mb-1" style={{ color: 'var(--vp-text-dim)' }}>🏛️ Estabilidad Partidaria (20%)</div>
-                                <DetailItem icon="🏛️" label="Partidos" value={`${parties.size} partido(s): ${[...parties].join(', ') || 'N/A'}`} />
-                                {resignations.length > 0 ? <DetailItem icon="🚪" label="Renuncias" value={`${resignations.length} renuncia(s)`} color="var(--vp-gold)" /> : <DetailItem icon="✅" label="Renuncias" value="Sin renuncias" color="var(--vp-green)" />}
-                                <div className="text-[10px] font-bold uppercase tracking-wider mt-3 mb-1" style={{ color: 'var(--vp-text-dim)' }}>💰 Transparencia (20%)</div>
-                                <DetailItem icon={fin.total_income > 0 ? '✅' : '⚠️'} label="Declaración" value={fin.total_income > 0 ? `Ingreso: S/ ${Number(fin.total_income).toLocaleString()}` : 'Sin ingresos declarados'} />
-                                <div className="text-[10px] font-bold uppercase tracking-wider mt-3 mb-1" style={{ color: 'var(--vp-text-dim)' }}>📋 Coherencia (20%)</div>
-                                <DetailItem icon="🗳️" label="Elecciones" value={`${(hv.elections || []).length} participación(es)`} />
+                            <ScoreDetailModal title="Integridad" icon="🛡️" score={parseFloat(integrScore.toFixed(1))} color="#10b981" onClose={() => setActiveModal(null)}>
+                                <div className="text-xs mb-4" style={{ color: 'var(--vp-text-dim)' }}>Evalúa únicamente las sentencias judiciales declaradas ante el JNE. Inicia en 100 y se descuenta 25 puntos por cada sentencia.</div>
+                                <div className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--vp-text-dim)' }}>⚖️ Sentencias Judiciales</div>
+                                {sentences.length === 0 ? <DetailItem icon="✅" label="Sin sentencias" value="Historial limpio. Score: 100/100" color="var(--vp-green)" /> : (
+                                    <>
+                                        {sentences.map((s: any, i: number) => <DetailItem key={i} icon="🔴" label={`${s.type || 'Sentencia'}: ${s.crime || 'Sin detalle'}`} value={`${s.sentence || 'Sin especificar'} → -25 pts`} color="var(--vp-red)" />)}
+                                        <DetailItem icon="📊" label="Cálculo" value={`100 - (${sentences.length} sentencia(s) × 25) = ${Math.max(0, 100 - sentences.length * 25)} pts`} color="#10b981" />
+                                    </>
+                                )}
                             </ScoreDetailModal>
                         );
                     })()}
                 </div>
+
 
                 {/* Proposals — hidden by request
                 {candidate.proposals && candidate.proposals.length > 0 && (
@@ -852,7 +1033,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                     </div>
                 )}
 
-                {/* === HOJA DE VIDA (compact) === */}
+                {/* === HOJA DE VIDA === */}
                 {(candidate.education || candidate.experience) && (
                     <div className="panel-glow">
                         <div className="flex items-center justify-between mb-3">
@@ -861,56 +1042,236 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                                 ℹ️ Fuente: <a href="https://votoinformado.jne.gob.pe" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--vp-blue)', textDecoration: 'underline' }}>JNE</a>
                             </div>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            {candidate.education && (
-                                <div className="p-3 rounded-xl" style={{ background: 'rgba(30,58,95,0.05)', border: '1px solid rgba(30,58,95,0.15)' }}>
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <span className="text-sm">🎓</span>
-                                        <span className="text-xs font-bold tracking-wider uppercase" style={{ color: 'var(--vp-blue)' }}>Formación Académica</span>
-                                    </div>
-                                    <div className="text-xs leading-relaxed" style={{ color: 'var(--vp-text)' }}>
-                                        {candidate.education.split('. ').filter(l => l.trim()).map((line, i) => (
-                                            <div key={i} className="flex items-start gap-1.5 mb-1">
-                                                <span className="text-[9px] mt-0.5 shrink-0" style={{ color: 'var(--vp-blue)' }}>•</span>
-                                                <span>{line.replace(/\.$/, '')}</span>
+
+                        {isPresident ? (
+                            <>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    {candidate.education && (
+                                        <div className="p-3 rounded-xl" style={{ background: 'rgba(30,58,95,0.05)', border: '1px solid rgba(30,58,95,0.15)' }}>
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <span className="text-sm">🎓</span>
+                                                <span className="text-xs font-bold tracking-wider uppercase" style={{ color: 'var(--vp-blue)' }}>Formación Académica</span>
                                             </div>
-                                        ))}
+                                            <div className="text-xs leading-relaxed" style={{ color: 'var(--vp-text)' }}>
+                                                {candidate.education.split('. ').filter(l => l.trim()).map((line, i) => (
+                                                    <div key={i} className="flex items-start gap-1.5 mb-1">
+                                                        <span className="text-[9px] mt-0.5 shrink-0" style={{ color: 'var(--vp-blue)' }}>•</span>
+                                                        <span>{line.replace(/\.$/, '')}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                    {candidate.experience && (
+                                        <div className="p-3 rounded-xl" style={{ background: 'rgba(0,230,118,0.05)', border: '1px solid rgba(0,230,118,0.15)' }}>
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <span className="text-sm">💼</span>
+                                                <span className="text-xs font-bold tracking-wider uppercase" style={{ color: 'var(--vp-green)' }}>Experiencia Profesional</span>
+                                            </div>
+                                            <div className="text-xs leading-relaxed" style={{ color: 'var(--vp-text)' }}>
+                                                {candidate.experience.split('. ').filter(l => l.trim()).map((line, i) => (
+                                                    <div key={i} className="flex items-start gap-1.5 mb-1">
+                                                        <span className="text-[9px] mt-0.5 shrink-0" style={{ color: 'var(--vp-green)' }}>•</span>
+                                                        <span>{line.replace(/\.$/, '')}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="mt-3 pt-3" style={{ borderTop: '1px solid var(--vp-border)' }}>
+                                    <Link href={`/candidate/${resolvedParams.id}/hoja-vida`}
+                                        className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all hover:scale-[1.02]"
+                                        style={{
+                                            background: 'linear-gradient(135deg, rgba(188,29,25,0.12), rgba(188,29,25,0.05))',
+                                            border: '1px solid rgba(188,29,25,0.25)',
+                                            color: '#bc1d19',
+                                        }}>
+                                        📋 Ver Hoja de Vida Completa (JNE) →
+                                    </Link>
+                                </div>
+                            </>
+                        ) : (
+                            /* ── Full embedded HV for non-presidential candidates ── */
+                            <div className="space-y-3">
+                                {/* Formación Académica */}
+                                {(() => {
+                                    const edu = hvEdu;
+                                    const technical = (edu.technical || []).filter((t: any) => t && (t.institution || t.specialty));
+                                    const university = (edu.university || []).filter((u: any) => u && (u.institution || u.degree));
+                                    const postgraduate = (edu.postgraduate || []).filter((p: any) => p && (p.institution || p.specialty));
+                                    const hasEdu = technical.length > 0 || university.length > 0 || postgraduate.length > 0;
+                                    return (
+                                        <div className="p-4 rounded-xl" style={{ background: 'rgba(30,58,95,0.04)', border: '1px solid rgba(30,58,95,0.12)' }}>
+                                            <div className="flex items-center gap-2 mb-3">
+                                                <span className="text-base">🎓</span>
+                                                <span className="text-xs font-bold tracking-wider uppercase" style={{ color: 'var(--vp-blue)' }}>Formación Académica</span>
+                                            </div>
+                                            {hasEdu ? (
+                                                <div className="space-y-2 text-xs" style={{ color: 'var(--vp-text)' }}>
+                                                    {postgraduate.map((p: any, i: number) => (
+                                                        <div key={`pg-${i}`} className="flex items-start gap-2 py-1.5 px-2 rounded-lg" style={{ background: 'rgba(99,102,241,0.06)' }}>
+                                                            <span className="text-[10px] mt-0.5 shrink-0">🏅</span>
+                                                            <div>
+                                                                <span className="font-semibold">{p.degree || 'Postgrado'}</span>
+                                                                {p.specialty && <span> en {p.specialty}</span>}
+                                                                {p.institution && <span className="opacity-70"> ({p.institution})</span>}
+                                                                {p.completed && <span className="ml-1 text-[9px] px-1.5 py-0.5 rounded-full font-bold" style={{ background: 'rgba(16,185,129,0.15)', color: '#10b981' }}>✓</span>}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                    {university.map((u: any, i: number) => (
+                                                        <div key={`uni-${i}`} className="flex items-start gap-2 py-1.5 px-2 rounded-lg" style={{ background: 'rgba(30,58,95,0.04)' }}>
+                                                            <span className="text-[10px] mt-0.5 shrink-0">🎓</span>
+                                                            <div>
+                                                                <span className="font-semibold">{u.degree || 'Universitario'}</span>
+                                                                {u.institution && <span className="opacity-70"> ({u.institution})</span>}
+                                                                {u.completed && <span className="ml-1 text-[9px] px-1.5 py-0.5 rounded-full font-bold" style={{ background: 'rgba(16,185,129,0.15)', color: '#10b981' }}>✓</span>}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                    {technical.map((t: any, i: number) => (
+                                                        <div key={`tech-${i}`} className="flex items-start gap-2 py-1.5 px-2 rounded-lg" style={{ background: 'rgba(245,158,11,0.04)' }}>
+                                                            <span className="text-[10px] mt-0.5 shrink-0">📚</span>
+                                                            <div>
+                                                                <span className="font-semibold">{t.specialty || 'Técnico'}</span>
+                                                                {t.institution && <span className="opacity-70"> ({t.institution})</span>}
+                                                                {t.completed && <span className="ml-1 text-[9px] px-1.5 py-0.5 rounded-full font-bold" style={{ background: 'rgba(16,185,129,0.15)', color: '#10b981' }}>✓</span>}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <div className="text-xs italic" style={{ color: 'var(--vp-text-dim)' }}>No registra formación académica superior.</div>
+                                            )}
+                                        </div>
+                                    );
+                                })()}
+
+                                {/* Experiencia Laboral + Política side by side */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    {/* Experiencia Laboral */}
+                                    <div className="p-4 rounded-xl" style={{ background: 'rgba(0,230,118,0.04)', border: '1px solid rgba(0,230,118,0.12)' }}>
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <span className="text-base">💼</span>
+                                            <span className="text-xs font-bold tracking-wider uppercase" style={{ color: 'var(--vp-green)' }}>Experiencia Laboral</span>
+                                        </div>
+                                        {hv.work_experience && hv.work_experience.length > 0 ? (
+                                            <div className="space-y-2 text-xs" style={{ color: 'var(--vp-text)' }}>
+                                                {hv.work_experience.map((w: any, i: number) => (
+                                                    <div key={i} className="py-1.5 px-2 rounded-lg" style={{ background: 'rgba(0,230,118,0.04)' }}>
+                                                        <div className="font-semibold">{w.position || '—'}</div>
+                                                        <div className="opacity-70 mt-0.5">{w.employer || '—'}</div>
+                                                        <div className="text-[10px] mt-0.5" style={{ color: 'var(--vp-text-dim)' }}>
+                                                            {w.period || (w.start_year ? `${w.start_year} - ${w.end_year || 'Actualidad'}` : '')}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <div className="text-xs italic" style={{ color: 'var(--vp-text-dim)' }}>Sin experiencia registrada.</div>
+                                        )}
+                                    </div>
+
+                                    {/* Experiencia Política */}
+                                    <div className="p-4 rounded-xl" style={{ background: 'rgba(99,102,241,0.04)', border: '1px solid rgba(99,102,241,0.12)' }}>
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <span className="text-base">🏛️</span>
+                                            <span className="text-xs font-bold tracking-wider uppercase" style={{ color: '#6366f1' }}>Cargos Partidarios</span>
+                                        </div>
+                                        {hv.political_history && hv.political_history.length > 0 && hv.political_history.some((p: any) => p.organization || p.position) ? (
+                                            <div className="space-y-2 text-xs" style={{ color: 'var(--vp-text)' }}>
+                                                {hv.political_history.filter((p: any) => p.organization || p.position).map((p: any, i: number) => (
+                                                    <div key={i} className="py-1.5 px-2 rounded-lg" style={{ background: 'rgba(99,102,241,0.04)' }}>
+                                                        <div className="font-semibold">{p.position || '—'}</div>
+                                                        <div className="opacity-70 mt-0.5">{p.organization || '—'}</div>
+                                                        <div className="text-[10px] mt-0.5" style={{ color: 'var(--vp-text-dim)' }}>
+                                                            {p.start_year ? `${p.start_year} - ${p.end_year || 'Actualidad'}` : ''}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <div className="text-xs italic" style={{ color: 'var(--vp-text-dim)' }}>Sin cargos partidarios registrados.</div>
+                                        )}
                                     </div>
                                 </div>
-                            )}
-                            {candidate.experience && (
-                                <div className="p-3 rounded-xl" style={{ background: 'rgba(0,230,118,0.05)', border: '1px solid rgba(0,230,118,0.15)' }}>
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <span className="text-sm">💼</span>
-                                        <span className="text-xs font-bold tracking-wider uppercase" style={{ color: 'var(--vp-green)' }}>Experiencia Profesional</span>
-                                    </div>
-                                    <div className="text-xs leading-relaxed" style={{ color: 'var(--vp-text)' }}>
-                                        {candidate.experience.split('. ').filter(l => l.trim()).map((line, i) => (
-                                            <div key={i} className="flex items-start gap-1.5 mb-1">
-                                                <span className="text-[9px] mt-0.5 shrink-0" style={{ color: 'var(--vp-green)' }}>•</span>
-                                                <span>{line.replace(/\.$/, '')}</span>
+
+                                {/* Sentencias + Finanzas side by side */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    {/* Sentencias */}
+                                    <div className="p-4 rounded-xl" style={{ background: hv.sentences && hv.sentences.length > 0 ? 'rgba(255,23,68,0.04)' : 'rgba(16,185,129,0.04)', border: `1px solid ${hv.sentences && hv.sentences.length > 0 ? 'rgba(255,23,68,0.15)' : 'rgba(16,185,129,0.12)'}` }}>
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <span className="text-base">⚖️</span>
+                                            <span className="text-xs font-bold tracking-wider uppercase" style={{ color: hv.sentences && hv.sentences.length > 0 ? 'var(--vp-red)' : '#10b981' }}>Sentencias Judiciales</span>
+                                        </div>
+                                        {hv.sentences && hv.sentences.length > 0 ? (
+                                            <div className="space-y-2 text-xs" style={{ color: 'var(--vp-text)' }}>
+                                                {hv.sentences.map((s: any, i: number) => (
+                                                    <div key={i} className="py-1.5 px-2 rounded-lg" style={{ background: 'rgba(255,23,68,0.04)' }}>
+                                                        <div className="font-semibold">{s.type || 'Sentencia'}</div>
+                                                        {s.case_number && <div className="opacity-70 mt-0.5">Exp: {s.case_number}</div>}
+                                                        {s.verdict && <div className="opacity-70 mt-0.5">Fallo: {s.verdict}</div>}
+                                                    </div>
+                                                ))}
                                             </div>
-                                        ))}
+                                        ) : (
+                                            <div className="flex items-center gap-2 text-xs font-semibold" style={{ color: '#10b981' }}>
+                                                <span>✅</span> Sin sentencias judiciales registradas
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Finanzas */}
+                                    <div className="p-4 rounded-xl" style={{ background: 'rgba(245,158,11,0.04)', border: '1px solid rgba(245,158,11,0.12)' }}>
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <span className="text-base">💰</span>
+                                            <span className="text-xs font-bold tracking-wider uppercase" style={{ color: '#f59e0b' }}>Declaración de Ingresos</span>
+                                        </div>
+                                        {(() => {
+                                            const pubIncome = (hvFinances.public_income || 0) + (hvFinances.individual_public || 0) + (hvFinances.other_public || 0);
+                                            const privIncome = (hvFinances.private_income || 0) + (hvFinances.individual_private || 0) + (hvFinances.other_private || 0);
+                                            const totalIncome = hvFinances.total_income || (pubIncome + privIncome);
+                                            return (
+                                                <div className="space-y-2 text-xs" style={{ color: 'var(--vp-text)' }}>
+                                                    <div className="flex justify-between py-1 px-2 rounded" style={{ background: 'rgba(245,158,11,0.04)' }}>
+                                                        <span className="opacity-70">Sector Público</span>
+                                                        <span className="font-semibold">S/ {pubIncome.toLocaleString()}</span>
+                                                    </div>
+                                                    <div className="flex justify-between py-1 px-2 rounded" style={{ background: 'rgba(245,158,11,0.04)' }}>
+                                                        <span className="opacity-70">Sector Privado</span>
+                                                        <span className="font-semibold">S/ {privIncome.toLocaleString()}</span>
+                                                    </div>
+                                                    <div className="flex justify-between py-1.5 px-2 rounded-lg font-bold" style={{ background: 'rgba(245,158,11,0.1)', color: '#f59e0b' }}>
+                                                        <span>Total Ingresos</span>
+                                                        <span>S/ {totalIncome.toLocaleString()}</span>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })()}
                                     </div>
                                 </div>
-                            )}
-                        </div>
-                        <div className="mt-3 pt-3" style={{ borderTop: '1px solid var(--vp-border)' }}>
-                            <Link href={`/candidate/${resolvedParams.id}/hoja-vida`}
-                                className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all hover:scale-[1.02]"
-                                style={{
-                                    background: 'linear-gradient(135deg, rgba(188,29,25,0.12), rgba(188,29,25,0.05))',
-                                    border: '1px solid rgba(188,29,25,0.25)',
-                                    color: '#bc1d19',
-                                }}>
-                                📋 Ver Hoja de Vida Completa (JNE) →
-                            </Link>
-                        </div>
+
+                                {/* Link to full detailed page */}
+                                <div className="pt-2" style={{ borderTop: '1px solid var(--vp-border)' }}>
+                                    <Link href={`/candidate/${resolvedParams.id}/hoja-vida`}
+                                        className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all hover:scale-[1.02]"
+                                        style={{
+                                            background: 'linear-gradient(135deg, rgba(188,29,25,0.08), rgba(188,29,25,0.03))',
+                                            border: '1px solid rgba(188,29,25,0.2)',
+                                            color: '#bc1d19',
+                                        }}>
+                                        📋 Ver formato completo JNE →
+                                    </Link>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 )}
 
                 {/* === ANÁLISIS SECTORIAL DEL PLAN DE GOBIERNO (PDF COMPLETO) === */}
                 {(() => {
+                    if (!isPresident) return null;
                     if (!sectorData || !sectorData.analysis) return null;
                     const partyName = ((candidate as any).party_jne_name || '').toUpperCase().replace(/[^A-Z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
                     const matchEntry = Object.values(sectorData.analysis as Record<string, any>).find((entry: any) => {
@@ -1146,7 +1507,7 @@ export default function CandidatePage({ params }: { params: Promise<{ id: string
                 })()}
 
                 {/* === PLAN DE GOBIERNO === */}
-                {candidate.plan_gobierno && candidate.plan_gobierno.length > 0 && (() => {
+                {isPresident && candidate.plan_gobierno && candidate.plan_gobierno.length > 0 && (() => {
                     // Group by dimension
                     const dimensions = candidate.plan_gobierno!.reduce((acc, item) => {
                         if (!acc[item.dimension]) acc[item.dimension] = [];

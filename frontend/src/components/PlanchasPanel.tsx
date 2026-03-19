@@ -11,6 +11,19 @@ interface PlanchaData {
     allCandidates: Candidate[];
 }
 
+// Helper: compute plancha score from candidate data using the formula
+// (HV×0.30) + (Exp×0.25) + (Int×0.35) + (Plan×0.10)
+function getPlanchaScore(p: PlanchaData): number {
+    const cands = p.allCandidates;
+    const n = cands.length;
+    if (n === 0) return 0;
+    const avgHoja = cands.reduce((s, c) => s + Number((c as any).hoja_score || 0), 0) / n;
+    const avgExp = cands.reduce((s, c) => s + Number(c.experience_score || 0), 0) / n;
+    const avgInt = cands.reduce((s, c) => s + Number(c.integrity_score || 0), 0) / n;
+    const avgPlan = cands.reduce((s, c) => s + Number((c as any).plan_score || 0), 0) / n;
+    return parseFloat(((avgHoja * 0.30) + (avgExp * 0.25) + (avgInt * 0.35) + (avgPlan * 0.10)).toFixed(1));
+}
+
 export default function PlanchasPanel() {
     const [planchas, setPlanchas] = useState<PlanchaData[]>([]);
     const [loading, setLoading] = useState(true);
@@ -21,16 +34,16 @@ export default function PlanchasPanel() {
         async function fetchPlanchas() {
             try {
                 // Fetch each endpoint independently so partial failures don't kill everything
-                const safeFetch = async <T,>(fn: () => Promise<T>, fallback: T): Promise<T> => {
-                    try { return await fn(); } catch { return fallback; }
+                const safeFetch = async <T,>(fn: () => Promise<T>, fallback: T, label = ''): Promise<T> => {
+                    try { return await fn(); } catch (e) { console.error(`[PlanchasPanel] safeFetch ${label} FAILED:`, e); return fallback; }
                 };
 
                 const [parties, presidents, senators, deputies, andean] = await Promise.all([
-                    safeFetch(getParties, []),
-                    safeFetch(() => getRanking('president'), []),
-                    safeFetch(() => getRanking('senator'), []),
-                    safeFetch(() => getRanking('deputy'), []),
-                    safeFetch(() => getRanking('andean'), []),
+                    safeFetch(getParties, [], 'parties'),
+                    safeFetch(() => getRanking('president'), [], 'president'),
+                    safeFetch(() => getRanking('senator'), [], 'senator'),
+                    safeFetch(() => getRanking('deputy'), [], 'deputy'),
+                    safeFetch(() => getRanking('andean'), [], 'andean'),
                 ]);
 
                 if (!parties.length) {
@@ -70,9 +83,7 @@ export default function PlanchasPanel() {
     const sorted = useMemo(() => {
         return [...planchas].sort((a, b) => {
             if (sortBy === 'score') {
-                const scoreA = a.presidential ? Number(a.presidential.final_score || 0) : Number(a.party.party_full_score || 0);
-                const scoreB = b.presidential ? Number(b.presidential.final_score || 0) : Number(b.party.party_full_score || 0);
-                return scoreB - scoreA;
+                return getPlanchaScore(b) - getPlanchaScore(a);
             }
             if (sortBy === 'name') return a.party.name.localeCompare(b.party.name);
             if (sortBy === 'candidates') return b.allCandidates.length - a.allCandidates.length;
@@ -123,7 +134,7 @@ export default function PlanchasPanel() {
             </div>
 
             {/* ═══════════ ANALYTICS DASHBOARD ═══════════ */}
-            <PlanchasDashboard planchas={planchas} sorted={sorted} />
+            {/* Dashboard removed */}
 
             {/* Sort controls */}
             <div className="planchas-sort-bar">
@@ -164,10 +175,7 @@ function PlanchasDashboard({ planchas, sorted }: { planchas: PlanchaData[]; sort
         const totalCandidates = planchas.reduce((s, p) => s + p.allCandidates.length, 0);
         const totalVotes = planchas.reduce((s, p) => s + p.allCandidates.reduce((v, c) => v + (c.vote_count || 0), 0), 0);
 
-        const scores = planchas.map(p => {
-            const ps = p.presidential ? Number(p.presidential.final_score || 0) : 0;
-            return ps > 0 ? ps : Number(p.party.party_full_score || 0);
-        });
+        const scores = planchas.map(p => getPlanchaScore(p));
         const avgScore = scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
         const maxScore = Math.max(...scores);
         const bestIdx = scores.indexOf(maxScore);
@@ -179,27 +187,36 @@ function PlanchasDashboard({ planchas, sorted }: { planchas: PlanchaData[]; sort
         const regular = scores.filter(s => s >= 30 && s < 50).length;
         const baja = scores.filter(s => s < 30).length;
 
-        // Score distribution histogram (0-10, 10-20, ..., 90-100)
-        const histogram = Array.from({ length: 10 }, (_, i) => {
-            const lo = i * 10;
-            const hi = lo + 10;
-            return { range: `${lo}-${hi}`, count: scores.filter(s => s >= lo && s < hi).length };
-        });
-        // fix last bucket to include 100
-        histogram[9].count += scores.filter(s => s >= 100).length;
-        const histMax = Math.max(...histogram.map(h => h.count), 1);
-
-        // Position totals across all planchas
+        // Global component averages across ALL candidates
         const allC = planchas.flatMap(p => p.allCandidates);
+        const globalAvg = (field: string) => allC.length > 0 ? allC.reduce((s, c) => s + Number((c as any)[field] || 0), 0) / allC.length : 0;
+        const avgHoja = globalAvg('hoja_score');
+        const avgExp = globalAvg('experience_score');
+        const avgInt = globalAvg('integrity_score');
+        const avgPlan = globalAvg('plan_score');
+
+        // Integrity insights
+        const sentencedCandidates = allC.filter(c => {
+            const hv = (c as any).hoja_de_vida || {};
+            return (hv.sentences || []).length > 0;
+        }).length;
+        const cleanCandidates = totalCandidates - sentencedCandidates;
+        const partiesWithSentences = planchas.filter(p => 
+            p.allCandidates.some(c => {
+                const hv = (c as any).hoja_de_vida || {};
+                return (hv.sentences || []).length > 0;
+            })
+        ).length;
+
+        // Position totals
         const posTotals = {
             president: allC.filter(c => c.position === 'president').length,
             senator: allC.filter(c => c.position === 'senator').length,
             deputy: allC.filter(c => c.position === 'deputy').length,
             andean: allC.filter(c => c.position === 'andean').length,
         };
-        const posMax = Math.max(...Object.values(posTotals), 1);
 
-        return { totalCandidates, totalVotes, avgScore, maxScore, bestPlancha, excelente, buena, regular, baja, histogram, histMax, posTotals, posMax };
+        return { totalCandidates, totalVotes, avgScore, maxScore, bestPlancha, excelente, buena, regular, baja, avgHoja, avgExp, avgInt, avgPlan, sentencedCandidates, cleanCandidates, partiesWithSentences, posTotals };
     }, [planchas]);
 
     const top5 = sorted.slice(0, 5);
@@ -212,34 +229,55 @@ function PlanchasDashboard({ planchas, sorted }: { planchas: PlanchaData[]; sort
             <div className="pd-kpi-row">
                 <div className="pd-kpi"><span className="pd-kpi-val" style={{ color: 'var(--vp-red)' }}>{planchas.length}</span><span className="pd-kpi-lbl">Planchas</span></div>
                 <div className="pd-kpi"><span className="pd-kpi-val" style={{ color: '#2563eb' }}>{stats.totalCandidates.toLocaleString()}</span><span className="pd-kpi-lbl">Candidatos</span></div>
-                <div className="pd-kpi"><span className="pd-kpi-val" style={{ color: '#16a34a' }}>{stats.totalVotes.toLocaleString()}</span><span className="pd-kpi-lbl">Votos Totales</span></div>
+                <div className="pd-kpi"><span className="pd-kpi-val" style={{ color: '#16a34a' }}>{stats.cleanCandidates.toLocaleString()}</span><span className="pd-kpi-lbl">Sin Sentencias</span></div>
+                <div className="pd-kpi"><span className="pd-kpi-val" style={{ color: '#dc2626' }}>{stats.sentencedCandidates}</span><span className="pd-kpi-lbl">Con Sentencias</span></div>
                 <div className="pd-kpi"><span className="pd-kpi-val" style={{ color: '#ca8a04' }}>{Number(stats.avgScore || 0).toFixed(1)}</span><span className="pd-kpi-lbl">Score Promedio</span></div>
                 <div className="pd-kpi"><span className="pd-kpi-val" style={{ color: '#16a34a' }}>{Number(stats.maxScore || 0).toFixed(1)}</span><span className="pd-kpi-lbl">Mejor Score</span></div>
-                <div className="pd-kpi"><span className="pd-kpi-val" style={{ color: '#7c3aed' }}>{planchas.filter(p => p.presidential).length}</span><span className="pd-kpi-lbl">Con Presidencial</span></div>
             </div>
 
-            {/* ── Row 2: Two columns ── */}
+            {/* ── Row 2: Three columns ── */}
             <div className="pd-two-cols">
-                {/* Left: Quality Distribution + Top 5 */}
+                {/* Left: Component Averages + Quality Distribution */}
                 <div className="pd-card">
-                    <h3 className="pd-card-title">📊 Distribución de Calidad</h3>
-                    <div className="pd-dist-bar">
-                        {stats.excelente > 0 && <div className="pd-dist-seg" style={{ flex: stats.excelente, background: '#16a34a' }} title={`Excelente: ${stats.excelente}`}>{stats.excelente}</div>}
-                        {stats.buena > 0 && <div className="pd-dist-seg" style={{ flex: stats.buena, background: '#2563eb' }} title={`Buena: ${stats.buena}`}>{stats.buena}</div>}
-                        {stats.regular > 0 && <div className="pd-dist-seg" style={{ flex: stats.regular, background: '#ca8a04' }} title={`Regular: ${stats.regular}`}>{stats.regular}</div>}
-                        {stats.baja > 0 && <div className="pd-dist-seg" style={{ flex: stats.baja, background: '#dc2626' }} title={`Baja: ${stats.baja}`}>{stats.baja}</div>}
+                    <h3 className="pd-card-title">📊 Promedios por Componente</h3>
+                    <p style={{ fontSize: '0.65rem', color: '#6b7280', margin: '0 0 10px', fontStyle: 'italic' }}>
+                        Promedios globales de los {stats.totalCandidates.toLocaleString()} candidatos
+                    </p>
+                    {[
+                        { label: 'Hoja de Vida', value: stats.avgHoja, weight: '30%', color: '#312e81' },
+                        { label: 'Experiencia', value: stats.avgExp, weight: '25%', color: '#f59e0b' },
+                        { label: 'Integridad', value: stats.avgInt, weight: '35%', color: '#0ea5e9' },
+                        { label: 'Plan de Gobierno', value: stats.avgPlan, weight: '10%', color: '#2563eb' },
+                    ].map(comp => (
+                        <div key={comp.label} className="pd-pos-row" style={{ marginBottom: 4 }}>
+                            <span className="pd-pos-label" style={{ fontSize: '0.65rem', width: 95 }}>{comp.label} ({comp.weight})</span>
+                            <div className="pd-pos-bar-wrap">
+                                <div className="pd-pos-bar" style={{ width: `${comp.value}%`, background: comp.color }} />
+                            </div>
+                            <span className="pd-pos-count" style={{ color: comp.color, fontSize: '0.7rem', fontWeight: 700, minWidth: 32, textAlign: 'right' }}>{comp.value.toFixed(1)}</span>
+                        </div>
+                    ))}
+
+                    <h3 className="pd-card-title" style={{ marginTop: 16 }}>⚖️ Situación Judicial Global</h3>
+                    <div className="pd-dist-bar" style={{ borderRadius: 6 }}>
+                        <div className="pd-dist-seg" style={{ flex: stats.cleanCandidates, background: '#16a34a' }} title={`Limpios: ${stats.cleanCandidates}`}>{stats.cleanCandidates}</div>
+                        {stats.sentencedCandidates > 0 && <div className="pd-dist-seg" style={{ flex: stats.sentencedCandidates, background: '#dc2626' }} title={`Con sentencia: ${stats.sentencedCandidates}`}>{stats.sentencedCandidates}</div>}
                     </div>
                     <div className="pd-dist-legend">
-                        <span><i style={{ background: '#16a34a' }} /> Excelente ({stats.excelente})</span>
-                        <span><i style={{ background: '#2563eb' }} /> Buena ({stats.buena})</span>
-                        <span><i style={{ background: '#ca8a04' }} /> Regular ({stats.regular})</span>
-                        <span><i style={{ background: '#dc2626' }} /> Baja ({stats.baja})</span>
+                        <span><i style={{ background: '#16a34a' }} /> ✅ Limpios ({stats.cleanCandidates})</span>
+                        <span><i style={{ background: '#dc2626' }} /> ⚠️ Con sentencias ({stats.sentencedCandidates})</span>
                     </div>
+                    <p style={{ fontSize: '0.6rem', color: '#6b7280', margin: '6px 0 0', fontStyle: 'italic' }}>
+                        {stats.partiesWithSentences} de {planchas.length} planchas tienen candidatos con sentencias judiciales
+                    </p>
+                </div>
 
-                    <h3 className="pd-card-title" style={{ marginTop: 20 }}>🏆 Top 5 Planchas</h3>
+                {/* Right: Top 5 + Quality Distribution + Positions */}
+                <div className="pd-card">
+                    <h3 className="pd-card-title">🏆 Top 5 Planchas</h3>
                     <div className="pd-top5">
                         {top5.map((p, i) => {
-                            const sc = p.presidential ? Number(p.presidential.final_score || 0) : Number(p.party.party_full_score || 0);
+                            const sc = getPlanchaScore(p);
                             const medals = ['🥇', '🥈', '🥉'];
                             return (
                                 <div key={p.party.id} className="pd-top5-row">
@@ -253,30 +291,22 @@ function PlanchasDashboard({ planchas, sorted }: { planchas: PlanchaData[]; sort
                             );
                         })}
                     </div>
-                </div>
 
-                {/* Right: Score Histogram + Positions */}
-                <div className="pd-card">
-                    <h3 className="pd-card-title">📈 Distribución de Scores</h3>
-                    <div className="pd-histogram">
-                        {stats.histogram.map((h, i) => (
-                            <div key={i} className="pd-hist-col">
-                                <div className="pd-hist-bar-wrap">
-                                    <div
-                                        className="pd-hist-bar"
-                                        style={{
-                                            height: `${(h.count / stats.histMax) * 100}%`,
-                                            background: i < 3 ? '#dc2626' : i < 5 ? '#ca8a04' : i < 7 ? '#2563eb' : '#16a34a',
-                                        }}
-                                    />
-                                </div>
-                                <span className="pd-hist-count">{h.count}</span>
-                                <span className="pd-hist-label">{h.range}</span>
-                            </div>
-                        ))}
+                    <h3 className="pd-card-title" style={{ marginTop: 16 }}>📋 Distribución de Calidad</h3>
+                    <div className="pd-dist-bar">
+                        {stats.excelente > 0 && <div className="pd-dist-seg" style={{ flex: stats.excelente, background: '#16a34a' }} title={`Excelente: ${stats.excelente}`}>{stats.excelente}</div>}
+                        {stats.buena > 0 && <div className="pd-dist-seg" style={{ flex: stats.buena, background: '#2563eb' }} title={`Buena: ${stats.buena}`}>{stats.buena}</div>}
+                        {stats.regular > 0 && <div className="pd-dist-seg" style={{ flex: stats.regular, background: '#ca8a04' }} title={`Regular: ${stats.regular}`}>{stats.regular}</div>}
+                        {stats.baja > 0 && <div className="pd-dist-seg" style={{ flex: stats.baja, background: '#dc2626' }} title={`Baja: ${stats.baja}`}>{stats.baja}</div>}
+                    </div>
+                    <div className="pd-dist-legend">
+                        <span><i style={{ background: '#16a34a' }} /> Excelente ≥70 ({stats.excelente})</span>
+                        <span><i style={{ background: '#2563eb' }} /> Buena 50-69 ({stats.buena})</span>
+                        <span><i style={{ background: '#ca8a04' }} /> Regular 30-49 ({stats.regular})</span>
+                        <span><i style={{ background: '#dc2626' }} /> Baja &lt;30 ({stats.baja})</span>
                     </div>
 
-                    <h3 className="pd-card-title" style={{ marginTop: 20 }}>👥 Candidatos por Cargo (Total)</h3>
+                    <h3 className="pd-card-title" style={{ marginTop: 16 }}>👥 Candidatos por Cargo</h3>
                     <div className="pd-pos-bars">
                         {[
                             { label: 'Presidente', count: stats.posTotals.president, color: '#dc2626', icon: '🏛️' },
@@ -288,7 +318,7 @@ function PlanchasDashboard({ planchas, sorted }: { planchas: PlanchaData[]; sort
                                 <span className="pd-pos-icon">{pos.icon}</span>
                                 <span className="pd-pos-label">{pos.label}</span>
                                 <div className="pd-pos-bar-wrap">
-                                    <div className="pd-pos-bar" style={{ width: `${(pos.count / stats.posMax) * 100}%`, background: pos.color }} />
+                                    <div className="pd-pos-bar" style={{ width: `${(pos.count / Math.max(...Object.values(stats.posTotals), 1)) * 100}%`, background: pos.color }} />
                                 </div>
                                 <span className="pd-pos-count" style={{ color: pos.color }}>{pos.count.toLocaleString()}</span>
                             </div>
@@ -303,7 +333,7 @@ function PlanchasDashboard({ planchas, sorted }: { planchas: PlanchaData[]; sort
                     <span className="pd-best-medal">🏆</span>
                     <span className="pd-best-text">
                         Mejor plancha: <strong style={{ color: stats.bestPlancha.party.color }}>{stats.bestPlancha.party.name}</strong>
-                        {' '}({stats.bestPlancha.party.abbreviation}) — Score: <strong>{Number(stats.maxScore || 0).toFixed(1)}</strong>
+                        {' '}({stats.bestPlancha.party.abbreviation}) — Score Plancha: <strong>{Number(stats.maxScore || 0).toFixed(1)}</strong>
                     </span>
                 </div>
             )}
@@ -337,8 +367,8 @@ function PlanchaCard({ plancha, rank }: { plancha: PlanchaData; rank: number }) 
     const avgFinalScore = totalCandidates > 0 ? totalScore / totalCandidates : 0;
 
     // Calculate plancha score using the formula: 
-    // plancha = (Antecedentes×0.30) + (Plan×0.25) + (HV×0.25) + (Score Prom.×0.20)
-    const calculatedPlanchaScore = (antecedentesScore * 0.30) + (avgPlanScore * 0.25) + (avgHojaScore * 0.25) + (avgFinalScore * 0.20);
+    // plancha = (HV×0.30) + (Experiencia×0.25) + (Integridad×0.35) + (Plan×0.10)
+    const calculatedPlanchaScore = (avgHojaScore * 0.30) + (avgExperiencia * 0.25) + (avgIntegrity * 0.35) + (avgPlanScore * 0.10);
     const displayScore = Number(calculatedPlanchaScore || 0);
 
     const byPosition = {
@@ -423,36 +453,36 @@ function PlanchaCard({ plancha, rank }: { plancha: PlanchaData; rank: number }) 
             <div className="plancha-section">
                 <h4 className="plancha-section-title">📊 FÓRMULA DE PLANCHA</h4>
                 <p style={{ fontSize: '0.7rem', color: '#6b7280', margin: '0 0 8px', fontStyle: 'italic' }}>
-                    plancha = (Antecedentes×0.30) + (Plan×0.25) + (HV×0.25) + (Score Prom.×0.20)
+                    plancha = (HV×0.30) + (Exp×0.25) + (Integridad×0.35) + (Plan×0.10)
                 </p>
                 <div className="plancha-breakdown">
                     <div className="plancha-brk-item">
-                        <span>⚖️ Antecedentes ({cleanCandidates}/{totalCandidates}) (30%)</span>
-                        <div style={{ flex: 1, margin: '0 8px', height: 6, background: '#f3f4f6', borderRadius: 3, overflow: 'hidden' }}>
-                            <div style={{ width: `${antecedentesScore}%`, height: '100%', background: '#0ea5e9', borderRadius: 3 }} />
-                        </div>
-                        <span className="plancha-brk-val" style={{ color: '#0ea5e9' }}>{Number(antecedentesScore * 0.30 || 0).toFixed(1)}</span>
-                    </div>
-                    <div className="plancha-brk-item">
-                        <span>📋 Plan de Gobierno (25%)</span>
-                        <div style={{ flex: 1, margin: '0 8px', height: 6, background: '#f3f4f6', borderRadius: 3, overflow: 'hidden' }}>
-                            <div style={{ width: `${avgPlanScore}%`, height: '100%', background: '#2563eb', borderRadius: 3 }} />
-                        </div>
-                        <span className="plancha-brk-val" style={{ color: '#2563eb' }}>{Number(avgPlanScore * 0.25 || 0).toFixed(1)}</span>
-                    </div>
-                    <div className="plancha-brk-item">
-                        <span>📄 Hoja de Vida (25%)</span>
+                        <span>📄 Hoja de Vida (30%)</span>
                         <div style={{ flex: 1, margin: '0 8px', height: 6, background: '#f3f4f6', borderRadius: 3, overflow: 'hidden' }}>
                             <div style={{ width: `${avgHojaScore}%`, height: '100%', background: '#312e81', borderRadius: 3 }} />
                         </div>
-                        <span className="plancha-brk-val" style={{ color: '#312e81' }}>{Number(avgHojaScore * 0.25 || 0).toFixed(1)}</span>
+                        <span className="plancha-brk-val" style={{ color: '#312e81' }}>{Number(avgHojaScore * 0.30 || 0).toFixed(1)}</span>
                     </div>
                     <div className="plancha-brk-item">
-                        <span>📊 Score Promedio (20%)</span>
+                        <span>🏛️ Experiencia (25%)</span>
                         <div style={{ flex: 1, margin: '0 8px', height: 6, background: '#f3f4f6', borderRadius: 3, overflow: 'hidden' }}>
-                            <div style={{ width: `${avgFinalScore}%`, height: '100%', background: '#f59e0b', borderRadius: 3 }} />
+                            <div style={{ width: `${avgExperiencia}%`, height: '100%', background: '#f59e0b', borderRadius: 3 }} />
                         </div>
-                        <span className="plancha-brk-val" style={{ color: '#f59e0b' }}>{Number(avgFinalScore * 0.20 || 0).toFixed(1)}</span>
+                        <span className="plancha-brk-val" style={{ color: '#f59e0b' }}>{Number(avgExperiencia * 0.25 || 0).toFixed(1)}</span>
+                    </div>
+                    <div className="plancha-brk-item">
+                        <span>⚖️ Integridad (35%)</span>
+                        <div style={{ flex: 1, margin: '0 8px', height: 6, background: '#f3f4f6', borderRadius: 3, overflow: 'hidden' }}>
+                            <div style={{ width: `${avgIntegrity}%`, height: '100%', background: '#0ea5e9', borderRadius: 3 }} />
+                        </div>
+                        <span className="plancha-brk-val" style={{ color: '#0ea5e9' }}>{Number(avgIntegrity * 0.35 || 0).toFixed(1)}</span>
+                    </div>
+                    <div className="plancha-brk-item">
+                        <span>📋 Plan de Gobierno (10%)</span>
+                        <div style={{ flex: 1, margin: '0 8px', height: 6, background: '#f3f4f6', borderRadius: 3, overflow: 'hidden' }}>
+                            <div style={{ width: `${avgPlanScore}%`, height: '100%', background: '#2563eb', borderRadius: 3 }} />
+                        </div>
+                        <span className="plancha-brk-val" style={{ color: '#2563eb' }}>{Number(avgPlanScore * 0.10 || 0).toFixed(1)}</span>
                     </div>
                     <div className="plancha-brk-item" style={{ borderTop: '1px solid #e5e7eb', paddingTop: 6, marginTop: 4 }}>
                         <span style={{ fontWeight: 700 }}>TOTAL</span>

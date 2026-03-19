@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Candidate, getCandidate } from '@/lib/api';
-import { getCandidatePhoto } from '@/lib/avatars';
+import { getCandidatePhoto, getPhotoFallback, getAvatarUrl } from '@/lib/avatars';
 import Link from 'next/link';
 import { use } from 'react';
 import NavHeader from '@/components/NavHeader';
@@ -112,7 +112,7 @@ export default function HojaDeVidaPage({ params }: { params: Promise<{ id: strin
                             src={photoUrl}
                             alt={candidate.name}
                             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                            onError={(e) => { (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(candidate.name)}&size=140&background=ddd&color=555`; }}
+                            onError={(e) => { const fb = getPhotoFallback((e.target as HTMLImageElement).src); if (fb && !(e.target as HTMLImageElement).dataset.retried) { (e.target as HTMLImageElement).dataset.retried = '1'; (e.target as HTMLImageElement).src = fb; } else { (e.target as HTMLImageElement).src = getAvatarUrl(candidate.name, 140, candidate.party_color); } }}
                         />
                     </div>
 
@@ -442,8 +442,8 @@ export default function HojaDeVidaPage({ params }: { params: Promise<{ id: strin
                     </div>
                 </Section>
 
-                {/* Plan de Gobierno link */}
-                {candidate.plan_gobierno && candidate.plan_gobierno.length > 0 && (
+                {/* Plan de Gobierno link — only for presidential candidates */}
+                {candidate.position === 'president' && candidate.plan_gobierno && candidate.plan_gobierno.length > 0 && (
                     <div style={{ background: '#fff', borderRadius: 8, padding: 20, marginTop: 20, border: '1px solid #e5e7eb', textAlign: 'center' }}>
                         <div style={{ fontSize: 14, fontWeight: 600, color: '#374151', marginBottom: 10 }}>📋 Plan de Gobierno</div>
                         <Link href={`/candidate/${id}`} style={{
